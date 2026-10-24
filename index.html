@@ -182,20 +182,31 @@
         <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
           <div id="packing-progress-bar" class="h-full bg-gradient-to-r from-red-600 to-amber-500 transition-all duration-300" style="width: 0%"></div>
         </div>
-        <div class="mt-3 flex flex-col sm:flex-row sm:items-end gap-2 no-print">
-          <label class="text-xs font-semibold text-slate-600 block flex-1">
-            This list is for
-            <select id="pack-person" onchange="onPackingPersonChange()" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900"></select>
-          </label>
-          <button type="button" onclick="downloadPackingList()" class="shrink-0 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg">Download this list</button>
+        <div id="pack-claim" class="mt-3 no-print">
+          <div class="flex flex-col sm:flex-row sm:items-end gap-2">
+            <label class="text-xs font-semibold text-slate-600 block flex-1">
+              Who is using this phone?
+              <select id="pack-person" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900"></select>
+            </label>
+            <button type="button" onclick="claimPackingPerson()" class="shrink-0 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-2 rounded-lg">This is my list</button>
+          </div>
         </div>
-        <p id="packing-personal-note" class="text-xs text-slate-500 mt-2">Pick a person. Items you add, edit, or remove stay on their list.</p>
+        <div id="pack-mine" class="hidden mt-3 no-print">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <p id="pack-mine-name" class="text-sm font-extrabold text-slate-900"></p>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="downloadPackingList()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg">Download my list</button>
+              <button type="button" onclick="releasePackingPerson()" class="text-xs font-bold text-slate-500 underline">Not me</button>
+            </div>
+          </div>
+        </div>
+        <p id="packing-personal-note" class="text-xs text-slate-500 mt-2">Choose your name once. You only edit the list on this phone.</p>
       </div>
 
       <form id="packing-editor" class="hidden no-print bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3" onsubmit="return addPackingSuggestion(event)">
         <div>
           <h3 id="packing-editor-title" class="text-sm font-extrabold text-slate-900">Add an item</h3>
-          <p id="packing-editor-note" class="text-xs text-slate-500 mt-0.5">This item is added only to the selected person's list.</p>
+          <p id="packing-editor-note" class="text-xs text-slate-500 mt-0.5">This item is added only to your list.</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label class="text-xs font-semibold text-slate-600 block">
@@ -254,6 +265,42 @@
       { name: "Mary (12)", group: "James & Lindsay" },
       { name: "James Timothy (9)", group: "James & Lindsay" }
     ];
+
+    const packingPeople = [
+      { id: "mark", name: "Mark Krejcarek", group: "Krejcarek" },
+      { id: "marisa", name: "Marisa Krejcarek", group: "Krejcarek" },
+      { id: "rose", name: "Rose Krejcarek", group: "Krejcarek" },
+      { id: "myles", name: "Myles Krejcarek", group: "Krejcarek" },
+      { id: "francis", name: "Francis Krejcarek", group: "Krejcarek" },
+      { id: "peter", name: "Peter Krejcarek", group: "Peter & Cheryll" },
+      { id: "cheryll", name: "Cheryll Puyot", group: "Peter & Cheryll" },
+      { id: "olive", name: "Olive Krejcarek", group: "Peter & Cheryll" },
+      { id: "randal", name: "Randal Krejcarek", group: "Randal & Ann" },
+      { id: "ann", name: "Ann Marie Krejcarek", group: "Randal & Ann" },
+      { id: "james-thomas", name: "James Krejcarek", group: "James & Lindsay" },
+      { id: "lindsay", name: "Lindsay Krejcarek", group: "James & Lindsay" },
+      { id: "ella", name: "Ella Krejcarek", group: "James & Lindsay" },
+      { id: "mary", name: "Mary Krejcarek", group: "James & Lindsay" },
+      { id: "james-timothy", name: "James T Krejcarek", group: "James & Lindsay" }
+    ];
+
+    const legacyPackingPerson = {
+      "Mark": "mark",
+      "Marisa": "marisa",
+      "Rose (16)": "rose",
+      "Myles (13)": "myles",
+      "Francis (11)": "francis",
+      "Peter": "peter",
+      "Cheryll": "cheryll",
+      "Olive (baby)": "olive",
+      "Randal": "randal",
+      "Ann": "ann",
+      "James Thomas": "james-thomas",
+      "Lindsay": "lindsay",
+      "Ella (14)": "ella",
+      "Mary (12)": "mary",
+      "James Timothy (9)": "james-timothy"
+    };
 
     const itineraryDays = [
       {
@@ -1166,45 +1213,75 @@
       };
     }
 
+    function packingPersonName() {
+      const person = packingPeople.find(entry => entry.id === packingPerson);
+      return person ? person.name : '';
+    }
+
+    function savedPackingPersonId() {
+      const raw = localStorage.getItem('japan2026_packing_person') || '';
+      const id = packingPeople.some(entry => entry.id === raw) ? raw : (legacyPackingPerson[raw] || '');
+      if (!id) return '';
+      if (raw !== id) {
+        const oldItems = localStorage.getItem(`japan2026_pack_items_v1_${raw}`);
+        const oldChecks = localStorage.getItem(`japan2026_pack_checks_${raw}`);
+        if (oldItems && !localStorage.getItem(`japan2026_pack_items_v1_${id}`)) {
+          localStorage.setItem(`japan2026_pack_items_v1_${id}`, oldItems);
+        }
+        if (oldChecks && !localStorage.getItem(`japan2026_pack_checks_${id}`)) {
+          localStorage.setItem(`japan2026_pack_checks_${id}`, oldChecks);
+        }
+        localStorage.setItem('japan2026_packing_person', id);
+      }
+      return id;
+    }
+
     function fillPersonSelect() {
       const select = document.getElementById('pack-person');
       if (!select) return;
       const groups = [];
       const byGroup = new Map();
-      travelers.forEach(traveler => {
-        if (!byGroup.has(traveler.group)) {
-          byGroup.set(traveler.group, []);
-          groups.push(traveler.group);
+      packingPeople.forEach(person => {
+        if (!byGroup.has(person.group)) {
+          byGroup.set(person.group, []);
+          groups.push(person.group);
         }
-        byGroup.get(traveler.group).push(traveler.name);
+        byGroup.get(person.group).push(person);
       });
-      const saved = localStorage.getItem('japan2026_packing_person') || '';
-      select.innerHTML = '<option value="">Choose a person</option>' + groups.map(group => `
+      select.innerHTML = '<option value="">Choose your name</option>' + groups.map(group => `
         <optgroup label="${escapeHtml(group)}">
-          ${byGroup.get(group).map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('')}
+          ${byGroup.get(group).map(person => `<option value="${escapeHtml(person.id)}">${escapeHtml(person.name)}</option>`).join('')}
         </optgroup>
       `).join('');
-      if (saved && Array.from(select.options).some(option => option.value === saved)) select.value = saved;
-      packingPerson = select.value;
+      packingPerson = savedPackingPersonId();
+      if (packingPerson) select.value = packingPerson;
     }
 
     function updatePersonalChrome() {
       const editor = document.getElementById('packing-editor');
+      const claim = document.getElementById('pack-claim');
+      const mine = document.getElementById('pack-mine');
       const note = document.getElementById('packing-personal-note');
       const title = document.getElementById('packing-editor-title');
       const blurb = document.getElementById('packing-blurb');
+      const name = packingPersonName();
       if (!packingPerson) {
         editor.classList.add('hidden');
-        note.textContent = 'Pick a person. Items you add, edit, or remove stay on their list.';
-        blurb.textContent = 'The group list is the starting point. Choose a person to make their own checklist.';
+        claim.classList.remove('hidden');
+        mine.classList.add('hidden');
+        note.textContent = 'Choose your name once. You only change the list on this phone.';
+        blurb.textContent = 'The group list is the starting point. After you choose your name, edits stay on your list.';
         return;
       }
       editor.classList.remove('hidden');
-      title.textContent = `Add an item for ${packingPerson}`;
-      blurb.textContent = `Check items off on this phone for ${packingPerson}. Their list is separate from everyone else's.`;
+      claim.classList.add('hidden');
+      mine.classList.remove('hidden');
+      document.getElementById('pack-mine-name').textContent = `${name}'s list`;
+      title.textContent = 'Add an item to my list';
+      blurb.textContent = `Check items off on this phone. Only ${name}'s list can be changed here.`;
       note.textContent = personalStore === 'remote'
-        ? `Adds, edits, and removals stay on the list for ${packingPerson}. Checkmarks stay on this phone.`
-        : `Saved on this phone for ${packingPerson}. Checkmarks stay on this phone too.`;
+        ? `Adds, edits, and removals stay on ${name}'s list. Checkmarks stay on this phone.`
+        : `Saved on this phone for ${name}. Checkmarks stay on this phone too.`;
     }
 
     function togglePackItem(id) {
@@ -1214,7 +1291,7 @@
     }
 
     function resetPacking() {
-      const who = packingPerson ? `${packingPerson}'s checkmarks` : 'the group checkmarks';
+      const who = packingPerson ? 'your checkmarks' : 'the group checkmarks';
       if (confirm(`Reset ${who} on this phone?`)) {
         checkedItems = {};
         localStorage.removeItem(checksStorageKey());
@@ -1223,7 +1300,7 @@
     }
 
     function downloadPackingList() {
-      const who = packingPerson || 'Group';
+      const who = packingPersonName() || 'Group';
       const lines = ['Japan 2026 packing list', `For: ${who}`, ''];
       groupedPacking().forEach(section => {
         lines.push(section.category);
@@ -1271,7 +1348,7 @@
 
     async function submitPackingSuggestion() {
       if (!packingPerson || packingSaving) {
-        if (!packingPerson) setPackingStatus('Choose who this list is for.');
+        if (!packingPerson) setPackingStatus('Choose your name first.');
         return;
       }
       const select = document.getElementById('pack-category');
@@ -1306,14 +1383,14 @@
         nameInput.value = '';
         noteInput.value = '';
         if (wasNew) newCategoryInput.value = '';
-        setPackingStatus(`Added for ${packingPerson}.`);
+        setPackingStatus(`Added to ${packingPersonName()}'s list.`);
         renderPacking();
         if (wasNew) {
           select.value = saved.category;
           document.getElementById('pack-new-category-wrap').classList.add('hidden');
         }
       } catch (err) {
-        setPackingStatus(`Could not add that item for ${packingPerson}. Try again.`);
+        setPackingStatus('Could not add that item to your list. Try again.');
       } finally {
         packingSaving = false;
       }
@@ -1339,10 +1416,10 @@
         packingRows = packingRows.map(row => row.id === id ? { ...row, ...saved } : row);
         saveLocalPersonal();
         editingPackId = null;
-        setPackingStatus(`Saved for ${packingPerson}.`);
+        setPackingStatus(`Saved on ${packingPersonName()}'s list.`);
         renderPacking();
       } catch (err) {
-        setPackingStatus(`Could not save that edit for ${packingPerson}.`);
+        setPackingStatus('Could not save that edit on your list.');
       } finally {
         packingSaving = false;
       }
@@ -1350,7 +1427,7 @@
 
     async function removePackingItem(id) {
       if (!packingPerson || packingSaving) return;
-      if (!confirm(`Remove this from ${packingPerson}'s list?`)) return;
+      if (!confirm('Remove this from your list?')) return;
       packingSaving = true;
       setPackingStatus('Removing…');
       try {
@@ -1358,10 +1435,10 @@
         packingRows = packingRows.filter(row => row.id !== id);
         saveLocalPersonal();
         if (editingPackId === id) editingPackId = null;
-        setPackingStatus(`Removed from ${packingPerson}'s list.`);
+        setPackingStatus('Removed from your list.');
         renderPacking();
       } catch (err) {
-        setPackingStatus(`Could not remove that item from ${packingPerson}'s list.`);
+        setPackingStatus('Could not remove that item from your list.');
       } finally {
         packingSaving = false;
       }
@@ -1505,26 +1582,52 @@
       saveLocalPersonal();
     }
 
+    function showGroupTemplate() {
+      packingRows = sharedTemplate.map(row => ({ ...row }));
+      personalStore = 'template';
+      loadChecks();
+      updatePersonalChrome();
+      renderPacking();
+    }
+
     async function onPackingPersonChange() {
       const token = ++personalLoadToken;
-      const select = document.getElementById('pack-person');
-      packingPerson = select ? select.value : '';
-      localStorage.setItem('japan2026_packing_person', packingPerson);
       editingPackId = null;
-      loadChecks();
-      if (!packingPerson) {
-        packingRows = sharedTemplate.map(row => ({ ...row }));
-        personalStore = 'template';
-        updatePersonalChrome();
-        renderPacking();
+      if (!packingPerson || !packingPeople.some(entry => entry.id === packingPerson)) {
+        packingPerson = '';
+        localStorage.removeItem('japan2026_packing_person');
+        showGroupTemplate();
         return;
       }
+      localStorage.setItem('japan2026_packing_person', packingPerson);
+      loadChecks();
       setPackingStatus('Loading…');
       await loadPersonalList(packingPerson);
       if (token !== personalLoadToken) return;
       setPackingStatus('');
       updatePersonalChrome();
       renderPacking();
+    }
+
+    function claimPackingPerson() {
+      const select = document.getElementById('pack-person');
+      const chosen = select ? select.value : '';
+      if (!chosen) {
+        setPackingStatus('Choose your name first.');
+        return;
+      }
+      packingPerson = chosen;
+      return onPackingPersonChange();
+    }
+
+    function releasePackingPerson() {
+      packingPerson = '';
+      localStorage.removeItem('japan2026_packing_person');
+      const select = document.getElementById('pack-person');
+      if (select) select.value = '';
+      editingPackId = null;
+      showGroupTemplate();
+      setPackingStatus('');
     }
 
     async function loadSharedPacking() {
