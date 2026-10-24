@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Japan Family Trip 2026 • 15-Traveler Group Hub (Nov 19–27)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-24">
+
+  <!-- TOP HERO HEADER -->
+  <header class="bg-gradient-to-br from-slate-900 via-red-950 to-slate-900 text-white shadow-lg sticky top-0 z-30">
+    <div class="max-w-5xl mx-auto px-4 py-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="bg-red-600 text-white text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">Nov 19 – Nov 27, 2026</span>
+            <span class="bg-white/15 text-amber-200 text-xs font-semibold px-2.5 py-0.5 rounded-full">15 Travelers • 4 Families</span>
+            <span id="countdown-badge" class="bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-xs font-semibold px-2.5 py-0.5 rounded-full"></span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight mt-1">🇯🇵 Japan 2026 Group Trip Hub</h1>
+          <p class="text-xs sm:text-sm text-slate-300">Osaka ➔ Himeji & Kojima ➔ Hiroshima & Miyajima ➔ Kyoto ➔ Hakone ➔ Tokyo</p>
+        </div>
+
+        <div class="flex items-center gap-2 no-print">
+          <a href="https://drive.google.com/drive/folders/1XRoT7b-9DFLb5oFKj2_7jHY5hQQaltnR?usp=sharing" target="_blank" rel="noopener"
+             class="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold px-3 py-2 rounded-lg transition">
+            <span>🛂</span> Passports Folder
+          </a>
+          <button onclick="window.print()"
+                  class="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-3 py-2 rounded-lg transition">
+            <span>🖨️</span> Print / PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN NAVIGATION TABS -->
+      <nav class="flex gap-1.5 mt-4 overflow-x-auto no-scrollbar no-print">
+        <button onclick="switchTab('itinerary')" id="tab-btn-itinerary"
+                class="tab-btn active-tab whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white text-slate-900 shadow">
+          🗓️ Day-by-Day Itinerary
+        </button>
+        <button onclick="switchTab('hotels')" id="tab-btn-hotels"
+                class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
+          🏨 Hotels & Confirmations
+        </button>
+        <button onclick="switchTab('rooms')" id="tab-btn-rooms"
+                class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
+          🛏️ Room Assignments (15)
+        </button>
+        <button onclick="switchTab('actions')" id="tab-btn-actions"
+                class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
+          ⚡ Action Items & Links
+        </button>
+        <button onclick="switchTab('packing')" id="tab-btn-packing"
+                class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
+          🎒 Group Packing Checklist
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 pt-5 space-y-6">
+
+    <!-- LEGEND BAR -->
+    <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="font-bold text-slate-700">Color Key (Matches Sheet):</span>
+        <span class="inline-flex items-center gap-1.5 font-semibold text-red-700 bg-red-50 border border-red-200 px-2.5 py-1 rounded-md">
+          <span class="w-2 h-2 rounded-full bg-red-600"></span> RED = Booked / Confirmed
+        </span>
+        <span class="inline-flex items-center gap-1.5 font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md">
+          <span class="w-2 h-2 rounded-full bg-blue-600"></span> BLUE = Suggestion / Optional
+        </span>
+      </div>
+      <div class="text-slate-500 font-medium">
+        Contact on Bookings: <span class="text-slate-800 font-semibold">mkrejcarek@gmail.com</span> • <span class="text-slate-800 font-semibold">954-232-5478</span>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 1: DAY-BY-DAY ITINERARY
+    =========================================== -->
+    <section id="tab-itinerary" class="space-y-4">
+      <!-- Day Jump Pills -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 no-print">
+        <button onclick="filterDay('all')" id="day-pill-all" class="day-pill bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap">All 9 Days</button>
+        <button onclick="filterDay('11/19')" id="day-pill-11/19" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Thu 11/19 • Osaka</button>
+        <button onclick="filterDay('11/20')" id="day-pill-11/20" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Fri 11/20 • Himeji/Kojima/Hiroshima</button>
+        <button onclick="filterDay('11/21')" id="day-pill-11/21" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Sat 11/21 • Miyajima</button>
+        <button onclick="filterDay('11/22')" id="day-pill-11/22" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Sun 11/22 • Miyajima ➔ Kyoto</button>
+        <button onclick="filterDay('11/23')" id="day-pill-11/23" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Mon 11/23 • Kyoto</button>
+        <button onclick="filterDay('11/24')" id="day-pill-11/24" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Tue 11/24 • Hakone</button>
+        <button onclick="filterDay('11/25')" id="day-pill-11/25" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Wed 11/25 • Tokyo</button>
+        <button onclick="filterDay('11/26')" id="day-pill-11/26" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Thu 11/26 • Tokyo</button>
+        <button onclick="filterDay('11/27')" id="day-pill-11/27" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Fri 11/27 • Departure NRT</button>
+      </div>
+
+      <div id="itinerary-cards-container" class="space-y-4"></div>
+    </section>
+
+    <!-- ==========================================
+         TAB 2: HOTELS & CONFIRMATIONS
+    =========================================== -->
+    <section id="tab-hotels" class="hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <h2 class="text-lg font-extrabold text-slate-900">🏨 All Group Hotels, Confirmation Numbers & Addresses</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Tap any hotel link or copy the address/confirmation number for check-in or luggage forwarding (Takkyubin).</p>
+      </div>
+      <div id="hotels-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- ==========================================
+         TAB 3: ROOM ASSIGNMENTS (ALL 15 TRAVELERS)
+    =========================================== -->
+    <section id="tab-rooms" class="hidden space-y-5">
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900">🛏️ Group Rooming Configurations (15 Travelers)</h2>
+            <p class="text-xs text-slate-500">Tap your name below to highlight your room across every hotel layout.</p>
+          </div>
+          <button onclick="filterTraveler('all')" class="self-start text-xs font-bold text-red-600 hover:underline">Reset Highlight</button>
+        </div>
+
+        <!-- Traveler Quick-Filter Pills -->
+        <div id="traveler-pills" class="flex flex-wrap gap-1.5 pt-1"></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" id="rooming-tables-container"></div>
+    </section>
+
+    <!-- ==========================================
+         TAB 4: ACTION ITEMS & QUICK LINKS
+    =========================================== -->
+    <section id="tab-actions" class="hidden space-y-4">
+      <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 shadow-sm">
+        <h2 class="text-base font-extrabold text-amber-950 flex items-center gap-2">
+          <span>⚡</span> Group Action Items & Pre-Trip Deadlines
+        </h2>
+        <p class="text-xs text-amber-900 mt-1">Items noted in the itinerary sheet that require booking, emailing, or reserving 1 month in advance.</p>
+      </div>
+
+      <div id="action-items-container" class="space-y-2.5"></div>
+
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm mt-6">
+        <h3 class="text-base font-extrabold text-slate-900 mb-3">🔗 Master Directory of All Sheet Links</h3>
+        <div id="all-links-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 5: GROUP PACKING CHECKLIST
+    =========================================== -->
+    <section id="tab-packing" class="hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900">🎒 Group Packing Checklist (Tailored to Our Route)</h2>
+            <p class="text-xs text-slate-500">Each person/family can check items off on their own phone. Saved automatically to your device.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="packing-progress-text" class="text-sm font-extrabold text-red-700">0% Packed</span>
+            <button onclick="resetPacking()" class="text-xs text-slate-400 hover:text-red-600 underline">Reset</button>
+          </div>
+        </div>
+        <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+          <div id="packing-progress-bar" class="h-full bg-gradient-to-r from-red-600 to-amber-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div id="packing-container" class="space-y-4"></div>
+    </section>
+
+  </main>
+
+  <script>
+    // ====================================================
+    // DATA FROM THE SHARED ITINERARY SHEET
+    // ====================================================
+    const travelers = [
+      { name: "Mark", group: "Krejcarek" },
+      { name: "Marisa", group: "Krejcarek" },
+      { name: "Rose (16)", group: "Krejcarek" },
+      { name: "Myles (13)", group: "Krejcarek" },
+      { name: "Francis (11)", group: "Krejcarek" },
+      { name: "Peter", group: "Peter & Cheryll" },
+      { name: "Cheryll", group: "Peter & Cheryll" },
+      { name: "Olive (baby)", group: "Peter & Cheryll" },
+      { name: "Randal", group: "Randal & Ann" },
+      { name: "Ann", group: "Randal & Ann" },
+      { name: "James Thomas", group: "James & Lindsay" },
+      { name: "Lindsay", group: "James & Lindsay" },
+      { name: "Ella (14)", group: "James & Lindsay" },
+      { name: "Mary (12)", group: "James & Lindsay" },
+      { name: "James Timothy (9)", group: "James & Lindsay" }
+    ];
+
+    const itineraryDays = [
+      {
+        date: "11/19",
+        dayName: "Thursday, Nov 19",
+        title: "Osaka Arrival (KIX ~Noon) ➔ Umeda & Namba",
+        city: "Osaka",
+        luggageTip: "Bring all luggage from KIX Airport to Hilton Osaka (Umeda).",
+        transport: [
+          { text: "Arrival at Kansai International Airport (KIX) around 12:00 PM noon", status: "booked" },
+          { text: "Train to Namba OR JR Haruka Express directly to Umeda (Umeda is most convenient for Hilton Osaka & next day's Shinkansen)", status: "suggestion" },
+          { text: "JR Pass / Reserved Seat Tickets (1-month reservation window opened 10/19)", status: "info", links: [
+            { label: "Japan Rail Pass Official", url: "https://japanrailpass.net/en/" },
+            { label: "JR Pass Video Guide", url: "https://www.youtube.com/watch?v=sa3_by5fRjE" },
+            { label: "How to Reserve Seats Video", url: "https://www.youtube.com/watch?v=2Lf0A7z_1Zc" }
+          ]}
+        ],
+        hotel: {
+          name: "Hilton Osaka (Umeda)",
+          status: "booked",
+          url: "https://www.hilton.com/en/hotels/osahitw-hilton-osaka/",
+          address: "530-0001, Osaka, 8-8, Umeda 1-chome, Kita-ku, Japan",
+          confirmation: "#3537286416",
+          details: "7 rooms confirmed (1 King bed, 6 Twin beds). Breakfast included. Passport photos sent. Pre-check-in available."
+        },
+        activities: [
+          { text: "4:00 PM 'WithLocals' Private Tour — BOOKED! Ask guide to meet at Hilton Osaka, take group to Namba area, and end at Zauo fishing restaurant.", status: "booked" },
+          { text: "Optional daytime ideas: Cat cafe, yoga, shopping around Umeda/Namba (free time—join tour or meet at dinner).", status: "suggestion" }
+        ],
+        food: [
+          { text: "6:00 PM Dinner Reservation at Zauo Fishing Restaurant (Namba) — BOOKED! Catch your own fish from the boat.", status: "booked", url: "https://www.zauo.com/shops/namba/" }
+        ]
+      },
+      {
+        date: "11/20",
+        dayName: "Friday, Nov 20",
+        title: "Osaka ➔ Himeji Castle ➔ Kojima Jeans St ➔ Hiroshima",
+        city: "Himeji • Kojima • Hiroshima",
+        luggageTip: "📦 Send big suitcases from Hilton Osaka front desk directly to Hilton Garden Inn Kyoto (arrives 11/22). Carry only a 2-night bag for Hiroshima & Miyajima!",
+        transport: [
+          { text: "Leave Hilton Osaka early morning ➔ head to Shin-Osaka Station for Shinkansen", status: "booked", links: [
+            { label: "Shin-Osaka Station Guide", url: "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station" }
+          ]},
+          { text: "Leg 1: Shinkansen from Shin-Osaka to Himeji (30–40 min)", status: "booked" },
+          { text: "Leg 2 (Optional): Shinkansen from Himeji to Okayama Station (19–23 min), transfer to JR Marine Liner/local train to Kojima (20–24 min)", status: "suggestion" },
+          { text: "Leg 3: To Hiroshima (~1 hr 15 min from Kojima, or ~1 hr direct from Himeji on Shinkansen)", status: "booked" },
+          { text: "Hiroshima Station to Hotel: Take Hiroshima Electric Railway Streetcar Line 1 (trains that run on the street)", status: "info" }
+        ],
+        hotel: {
+          name: "THE KNot Hiroshima",
+          status: "suggestion",
+          url: "https://hotel-the-knot.jp/hiroshima/en/",
+          address: "Central Hiroshima (Streetcar Line 1 from Hiroshima Station)",
+          confirmation: "Check Pre-Check-In Status (Email hotel re: rooms, baby cot & 16yo policy)",
+          details: "Stayed here on last school trip. Basic rooms, nice lobby & breakfast, convenient location."
+        },
+        activities: [
+          { text: "Himeji Castle (2–3 hours): Students are FREE with a School ID! Adults ~$15. Buy online or at castle gate.", status: "booked", url: "https://himejicastle-ticket.jp/?utm_source=alliance&utm_medium=referral&utm_campaign=2603_ticket&utm_id=nid000309" },
+          { text: "Kojima Jeans Street (1–2 hours): Indigo denim district in Kurashiki City. (Note: Momotaro, Kapital, Samurai & Japan Blue Jeans also have shops in Kyoto/Tokyo).", status: "suggestion", links: [
+            { label: "Kojima Jeans Street Guide", url: "https://www.japan.travel/en/japan-magazine/exploring-jeans-street-in-kojima-city-dyed-in-indigo/" },
+            { label: "Momotaro Jeans", url: "https://www.momotaro-jeans.com/en_US/home/" },
+            { label: "Kapital", url: "https://www.kapital.jp/" },
+            { label: "Samurai Jeans", url: "https://www.samurai-j.com/en" },
+            { label: "Japan Blue Jeans", url: "https://www.japanblue-jeans.com/en_US/home/" }
+          ]}
+        ],
+        food: [
+          { text: "Breakfast included at Hilton Osaka before departure", status: "booked" },
+          { text: "Lunch at Otemae Park (right across from Himeji Castle) — outdoor food stalls with local specialties", status: "suggestion", url: "https://maps.app.goo.gl/QARUvBrxchKmCdbd6" },
+          { text: "Dinner in Hiroshima (Hiroshima-style Okonomiyaki recommended!)", status: "suggestion" }
+        ]
+      },
+      {
+        date: "11/21",
+        dayName: "Saturday, Nov 21",
+        title: "Hiroshima Peace Park Ferry ➔ Miyajima Island",
+        city: "Miyajima Island",
+        luggageTip: "🚐 Look for the Hotel Makoto van at the Miyajima pier—they pick up your luggage so you can explore hands-free!",
+        transport: [
+          { text: "Walk 15 mins from The Knot Hotel to Peace Memorial Boat Dock. Arrive by 9:45 AM for 10:10 AM departure (45-min boat ride to Miyajima). Pay at dock.", status: "booked", links: [
+            { label: "Aqua Net World Heritage Ferry Timetable", url: "https://www.aqua-net-h.co.jp/en/heritage/#timeTable-m" },
+            { label: "Meeting Location Map", url: "https://maps.app.goo.gl/WA44dJRN4K4BbwQc7" },
+            { label: "Directions to Boat Dock Doc", url: "https://docs.google.com/document/d/1Nr92oKDYSzGGOJD6nCr7dNQbiknT8I-XrEAG61sjIEo/edit?usp=sharing" },
+            { label: "Photo of Hotel Makoto Luggage Van", url: "https://docs.google.com/document/d/1RVkwfAPNKfkHgwYBl83nZy7IL7E43WWavRpLBzrRGt0/edit?usp=sharing" }
+          ]},
+          { text: "Ferry Booking #1: Confirmation #538527 (Inquiry Key: ju9J) • Ferry Booking #2: Confirmation #538532 (Inquiry Key: 2CkE)", status: "booked" }
+        ],
+        hotel: {
+          name: "Hotel Makoto (Miyajima)",
+          status: "booked",
+          url: "https://hotelmakoto.co.jp/en/",
+          address: "Miyajima Island (Van picks up luggage at ferry terminal)",
+          confirmation: "Pre-check-in (Optional +2,200 yen/person for ocean view room)",
+          details: "Traditional stay on Miyajima Island with dinner & breakfast included."
+        },
+        activities: [
+          { text: "Mount Misen Hike & Ropeway Gondola to the summit", status: "suggestion" },
+          { text: "Stroll Omotesando shopping street & Itsukushima Shrine", status: "suggestion" },
+          { text: "Okeiko Japan Miyajima Tea Ceremony (with optional Kimono): 30-min English guide, watch sensei & whisk your own matcha (5,000 yen, ages 6+, baby held). Sessions at 10:30, 13:30, 15:30.", status: "suggestion", links: [
+            { label: "Okeiko Japan Menu", url: "https://okeikojapan-miyajima.com/en/activity-menu-english/" },
+            { label: "TripAdvisor Reviews", url: "https://www.tripadvisor.com/Attraction_Review-g14135087-d12298024-Reviews-Okeiko_Japan_Miyajima-Itsukushima_Hatsukaichi_Hiroshima_Prefecture_Chugoku.html" }
+          ]}
+        ],
+        food: [
+          { text: "Lunch along Miyajima shopping street", status: "suggestion" },
+          { text: "Dinner & Breakfast included at Hotel Makoto", status: "booked" }
+        ]
+      },
+      {
+        date: "11/22",
+        dayName: "Sunday, Nov 22",
+        title: "Miyajima ➔ Hiroshima ➔ Shinkansen to Kyoto",
+        city: "Kyoto",
+        luggageTip: "Your big suitcases shipped from Osaka on 11/20 will be waiting for you at Hilton Garden Inn Kyoto!",
+        transport: [
+          { text: "Board JR West Miyajima Ferry off the island (use JR Pass, no reservation needed).", status: "booked", links: [
+            { label: "JR Ferry Boarding Map", url: "https://maps.app.goo.gl/nphaSxZogRQywBSq6" }
+          ]},
+          { text: "Walk 10 mins (2–3 blocks) to JR Miyajimaguchi Station ➔ take JR train to Hiroshima Station (last stop).", status: "booked", links: [
+            { label: "Miyajimaguchi Station Map", url: "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8" }
+          ]},
+          { text: "Transfer at Hiroshima Station to Shinkansen bound for Kyoto (sit in non-reserved section; total travel ~3 hrs). Easy subway ride from Kyoto Station to hotel.", status: "booked" }
+        ],
+        hotel: {
+          name: "Hilton Garden Inn Kyoto Shijo Karasuma",
+          status: "booked",
+          url: "https://www.hilton.com/en/hotels/itmkygi-hilton-garden-inn-kyoto-shijo-karasuma/?SEO_id=GMB-APAC-GI-ITMKYGI",
+          address: "600-8418, Kyoto, 397 Gojokarasumacho, Shimogyo Ward, Japan",
+          confirmation: "#3532653371",
+          details: "7 rooms confirmed (2 rooms w/ 2 Twin beds, 5 rooms w/ 1 Queen bed). Breakfast included. Passport photos sent."
+        },
+        activities: [
+          { text: "Arrive Kyoto mid-to-late afternoon", status: "info" },
+          { text: "Kyoto Options (split across 11/22 PM & 11/23): Nishiki Market (2–3 hrs), Cat / Mini-Pig / Shiba-Inu / Hedgehog Cafe, Fushimi Inari Shrine (2–3 hrs), Nighttime Ghost Tour in Bamboo Forest", status: "suggestion" },
+          { text: "TeamLab Biovortex Kyoto (2–3 hrs) & Maikoya Tea Ceremony", status: "suggestion", links: [
+            { label: "TeamLab Kyoto", url: "https://www.teamlab.art/e/kyoto/" },
+            { label: "Maikoya Tea Ceremony", url: "https://mai-ko.com/" }
+          ]}
+        ],
+        food: [
+          { text: "Chicken Wings Restaurant (English menu on iPad), Okonomiyaki, or Shabu-Shabu", status: "suggestion", url: "https://maps.app.goo.gl/KtHyU9mgLCwxQnRi7" }
+        ]
+      },
+      {
+        date: "11/23",
+        dayName: "Monday, Nov 23",
+        title: "Full Day Exploring Kyoto",
+        city: "Kyoto",
+        luggageTip: "No hotel change today! Relax and enjoy Kyoto.",
+        transport: [
+          { text: "Local Kyoto trains, subway, or taxis between shrines and markets", status: "info" }
+        ],
+        hotel: {
+          name: "Hilton Garden Inn Kyoto Shijo Karasuma (Night 2)",
+          status: "booked",
+          url: "https://www.hilton.com/en/hotels/itmkygi-hilton-garden-inn-kyoto-shijo-karasuma/?SEO_id=GMB-APAC-GI-ITMKYGI",
+          address: "600-8418, Kyoto, 397 Gojokarasumacho, Shimogyo Ward, Japan",
+          confirmation: "#3532653371",
+          details: "Continuing stay — 7 rooms confirmed, breakfast included."
+        },
+        activities: [
+          { text: "Arashiyama Bamboo Forest (3–4 hrs including transit)", status: "suggestion" },
+          { text: "Fushimi Inari Shrine (thousands of red torii gates, 2–3 hrs)", status: "suggestion" },
+          { text: "Nishiki Market & Animal Cafes (Cat / Mini-Pig / Shiba-Inu / Hedgehog)", status: "suggestion" },
+          { text: "TeamLab Kyoto (2–3 hrs) or Tea Ceremony", status: "suggestion", links: [
+            { label: "TeamLab Kyoto", url: "https://www.teamlab.art/e/kyoto/" },
+            { label: "Maikoya Tea Ceremony", url: "https://mai-ko.com/" }
+          ]}
+        ],
+        food: [
+          { text: "Breakfast included at Hilton Garden Inn Kyoto", status: "booked" },
+          { text: "Dinner options: Chicken Wings spot (iPad English menu), Okonomiyaki, or Shabu-Shabu", status: "suggestion", url: "https://maps.app.goo.gl/KtHyU9mgLCwxQnRi7" }
+        ]
+      },
+      {
+        date: "11/24",
+        dayName: "Tuesday, Nov 24",
+        title: "Kyoto ➔ Hakone (Mt. Fuji Views & Onsen)",
+        city: "Hakone",
+        luggageTip: "Optional: Ship heavy bags from Kyoto straight to Mitsui Garden Hotel Tokyo so you only carry an overnight bag into Hakone!",
+        transport: [
+          { text: "Leave Kyoto early on Shinkansen to Odawara Station (~2 hrs), arriving Hakone around noon.", status: "suggestion" },
+          { text: "Odawara Station to Hotel: Hakone Tozan Bus (30 min), Taxi (5,000–6,000 yen/car), Hotel Shuttle (call ahead), or Hakone Mobility Service charter vans (Phone: 0120-148-512 — 9ppl: 9,760 yen/hr + 5,000; 6ppl: 8,160 yen/hr + 1,000; 4ppl: 8,160 yen/hr).", status: "suggestion", links: [
+            { label: "Hakone Mobility Service Rates", url: "https://www.hakone-ms.co.jp/eng/price/" }
+          ]}
+        ],
+        hotel: {
+          name: "Fujiya Hotel (Hakone)",
+          status: "suggestion",
+          url: "https://www.booking.com/hotel/jp/fujiya.html",
+          address: "Miyanoshita, Hakone (Historic turn-of-the-century resort)",
+          confirmation: "Check Pre-Check-In & Shuttle Reservations (1 month in advance)",
+          details: "6 rooms layout in sheet: 4x Forest Wing Twin (3 ppl each), 1x Flower Palace Penthouse (4 ppl), 1x Comfy Lodge (3 adults)."
+        },
+        activities: [
+          { text: "Hakone Open-Air Outdoor Museum (2–3 hrs) in the afternoon", status: "suggestion" },
+          { text: "Hakone Ropeway Gondola with Mt. Fuji view (2–3 hrs — note Owakudani can be traffic-heavy; great for morning before checkout too)", status: "suggestion" },
+          { text: "Evening Onsen (hot springs) relaxation at hotel", status: "suggestion" }
+        ],
+        food: [
+          { text: "Breakfast at Hilton Garden Inn Kyoto before departing", status: "booked" },
+          { text: "Lunch on Hakone shopping street; Dinner & next morning's Breakfast at Fujiya Hotel", status: "suggestion" }
+        ]
+      },
+      {
+        date: "11/25",
+        dayName: "Wednesday, Nov 25",
+        title: "Hakone ➔ Tokyo (Ginza, Shibuya, TeamLab Planets)",
+        city: "Tokyo",
+        luggageTip: "Check into Mitsui Garden Hotel Kyobashi (walking distance to Tokyo Station & Ginza).",
+        transport: [
+          { text: "Morning Ropeway / Fuji view in Hakone before checkout, then Shinkansen/train from Odawara to Tokyo Station (~2 hrs total)", status: "booked" }
+        ],
+        hotel: {
+          name: "Mitsui Garden Hotel Kyobashi (Tokyo)",
+          status: "booked",
+          url: "https://www.gardenhotels.co.jp/kyobashi/eng/",
+          address: "Kyobashi, Chuo-ku, Tokyo (Near Tokyo Station & Ginza)",
+          confirmation: "7 Rooms (6 rooms of 2ppl + 1 room w/ 2 adults & baby). Send pre-check-in!",
+          details: "Note: Sheet flags 'Smoking room' to verify. Breakfast is 2,420 yen/person (busy with 20–30 min wait, or grab food nearby)."
+        },
+        activities: [
+          { text: "TeamLab Planets Tokyo (Different from the Kyoto/school trip one! Knee-deep water rooms — wear pants that roll up).", status: "suggestion", url: "https://www.teamlab.art/e/planets/" },
+          { text: "Shopping in Ginza (Shiseido flagship store) & Harajuku / Shibuya (Liberty Walk Tokyo)", status: "suggestion" },
+          { text: "JDM Car Tour experience", status: "suggestion", url: "https://www.getyourguide.com/s?q=Tokyo&et=507597" },
+          { text: "Casio Museum & G-Shock Store Tokyo", status: "suggestion", links: [
+            { label: "Casio Museum Blog Guide", url: "https://www.plus9time.com/blog/2025/10/10/visit-to-the-casio-museum-tokyo" },
+            { label: "G-Shock Store Tokyo", url: "https://www.casio.com/jp/watches/G-SHOCK_STORE/store-203/" }
+          ]}
+        ],
+        food: [
+          { text: "Breakfast at Hakone hotel; Dinner at Tokyo restaurants", status: "suggestion" }
+        ]
+      },
+      {
+        date: "11/26",
+        dayName: "Thursday, Nov 26",
+        title: "Full Day in Tokyo (Markets, Vintage & Neighborhoods)",
+        city: "Tokyo",
+        luggageTip: "Pack souvenirs tonight for tomorrow's 2:00 PM NRT flight!",
+        transport: [
+          { text: "Tokyo Metro & JR lines using IC Cards / Suica", status: "info" }
+        ],
+        hotel: {
+          name: "Mitsui Garden Hotel Kyobashi (Night 2)",
+          status: "booked",
+          url: "https://www.gardenhotels.co.jp/kyobashi/eng/",
+          address: "Kyobashi, Chuo-ku, Tokyo",
+          confirmation: "Continuing Stay (7 Rooms)",
+          details: "Walking distance to Ginza & Tokyo Station."
+        },
+        activities: [
+          { text: "Tsukiji Outer Market food & market stroll (1–2 hrs)", status: "suggestion" },
+          { text: "Shimokitazawa neighborhood (vintage clothing stores, record shops, indie cafes)", status: "suggestion" },
+          { text: "Harajuku / Shibuya (Liberty Walk Tokyo) & Ginza shopping", status: "suggestion" },
+          { text: "Optional Day Trip: Kamakura & Enoshima coastal train", status: "suggestion" }
+        ],
+        food: [
+          { text: "Tsukiji Market street food + Farewell Group Dinner in Tokyo", status: "suggestion" }
+        ]
+      },
+      {
+        date: "11/27",
+        dayName: "Friday, Nov 27",
+        title: "Tokyo ➔ Narita Airport (NRT) 2:00 PM Flight Home",
+        city: "Tokyo ➔ NRT Departure",
+        luggageTip: "All bags with you on the Airport Shuttle Bus or Narita Express train.",
+        transport: [
+          { text: "Flight departs Narita Airport (NRT) at 2:00 PM (Arrive NRT by ~11:00 AM)", status: "booked" },
+          { text: "Airport Shuttle Bus (TYO-NRT Bus from Tokyo Station/Ginza) OR Narita Express (N'EX) train from Tokyo Station", status: "suggestion" }
+        ],
+        hotel: {
+          name: "Check-out from Mitsui Garden Hotel Kyobashi",
+          status: "info",
+          url: "https://www.gardenhotels.co.jp/kyobashi/eng/",
+          address: "Kyobashi, Chuo-ku, Tokyo",
+          confirmation: "Morning Check-Out",
+          details: "Leave for Narita Airport by ~9:30–10:00 AM."
+        },
+        activities: [
+          { text: "Last-minute souvenir shopping at Tokyo Station or Narita Airport duty-free", status: "suggestion" }
+        ],
+        food: [
+          { text: "Breakfast at hotel (or bakery near Tokyo Station)", status: "suggestion" }
+        ]
+      }
+    ];
+
+    const roomConfigs = [
+      {
+        title: "7-Room Configuration",
+        subtitle: "Used at Hilton Osaka, Hilton Garden Inn Kyoto & Mitsui Garden Tokyo",
+        badge: "Confirmed 7 Rooms",
+        rooms: [
+          { num: "Room 1", guests: ["Peter", "Cheryll", "Olive (baby)"], note: "2 Adults + Baby" },
+          { num: "Room 2", guests: ["Randal", "Mark"], note: "2 Adults" },
+          { num: "Room 3", guests: ["Marisa", "Francis (11)"], note: "1 Adult + 1 Child" },
+          { num: "Room 4", guests: ["Rose (16)", "Ella (14)"], note: "Teens Room" },
+          { num: "Room 5", guests: ["Lindsay", "Mary (12)"], note: "1 Adult + 1 Child" },
+          { num: "Room 6", guests: ["James Thomas", "James Timothy (9)"], note: "1 Adult + 1 Child" },
+          { num: "Room 7", guests: ["Ann", "Myles (13)"], note: "1 Adult + 1 Teen" }
+        ]
+      },
+      {
+        title: "5-Room Configuration",
+        subtitle: "Alternative Family Grouping Option ('Rooms if possible for Tokyo')",
+        badge: "5-Room Option",
+        rooms: [
+          { num: "Room 1", guests: ["Peter", "Cheryll", "Olive (baby)"], note: "3 Guests" },
+          { num: "Room 2", guests: ["Randal", "Ann", "Myles (13)"], note: "3 Guests" },
+          { num: "Room 3", guests: ["Mark", "Marisa", "Francis (11)"], note: "3 Guests" },
+          { num: "Room 4", guests: ["Rose (16)", "Ella (14)", "Mary (12)"], note: "3 Girls Room" },
+          { num: "Room 5", guests: ["James Thomas", "Lindsay", "James Timothy (9)"], note: "3 Guests" }
+        ]
+      },
+      {
+        title: "6-Room Hakone Layout",
+        subtitle: "Fujiya Hotel Hakone Room Breakdown",
+        badge: "6 Rooms (Fujiya)",
+        rooms: [
+          { num: "Room 1", guests: ["Forest Wing Twin (3 People)"], note: "3 Guests" },
+          { num: "Room 2", guests: ["Forest Wing Twin (3 People)"], note: "3 Guests" },
+          { num: "Room 3", guests: ["Forest Wing Twin (3 People)"], note: "3 Guests" },
+          { num: "Room 4", guests: ["Forest Wing Twin (3 People)"], note: "3 Guests" },
+          { num: "Room 5", guests: ["Flower Palace Penthouse (4 People)"], note: "4 Guests" },
+          { num: "Room 6", guests: ["Comfy Lodge (3 Adults)"], note: "3 Adults" }
+        ]
+      }
+    ];
+
+    const actionItems = [
+      { id: "act-1", urgent: true, title: "Reserve JR Pass Shinkansen Seats (Opened 10/19)", desc: "1-month window is open now for 11/19 arrival. Reserve group seats for Osaka ➔ Himeji ➔ Hiroshima, and Hakone ➔ Tokyo.", link: "https://japanrailpass.net/en/" },
+      { id: "act-2", urgent: true, title: "Email THE KNot Hiroshima (11/20 Stay)", desc: "Phone wasn't working on their end—email to verify pre-check-in status, confirm all group rooms (not just 1 room), baby cot for Olive, and 16yo policy.", link: "https://hotel-the-knot.jp/hiroshima/en/" },
+      { id: "act-3", urgent: true, title: "Email Okeiko Japan Miyajima for 11/21 Tea Ceremony", desc: "Email to reserve group time slot (10:30, 13:30, or 15:30). 5,000 yen/person, 30-min English guide, baby Olive held.", link: "https://okeikojapan-miyajima.com/en/activity-menu-english/" },
+      { id: "act-4", urgent: true, title: "Book Hakone Transport & Fujiya Shuttle (11/24)", desc: "1-month advance window is open! Call Fujiya Hotel about station/gondola shuttle or reserve Hakone Mobility Service vans (0120-148-512).", link: "https://www.hakone-ms.co.jp/eng/price/" },
+      { id: "act-5", urgent: false, title: "Complete Pre-Check-In & Check Smoking Room at Mitsui Garden Tokyo (11/25)", desc: "Submit pre-check-in and verify whether a smoking room was assigned so we can request non-smoking if needed.", link: "https://www.gardenhotels.co.jp/kyobashi/eng/" },
+      { id: "act-6", urgent: false, title: "Pack Physical Student IDs for All 6 Kids/Teens", desc: "Rose (16), Ella (14), Myles (13), Mary (12), Francis (11), and James Timothy (9) get into Himeji Castle FREE on 11/20 with a school ID.", link: "https://himejicastle-ticket.jp/" }
+    ];
+
+    const groupPackingList = [
+      {
+        category: "🛂 Documents, Passes & Entry",
+        items: [
+          { id: "gp-1", name: "Valid Passports ( + Backup Copy in Shared Google Drive)", note: "Carry physical passport at all times in Japan for tax-free shopping & train pass checks." },
+          { id: "gp-2", name: "Physical Student ID Cards (For Rose, Ella, Myles, Mary, Francis, James Timothy)", note: "Saves ~$15/student for FREE entry at Himeji Castle on 11/20." },
+          { id: "gp-3", name: "Visit Japan Web QR Codes (Immigration & Customs)", note: "Screenshot QR codes for offline arrival at KIX on 11/19." },
+          { id: "gp-4", name: "JR Pass Exchange Orders & IC Transit Cards (Suica / Pasmo)", note: "Kids 11 & under (Francis 11, James Timothy 9) qualify for 50% off Child fares!" },
+          { id: "gp-5", name: "Japanese Yen Cash (¥) + No-Foreign-Fee Credit Cards", note: "Cash needed for 11/21 Miyajima ferry dock, Otemae Park food stalls, and temple entries." }
+        ]
+      },
+      {
+        category: "🎒 Smart Luggage Strategy (Crucial for 11/20–11/22)",
+        items: [
+          { id: "gp-6", name: "Packable 2-Night Duffle / Backpack (For Hiroshima & Miyajima)", note: "On 11/20 AM, ship heavy suitcases from Hilton Osaka to Hilton Garden Inn Kyoto. Take only a 2-night bag to Himeji/Hiroshima/Miyajima!" },
+          { id: "gp-7", name: "Luggage AirTags & Color-Coded Straps", note: "Makes spotting our 15-person group bags easy on the Hotel Makoto van (11/21) & Shinkansen racks." },
+          { id: "gp-8", name: "Packable Tote Bag for Souvenirs / Kojima Jeans / Ginza", note: "Great for carrying denim from Kojima (11/20) or Tokyo shopping (11/25–11/26)." }
+        ]
+      },
+      {
+        category: "🧥 Late-November Clothing & Activity Gear",
+        items: [
+          { id: "gp-9", name: "Broken-In Slip-On Walking Shoes (15,000–20,000 steps/day)", note: "Easy slip-on/off for Himeji Castle, tea ceremonies, and hotel lobbies." },
+          { id: "gp-10", name: "Warm Crew Socks (No holes!)", note: "Himeji Castle (11/20) and tea ceremonies require removing shoes on cold wooden/tatami floors." },
+          { id: "gp-11", name: "Pants/Shorts That Roll Above the Knee (For TeamLab Planets Tokyo)", note: "TeamLab Planets (11/25) has knee-deep water rooms and mirrored floors." },
+          { id: "gp-12", name: "Packable Down Jacket + Breathable Layers", note: "Late November is 45°F–62°F outside (chilly in Hakone mountains & Miyajima ferry), but trains are warmly heated." },
+          { id: "gp-13", name: "Soft Baby Carrier for Olive (No Strollers in Himeji Castle)", note: "Required for steep stairs inside Himeji Castle (11/20), Miyajima Tea Ceremony (11/21), and Fushimi Inari." }
+        ]
+      },
+      {
+        category: "🔌 Tech, Power & Daily Essentials",
+        items: [
+          { id: "gp-14", name: "Portable Power Bank (10,000–20,000mAh) + Cables", note: "Essential for Google Maps, WhatsApp group coordination, and photos all day." },
+          { id: "gp-15", name: "2-Prong (Type A) Multi-Port Wall Charger per Room", note: "Japan uses standard US 2-prong flat plugs." },
+          { id: "gp-16", name: "Small Trash Bag + Pocket Hand Towel / Sanitizer", note: "Public trash cans are rare in Japan, and many public restrooms do not have paper towels." }
+        ]
+      }
+    ];
+
+    // ====================================================
+    // STATE & LOCAL STORAGE
+    // ====================================================
+    let currentTab = 'itinerary';
+    let selectedDay = 'all';
+    let selectedTraveler = 'all';
+    let checkedItems = JSON.parse(localStorage.getItem('japan2026_group_checked') || '{}');
+    let checkedActions = JSON.parse(localStorage.getItem('japan2026_group_actions') || '{}');
+
+    function updateCountdown() {
+      const tripStart = new Date('2026-11-19T00:00:00');
+      const now = new Date();
+      const diff = Math.ceil((tripStart - now) / (1000 * 60 * 60 * 24));
+      const badge = document.getElementById('countdown-badge');
+      if (diff > 0) {
+        badge.textContent = `⏳ ${diff} Days Until Osaka Arrival`;
+      } else if (diff >= -8) {
+        badge.textContent = `🇯🇵 Trip In Progress!`;
+      } else {
+        badge.textContent = `🇯🇵 Nov 19–27, 2026`;
+      }
+    }
+
+    function statusBadge(status) {
+      if (status === 'booked') {
+        return `<span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-300"><span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>Booked</span>`;
+      }
+      if (status === 'suggestion') {
+        return `<span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-300"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Suggestion</span>`;
+      }
+      return `<span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300">Info</span>`;
+    }
+
+    // ====================================================
+    // RENDER ITINERARY
+    // ====================================================
+    function renderItinerary() {
+      const container = document.getElementById('itinerary-cards-container');
+      const filtered = selectedDay === 'all' ? itineraryDays : itineraryDays.filter(d => d.date === selectedDay);
+
+      container.innerHTML = filtered.map(day => `
+        <article class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <!-- Day Header -->
+          <div class="bg-slate-900 text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+            <div class="flex items-center gap-2.5">
+              <span class="bg-red-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">${day.date}</span>
+              <div>
+                <h3 class="text-base sm:text-lg font-extrabold">${day.title}</h3>
+                <p class="text-xs text-slate-300">${day.dayName} • ${day.city}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Luggage Tip Callout -->
+          <div class="bg-amber-50/90 border-b border-amber-200 px-4 py-2 text-xs text-amber-950 font-medium flex items-center gap-2">
+            <span>🧳</span>
+            <span><strong>Luggage Plan:</strong> ${day.luggageTip}</span>
+          </div>
+
+          <!-- 4-Column Grid matching Google Sheet -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+
+            <!-- Transportation -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-2.5">
+              <div class="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <span>🚄</span> Location & Transportation
+              </div>
+              <ul class="space-y-2.5 text-xs sm:text-sm">
+                ${day.transport.map(t => `
+                  <li class="bg-white p-2.5 rounded-lg border border-slate-200/70 space-y-1.5">
+                    <div class="flex items-start justify-between gap-2">
+                      <span class="text-slate-800 font-medium">${t.text}</span>
+                      ${statusBadge(t.status)}
+                    </div>
+                    ${t.links ? `<div class="flex flex-wrap gap-1.5 pt-1">
+                      ${t.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded transition">🔗 ${l.label} ↗</a>`).join('')}
+                    </div>` : ''}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            <!-- Hotel -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <span>🏨</span> Hotel & Confirmation
+                </div>
+                ${statusBadge(day.hotel.status)}
+              </div>
+              <div class="bg-white p-3 rounded-lg border border-slate-200/70 space-y-1.5">
+                <a href="${day.hotel.url}" target="_blank" rel="noopener" class="text-sm sm:text-base font-extrabold text-slate-900 hover:text-red-600 underline flex items-center gap-1">
+                  ${day.hotel.name} ↗
+                </a>
+                <p class="text-xs text-slate-600"><strong>📍 Address:</strong> ${day.hotel.address}</p>
+                <p class="text-xs text-red-700 font-bold bg-red-50 border border-red-200 px-2 py-1 rounded inline-block">
+                  🔑 Conf: ${day.hotel.confirmation}
+                </p>
+                <p class="text-xs text-slate-700 pt-1">${day.hotel.details}</p>
+              </div>
+            </div>
+
+            <!-- Activities -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-2.5">
+              <div class="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <span>⛩️</span> Activities & Sightseeing
+              </div>
+              <ul class="space-y-2 text-xs sm:text-sm">
+                ${day.activities.map(a => `
+                  <li class="bg-white p-2.5 rounded-lg border border-slate-200/70 space-y-1.5">
+                    <div class="flex items-start justify-between gap-2">
+                      <span class="text-slate-800 font-medium">${a.text}</span>
+                      ${statusBadge(a.status)}
+                    </div>
+                    ${a.url ? `<div class="pt-1"><a href="${a.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded">🔗 Open Link / Tickets ↗</a></div>` : ''}
+                    ${a.links ? `<div class="flex flex-wrap gap-1.5 pt-1">
+                      ${a.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded">🔗 ${l.label} ↗</a>`).join('')}
+                    </div>` : ''}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            <!-- Food -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-2.5">
+              <div class="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <span>🍜</span> Meals & Dining
+              </div>
+              <ul class="space-y-2 text-xs sm:text-sm">
+                ${day.food.map(f => `
+                  <li class="bg-white p-2.5 rounded-lg border border-slate-200/70 space-y-1.5">
+                    <div class="flex items-start justify-between gap-2">
+                      <span class="text-slate-800 font-medium">${f.text}</span>
+                      ${statusBadge(f.status)}
+                    </div>
+                    ${f.url ? `<div class="pt-1"><a href="${f.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded">📍 View Restaurant / Map ↗</a></div>` : ''}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function filterDay(day) {
+      selectedDay = day;
+      document.querySelectorAll('.day-pill').forEach(btn => {
+        btn.className = 'day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap';
+      });
+      const activeBtn = document.getElementById(`day-pill-${day}`);
+      if (activeBtn) {
+        activeBtn.className = 'day-pill bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow';
+      }
+      renderItinerary();
+    }
+
+    // ====================================================
+    // RENDER HOTELS
+    // ====================================================
+    function renderHotels() {
+      const uniqueHotels = [
+        { dates: "Thu 11/19 (1 Night)", ...itineraryDays[0].hotel },
+        { dates: "Fri 11/20 (1 Night)", ...itineraryDays[1].hotel },
+        { dates: "Sat 11/21 (1 Night)", ...itineraryDays[2].hotel },
+        { dates: "Sun 11/22 – Tue 11/24 (2 Nights)", ...itineraryDays[3].hotel },
+        { dates: "Tue 11/24 (1 Night)", ...itineraryDays[5].hotel },
+        { dates: "Wed 11/25 – Fri 11/27 (2 Nights)", ...itineraryDays[6].hotel }
+      ];
+
+      document.getElementById('hotels-container').innerHTML = uniqueHotels.map(h => `
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col justify-between space-y-3">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">${h.dates}</span>
+              ${statusBadge(h.status)}
+            </div>
+            <a href="${h.url}" target="_blank" rel="noopener" class="text-base font-extrabold text-slate-900 hover:text-red-600 underline block">
+              ${h.name} ↗
+            </a>
+            <p class="text-xs text-slate-600"><strong>📍 Address:</strong> ${h.address}</p>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-900 font-bold">
+              Confirmation: ${h.confirmation}
+            </div>
+            <p class="text-xs text-slate-700">${h.details}</p>
+          </div>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <a href="${h.url}" target="_blank" rel="noopener" class="text-xs font-bold text-blue-700 hover:underline">Open Hotel Website ↗</a>
+            <button onclick="navigator.clipboard.writeText('${h.address.replace(/'/g, "\\'")}'); alert('Copied address: ${h.address.replace(/'/g, "\\'")}')"
+                    class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded">
+              📋 Copy Address
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ====================================================
+    // RENDER ROOMS & TRAVELER FILTER
+    // ====================================================
+    function renderRooms() {
+      const pillsContainer = document.getElementById('traveler-pills');
+      pillsContainer.innerHTML = travelers.map(t => {
+        const active = selectedTraveler === t.name;
+        return `<button onclick="filterTraveler('${t.name}')"
+                        class="text-xs px-2.5 py-1 rounded-full font-semibold transition border ${
+                          active
+                            ? 'bg-red-600 text-white border-red-600 shadow'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                        }">
+                  👤 ${t.name}
+                </button>`;
+      }).join('');
+
+      const tablesContainer = document.getElementById('rooming-tables-container');
+      tablesContainer.innerHTML = roomConfigs.map(cfg => `
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <div class="bg-slate-900 text-white p-3.5">
+            <span class="text-[11px] font-bold uppercase tracking-wider bg-white/15 text-amber-300 px-2 py-0.5 rounded">${cfg.badge}</span>
+            <h3 class="text-base font-extrabold mt-1">${cfg.title}</h3>
+            <p class="text-xs text-slate-300">${cfg.subtitle}</p>
+          </div>
+          <div class="p-3 divide-y divide-slate-100 flex-1">
+            ${cfg.rooms.map(r => {
+              const isHighlighted = selectedTraveler !== 'all' && r.guests.some(g => g.includes(selectedTraveler));
+              return `
+                <div class="py-2.5 px-2 rounded-lg transition ${isHighlighted ? 'bg-amber-100 border-2 border-amber-400' : ''}">
+                  <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
+                    <span class="text-slate-900 font-extrabold">${r.num}</span>
+                    <span>${r.note}</span>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5">
+                    ${r.guests.map(g => {
+                      const match = selectedTraveler !== 'all' && g.includes(selectedTraveler);
+                      return `<span class="text-xs font-bold px-2 py-0.5 rounded ${
+                        match ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-800'
+                      }">${g}</span>`;
+                    }).join('')}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterTraveler(name) {
+      selectedTraveler = selectedTraveler === name ? 'all' : name;
+      renderRooms();
+    }
+
+    // ====================================================
+    // RENDER ACTIONS & MASTER LINKS
+    // ====================================================
+    function renderActions() {
+      const container = document.getElementById('action-items-container');
+      container.innerHTML = actionItems.map(item => {
+        const done = !!checkedActions[item.id];
+        return `
+          <div class="bg-white border ${done ? 'border-slate-200 opacity-60' : item.urgent ? 'border-red-300' : 'border-slate-200'} rounded-xl p-3.5 shadow-sm flex items-start gap-3">
+            <input type="checkbox" ${done ? 'checked' : ''} onchange="toggleAction('${item.id}')"
+                   class="mt-1 w-5 h-5 accent-red-600 rounded cursor-pointer" />
+            <div class="flex-1 text-xs sm:text-sm">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-extrabold ${done ? 'line-through text-slate-400' : 'text-slate-900'}">${item.title}</span>
+                ${item.urgent ? `<span class="text-[10px] font-extrabold uppercase bg-red-100 text-red-700 px-2 py-0.5 rounded">Priority</span>` : ''}
+              </div>
+              <p class="text-xs text-slate-600 mt-1">${item.desc}</p>
+              ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener" class="inline-block mt-1.5 text-xs font-bold text-blue-700 hover:underline">Open Link ↗</a>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const allLinks = [
+        { name: "Family Passports Drive Folder", url: "https://drive.google.com/drive/folders/1XRoT7b-9DFLb5oFKj2_7jHY5hQQaltnR?usp=sharing", cat: "Docs" },
+        { name: "Japan Rail Pass Official", url: "https://japanrailpass.net/en/", cat: "Transit" },
+        { name: "Hilton Osaka (11/19)", url: "https://www.hilton.com/en/hotels/osahitw-hilton-osaka/", cat: "Hotel" },
+        { name: "Zauo Fishing Restaurant Namba (11/19)", url: "https://www.zauo.com/shops/namba/", cat: "Food" },
+        { name: "Shin-Osaka Station Guide", url: "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station", cat: "Transit" },
+        { name: "Himeji Castle Tickets (11/20)", url: "https://himejicastle-ticket.jp/", cat: "Activity" },
+        { name: "Otemae Park Food Stalls Map (11/20)", url: "https://maps.app.goo.gl/QARUvBrxchKmCdbd6", cat: "Food" },
+        { name: "Kojima Jeans Street Guide (11/20)", url: "https://www.japan.travel/en/japan-magazine/exploring-jeans-street-in-kojima-city-dyed-in-indigo/", cat: "Activity" },
+        { name: "THE KNot Hiroshima (11/20)", url: "https://hotel-the-knot.jp/hiroshima/en/", cat: "Hotel" },
+        { name: "Miyajima Heritage Ferry Timetable (11/21)", url: "https://www.aqua-net-h.co.jp/en/heritage/#timeTable-m", cat: "Transit" },
+        { name: "Directions to Hiroshima Boat Dock Doc", url: "https://docs.google.com/document/d/1Nr92oKDYSzGGOJD6nCr7dNQbiknT8I-XrEAG61sjIEo/edit?usp=sharing", cat: "Transit" },
+        { name: "Makoto Luggage Van Photo Doc", url: "https://docs.google.com/document/d/1RVkwfAPNKfkHgwYBl83nZy7IL7E43WWavRpLBzrRGt0/edit?usp=sharing", cat: "Hotel" },
+        { name: "Hotel Makoto Miyajima (11/21)", url: "https://hotelmakoto.co.jp/en/", cat: "Hotel" },
+        { name: "Okeiko Japan Miyajima Tea Ceremony", url: "https://okeikojapan-miyajima.com/en/activity-menu-english/", cat: "Activity" },
+        { name: "Hilton Garden Inn Kyoto (11/22–23)", url: "https://www.hilton.com/en/hotels/itmkygi-hilton-garden-inn-kyoto-shijo-karasuma/", cat: "Hotel" },
+        { name: "TeamLab Kyoto", url: "https://www.teamlab.art/e/kyoto/", cat: "Activity" },
+        { name: "Kyoto Chicken Wings Map", url: "https://maps.app.goo.gl/KtHyU9mgLCwxQnRi7", cat: "Food" },
+        { name: "Fujiya Hotel Hakone (11/24)", url: "https://www.booking.com/hotel/jp/fujiya.html", cat: "Hotel" },
+        { name: "Hakone Mobility Service Vans", url: "https://www.hakone-ms.co.jp/eng/price/", cat: "Transit" },
+        { name: "Mitsui Garden Hotel Kyobashi (11/25–27)", url: "https://www.gardenhotels.co.jp/kyobashi/eng/", cat: "Hotel" },
+        { name: "TeamLab Planets Tokyo", url: "https://www.teamlab.art/e/planets/", cat: "Activity" },
+        { name: "Casio Museum Guide", url: "https://www.plus9time.com/blog/2025/10/10/visit-to-the-casio-museum-tokyo", cat: "Activity" }
+      ];
+
+      document.getElementById('all-links-grid').innerHTML = allLinks.map(l => `
+        <a href="${l.url}" target="_blank" rel="noopener"
+           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50/40 transition text-xs font-semibold text-slate-800">
+          <span class="truncate pr-2">${l.name}</span>
+          <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 shrink-0">${l.cat} ↗</span>
+        </a>
+      `).join('');
+    }
+
+    function toggleAction(id) {
+      checkedActions[id] = !checkedActions[id];
+      localStorage.setItem('japan2026_group_actions', JSON.stringify(checkedActions));
+      renderActions();
+    }
+
+    // ====================================================
+    // RENDER GROUP PACKING CHECKLIST
+    // ====================================================
+    function renderPacking() {
+      const container = document.getElementById('packing-container');
+      let total = 0;
+      let completed = 0;
+
+      container.innerHTML = groupPackingList.map(section => {
+        const itemsHtml = section.items.map(item => {
+          total++;
+          const isChecked = !!checkedItems[item.id];
+          if (isChecked) completed++;
+          return `
+            <label class="flex items-start gap-3 p-3 rounded-xl border ${isChecked ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200 hover:border-slate-300'} cursor-pointer transition">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePackItem('${item.id}')"
+                     class="mt-0.5 w-5 h-5 accent-red-600 rounded cursor-pointer shrink-0" />
+              <div class="flex-1 text-xs sm:text-sm">
+                <div class="font-bold ${isChecked ? 'line-through text-slate-400' : 'text-slate-900'}">${item.name}</div>
+                <p class="text-xs text-slate-500 mt-0.5">${item.note}</p>
+              </div>
+            </label>
+          `;
+        }).join('');
+
+        return `
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2.5">
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">${section.category}</h3>
+            <div class="space-y-2">${itemsHtml}</div>
+          </div>
+        `;
+      }).join('');
+
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      document.getElementById('packing-progress-text').textContent = `${completed}/${total} (${pct}%) Packed`;
+      document.getElementById('packing-progress-bar').style.width = `${pct}%`;
+    }
+
+    function togglePackItem(id) {
+      checkedItems[id] = !checkedItems[id];
+      localStorage.setItem('japan2026_group_checked', JSON.stringify(checkedItems));
+      renderPacking();
+    }
+
+    function resetPacking() {
+      if (confirm('Reset all packing checkmarks on this device?')) {
+        checkedItems = {};
+        localStorage.removeItem('japan2026_group_checked');
+        renderPacking();
+      }
+    }
+
+    // ====================================================
+    // TAB SWITCHING
+    // ====================================================
+    function switchTab(tabName) {
+      currentTab = tabName;
+      ['itinerary', 'hotels', 'rooms', 'actions', 'packing'].forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          el.classList.remove('hidden');
+          btn.className = 'tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white text-slate-900 shadow';
+        } else {
+          el.classList.add('hidden');
+          btn.className = 'tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20';
+        }
+      });
+    }
+
+    // INITIALIZE
+    updateCountdown();
+    renderItinerary();
+    renderHotels();
+    renderRooms();
+    renderActions();
+    renderPacking();
+  </script>
+</body>
+</html>
