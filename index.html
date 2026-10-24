@@ -93,6 +93,19 @@
       </div>
     </div>
 
+    <section id="reminders-box" class="bg-white border border-amber-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="px-4 py-3 bg-amber-50 border-b border-amber-100">
+        <h2 class="text-sm font-extrabold text-slate-900">Reminders</h2>
+        <p class="text-xs text-slate-600 mt-0.5">A note here shows up for the whole group.</p>
+      </div>
+      <ul id="reminders-list" class="divide-y divide-slate-100"></ul>
+      <form id="reminder-form" class="p-3 flex flex-col sm:flex-row gap-2 border-t border-slate-100">
+        <input id="reminder-text" maxlength="240" placeholder="Add a reminder for everyone…" class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900" />
+        <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg">Add reminder</button>
+      </form>
+      <p id="reminder-status" class="hidden px-4 pb-3 text-xs text-amber-800"></p>
+    </section>
+
     <!-- ==========================================
          TAB 1: DAY-BY-DAY ITINERARY
     =========================================== -->
@@ -110,6 +123,7 @@
         <button onclick="filterDay('11/26')" id="day-pill-11/26" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Thu 11/26 • Tokyo</button>
         <button onclick="filterDay('11/27')" id="day-pill-11/27" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Fri 11/27 • Departure NRT</button>
       </div>
+      <p class="text-xs text-slate-500">Booked plans are set for the whole group. On a blue suggestion, tap I'm interested so everyone can see who wants to go.</p>
 
       <div id="itinerary-cards-container" class="space-y-4"></div>
     </section>
@@ -715,10 +729,51 @@
     // ====================================================
     // RENDER ITINERARY
     // ====================================================
+    let activityInterest = [];
+    let reminders = [];
+    let reminderLoadToken = 0;
+    let remindersSubscribed = false;
+
+    function interestKey(date, text) {
+      let hash = 0;
+      const value = `${date}|${text}`;
+      for (let i = 0; i < value.length; i++) hash = (Math.imul(31, hash) + value.charCodeAt(i)) | 0;
+      return `act-${(hash >>> 0).toString(36)}`;
+    }
+
+    function peopleInterested(activityId) {
+      return activityInterest
+        .filter(row => row.activityId === activityId)
+        .map(row => packingPeople.find(person => person.id === row.personId))
+        .filter(Boolean);
+    }
+
+    function interestControls(date, item) {
+      if (!item || item.status !== 'suggestion') return '';
+      const id = interestKey(date, item.text);
+      const people = peopleInterested(id);
+      const mine = packingPerson && people.some(person => person.id === packingPerson);
+      const names = people.length
+        ? `${people.length} interested: ${people.map(person => escapeHtml(person.name)).join(', ')}`
+        : 'No one yet';
+      const label = !packingPerson ? 'Choose your name' : (mine ? 'Interested' : "I'm interested");
+      const buttonClass = mine
+        ? 'bg-blue-600 text-white border-blue-600'
+        : 'bg-white text-blue-800 border-blue-300 hover:bg-blue-50';
+      return `
+        <div class="pt-1 space-y-1">
+          <button type="button" data-interest="${escapeHtml(id)}" class="text-[11px] font-bold px-2.5 py-1 rounded-full border ${buttonClass}">${label}</button>
+          <p class="text-[11px] text-slate-600">${names}</p>
+        </div>
+      `;
+    }
+
     function renderItinerary() {
+      if (!packingPerson) packingPerson = savedPackingPersonId();
       const container = document.getElementById('itinerary-cards-container');
       const filtered = selectedDay === 'all' ? itineraryDays : itineraryDays.filter(d => d.date === selectedDay);
 
+      renderReminders();
       container.innerHTML = filtered.map(day => `
         <article class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           <!-- Day Header -->
@@ -793,6 +848,7 @@
                       <span class="text-slate-800 font-medium">${a.text}</span>
                       ${statusBadge(a.status)}
                     </div>
+                    ${interestControls(day.date, a)}
                     ${a.url ? `<div class="pt-1"><a href="${a.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded">🔗 Open Link / Tickets ↗</a></div>` : ''}
                     ${a.links ? `<div class="flex flex-wrap gap-1.5 pt-1">
                       ${a.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded">🔗 ${l.label} ↗</a>`).join('')}
@@ -814,6 +870,7 @@
                       <span class="text-slate-800 font-medium">${f.text}</span>
                       ${statusBadge(f.status)}
                     </div>
+                    ${interestControls(day.date, f)}
                     ${f.url ? `<div class="pt-1"><a href="${f.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded">📍 View Restaurant / Map ↗</a></div>` : ''}
                   </li>
                 `).join('')}
@@ -1588,6 +1645,7 @@
       loadChecks();
       updatePersonalChrome();
       renderPacking();
+      renderItinerary();
     }
 
     async function onPackingPersonChange() {
@@ -1607,6 +1665,230 @@
       setPackingStatus('');
       updatePersonalChrome();
       renderPacking();
+      renderItinerary();
+    }
+
+    function readLocalInterest() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem('japan2026_activity_interest') || '[]');
+        if (!Array.isArray(parsed)) return [];
+        return parsed.filter(row => row && typeof row.activityId === 'string' && packingPeople.some(person => person.id === row.personId));
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function saveLocalInterest() {
+      localStorage.setItem('japan2026_activity_interest', JSON.stringify(activityInterest));
+    }
+
+    function toggleInterest(activityId) {
+      if (!packingPerson) {
+        switchTab('packing');
+        const select = document.getElementById('pack-person');
+        if (select) select.focus();
+        setPackingStatus('Choose your name, then go back to the itinerary and tap I\'m interested.');
+        return;
+      }
+      const already = activityInterest.some(row => row.activityId === activityId && row.personId === packingPerson);
+      activityInterest = already
+        ? activityInterest.filter(row => !(row.activityId === activityId && row.personId === packingPerson))
+        : activityInterest.concat([{ activityId, personId: packingPerson }]);
+      saveLocalInterest();
+      renderItinerary();
+      syncInterest(activityId, packingPerson, !already);
+    }
+
+    async function syncInterest(activityId, personId, add) {
+      if (!packingClient) return;
+      const query = add
+        ? packingClient.from('activity_interest').upsert(
+            { activity_id: activityId, person_id: personId },
+            { onConflict: 'activity_id,person_id' }
+          )
+        : packingClient.from('activity_interest').delete().eq('activity_id', activityId).eq('person_id', personId);
+      await query;
+    }
+
+    async function loadActivityInterest() {
+      activityInterest = readLocalInterest();
+      renderItinerary();
+      if (!packingClient) return;
+      const { data, error } = await packingClient.from('activity_interest').select('activity_id, person_id');
+      if (error || !Array.isArray(data)) return;
+      const remote = data
+        .filter(row => packingPeople.some(person => person.id === row.person_id))
+        .map(row => ({ activityId: row.activity_id, personId: row.person_id }));
+      activityInterest.forEach(local => {
+        const known = remote.some(row => row.activityId === local.activityId && row.personId === local.personId);
+        if (known) return;
+        remote.push(local);
+        syncInterest(local.activityId, local.personId, true);
+      });
+      activityInterest = remote;
+      saveLocalInterest();
+      renderItinerary();
+    }
+
+    function setReminderStatus(message) {
+      const el = document.getElementById('reminder-status');
+      if (!el) return;
+      el.textContent = message || '';
+      el.classList.toggle('hidden', !message);
+    }
+
+    function formatReminderWhen(iso) {
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) return '';
+      return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+
+    function readLocalReminders() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem('japan2026_reminders') || '[]');
+        if (!Array.isArray(parsed)) return [];
+        return parsed.filter(row => row && typeof row.id === 'string' && typeof row.body === 'string' && packingPeople.some(person => person.id === row.personId));
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function saveLocalReminders() {
+      localStorage.setItem('japan2026_reminders', JSON.stringify(reminders));
+    }
+
+    function renderReminders() {
+      const list = document.getElementById('reminders-list');
+      if (!list) return;
+      const sorted = reminders.slice().sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+      if (!sorted.length) {
+        list.innerHTML = '<li class="px-4 py-3 text-sm text-slate-500">No reminders yet.</li>';
+        return;
+      }
+      list.innerHTML = sorted.map(row => {
+        const person = packingPeople.find(entry => entry.id === row.personId);
+        const mine = packingPerson && row.personId === packingPerson;
+        const when = row.createdAt ? ` · ${escapeHtml(formatReminderWhen(row.createdAt))}` : '';
+        return `
+          <li class="px-4 py-3 flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-sm text-slate-800 whitespace-pre-wrap">${escapeHtml(row.body)}</p>
+              <p class="text-[11px] text-slate-500 mt-1">${escapeHtml(person ? person.name : 'Someone')}${when}</p>
+            </div>
+            ${mine ? `<button type="button" data-reminder-remove="${escapeHtml(row.id)}" class="shrink-0 text-[11px] font-bold text-slate-500 hover:text-red-700">Remove</button>` : ''}
+          </li>
+        `;
+      }).join('');
+    }
+
+    function syncReminderInsert(row) {
+      if (!packingClient) return Promise.resolve();
+      return packingClient.from('reminders').upsert({
+        id: row.id,
+        person: row.personId,
+        body: row.body,
+        created_at: row.createdAt
+      }, { onConflict: 'id' });
+    }
+
+    function addReminder(body) {
+      const text = String(body || '').trim();
+      if (!text) return;
+      if (!packingPerson) {
+        switchTab('packing');
+        const select = document.getElementById('pack-person');
+        if (select) select.focus();
+        setPackingStatus('Choose your name, then add the reminder.');
+        setReminderStatus('Choose your name on the packing tab first.');
+        return;
+      }
+      const row = {
+        id: `rem-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+        personId: packingPerson,
+        body: text.slice(0, 240),
+        createdAt: new Date().toISOString()
+      };
+      reminders = reminders.concat([row]);
+      saveLocalReminders();
+      renderReminders();
+      setReminderStatus('');
+      const input = document.getElementById('reminder-text');
+      if (input) input.value = '';
+      syncReminderInsert(row);
+    }
+
+    function removeReminder(id) {
+      const row = reminders.find(entry => entry.id === id);
+      if (!row || row.personId !== packingPerson) return;
+      reminders = reminders.filter(entry => entry.id !== id);
+      saveLocalReminders();
+      renderReminders();
+      if (packingClient) packingClient.from('reminders').delete().eq('id', id);
+    }
+
+    async function loadReminders() {
+      const token = ++reminderLoadToken;
+      reminders = readLocalReminders();
+      renderReminders();
+      if (!packingClient) return;
+      const { data, error } = await packingClient
+        .from('reminders')
+        .select('id, person, body, created_at')
+        .order('created_at', { ascending: false });
+      if (token !== reminderLoadToken || error || !Array.isArray(data)) return;
+      const remote = data
+        .filter(row => row && packingPeople.some(person => person.id === row.person) && typeof row.body === 'string')
+        .map(row => ({ id: row.id, personId: row.person, body: row.body, createdAt: row.created_at }));
+      reminders.forEach(local => {
+        if (remote.some(row => row.id === local.id)) return;
+        remote.push(local);
+        syncReminderInsert(local);
+      });
+      if (token !== reminderLoadToken) return;
+      reminders = remote;
+      saveLocalReminders();
+      renderReminders();
+    }
+
+    function subscribeReminders() {
+      if (!packingClient || remindersSubscribed) return;
+      remindersSubscribed = true;
+      packingClient
+        .channel('japan2026-reminders')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'reminders' }, () => loadReminders())
+        .subscribe();
+    }
+
+    function initReminders() {
+      const form = document.getElementById('reminder-form');
+      const list = document.getElementById('reminders-list');
+      if (form && form.dataset.bound !== '1') {
+        form.dataset.bound = '1';
+        form.addEventListener('submit', event => {
+          event.preventDefault();
+          addReminder(document.getElementById('reminder-text').value);
+        });
+      }
+      if (list && list.dataset.bound !== '1') {
+        list.dataset.bound = '1';
+        list.addEventListener('click', event => {
+          const button = event.target.closest('[data-reminder-remove]');
+          if (!button || !list.contains(button)) return;
+          removeReminder(button.getAttribute('data-reminder-remove'));
+        });
+      }
+    }
+
+    function initInterest() {
+      const container = document.getElementById('itinerary-cards-container');
+      if (!container || container.dataset.interestBound === '1') return;
+      container.dataset.interestBound = '1';
+      container.addEventListener('click', event => {
+        const button = event.target.closest('[data-interest]');
+        if (!button || !container.contains(button)) return;
+        event.preventDefault();
+        toggleInterest(button.getAttribute('data-interest'));
+      });
     }
 
     function claimPackingPerson() {
@@ -1665,12 +1947,16 @@
       loadChecks();
       updatePersonalChrome();
       renderPacking();
+      initInterest();
+      initReminders();
 
       const url = (SUPABASE_URL || '').trim();
       const key = (SUPABASE_ANON_KEY || '').trim();
       const canShare = url && key && window.supabase && typeof window.supabase.createClient === 'function';
       if (!canShare) {
         if (packingPerson) onPackingPersonChange();
+        else loadActivityInterest();
+        loadReminders();
         return;
       }
       try {
@@ -1678,10 +1964,14 @@
       } catch (err) {
         packingClient = null;
         if (packingPerson) onPackingPersonChange();
+        else loadActivityInterest();
+        loadReminders();
         return;
       }
+      subscribeReminders();
       loadSharedPacking().then(() => {
-        if (packingPerson) return onPackingPersonChange();
+        const personLoad = packingPerson ? onPackingPersonChange() : Promise.resolve();
+        return personLoad.then(() => Promise.all([loadActivityInterest(), loadReminders()]));
       });
     }
 
