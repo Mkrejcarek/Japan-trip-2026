@@ -50,7 +50,7 @@
       </div>
 
       <!-- MAIN NAVIGATION TABS -->
-      <nav class="flex gap-1.5 mt-4 overflow-x-auto no-scrollbar no-print">
+      <nav class="flex flex-wrap gap-1.5 mt-4 no-print">
         <button onclick="switchTab('itinerary')" id="tab-btn-itinerary"
                 class="tab-btn active-tab whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white text-slate-900 shadow">
           🗓️ Day-by-Day Itinerary
@@ -98,7 +98,7 @@
     =========================================== -->
     <section id="tab-itinerary" class="space-y-4">
       <!-- Day Jump Pills -->
-      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 no-print">
+      <div class="flex flex-wrap items-center gap-1.5 py-1 no-print">
         <button onclick="filterDay('all')" id="day-pill-all" class="day-pill bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap">All 9 Days</button>
         <button onclick="filterDay('11/19')" id="day-pill-11/19" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Thu 11/19 • Osaka</button>
         <button onclick="filterDay('11/20')" id="day-pill-11/20" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Fri 11/20 • Himeji/Kojima/Hiroshima</button>
