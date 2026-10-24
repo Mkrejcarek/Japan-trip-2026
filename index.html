@@ -172,7 +172,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
           <div>
             <h2 class="text-lg font-extrabold text-slate-900">🎒 Group Packing Checklist (Tailored to Our Route)</h2>
-            <p class="text-xs text-slate-500">Each person/family can check items off on their own phone. Saved automatically to your device.</p>
+            <p id="packing-blurb" class="text-xs text-slate-500">Each person/family can check items off on their own phone. Saved automatically to your device.</p>
           </div>
           <div class="flex items-center gap-2">
             <span id="packing-progress-text" class="text-sm font-extrabold text-red-700">0% Packed</span>
@@ -184,12 +184,48 @@
         </div>
       </div>
 
+      <form id="packing-editor" class="hidden no-print bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3" onsubmit="return addPackingSuggestion(event)">
+        <div>
+          <h3 class="text-sm font-extrabold text-slate-900">Add a packing suggestion</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Everyone with this page sees new and edited suggestions. Checkmarks stay on this phone.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <label class="text-xs font-semibold text-slate-600 block">
+            Category
+            <select id="pack-category" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900"></select>
+          </label>
+          <label id="pack-new-category-wrap" class="hidden text-xs font-semibold text-slate-600 block">
+            New category
+            <input id="pack-new-category" type="text" maxlength="80" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900" placeholder="For example, Baby gear" />
+          </label>
+        </div>
+        <label class="text-xs font-semibold text-slate-600 block">
+          Item
+          <input id="pack-name" required maxlength="160" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900" placeholder="What should we pack?" />
+        </label>
+        <label class="text-xs font-semibold text-slate-600 block">
+          Note
+          <textarea id="pack-note" maxlength="400" rows="2" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900" placeholder="Optional detail"></textarea>
+        </label>
+        <div class="flex items-center justify-between gap-3">
+          <p id="packing-status" class="text-xs text-slate-500"></p>
+          <button type="submit" class="shrink-0 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-2 rounded-lg">Add suggestion</button>
+        </div>
+      </form>
+
       <div id="packing-container" class="space-y-4"></div>
     </section>
 
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4"></script>
   <script>
+    // Project URL is set. Paste the anon public key from Supabase → Project Settings → API.
+    // Leave the key blank to keep the built-in list with no shared editing.
+    // Do not put the service_role key here.
+    const SUPABASE_URL = "https://rvqvwakwridhfldgjlri.supabase.co";
+    const SUPABASE_ANON_KEY = "";
+
     // ====================================================
     // DATA FROM THE SHARED ITINERARY SHEET
     // ====================================================
@@ -905,33 +941,145 @@
     }
 
     // ====================================================
-    // RENDER GROUP PACKING CHECKLIST
+    // GROUP PACKING CHECKLIST
+    // Suggestions can live in Supabase. Checkmarks stay on this phone.
     // ====================================================
+    let packingClient = null;
+    let packingRows = [];
+    let editingPackId = null;
+    let packingSaving = false;
+    let packingStarted = false;
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function defaultPackingRows() {
+      const rows = [];
+      groupPackingList.forEach((section, sIndex) => {
+        section.items.forEach((item, iIndex) => {
+          rows.push({
+            id: item.id,
+            category: section.category,
+            name: item.name,
+            note: item.note || '',
+            position: (sIndex + 1) * 100 + iIndex
+          });
+        });
+      });
+      return rows;
+    }
+
+    function setPackingStatus(message) {
+      const el = document.getElementById('packing-status');
+      if (el) el.textContent = message || '';
+    }
+
+    function groupedPacking() {
+      const sorted = packingRows.slice().sort((a, b) => {
+        const byPosition = (Number(a.position) || 0) - (Number(b.position) || 0);
+        if (byPosition !== 0) return byPosition;
+        return String(a.id).localeCompare(String(b.id));
+      });
+      const sections = [];
+      const indexByCategory = new Map();
+      sorted.forEach(row => {
+        const category = row.category || 'Other';
+        if (!indexByCategory.has(category)) {
+          indexByCategory.set(category, sections.length);
+          sections.push({ category, items: [] });
+        }
+        sections[indexByCategory.get(category)].items.push(row);
+      });
+      return sections;
+    }
+
+    function toggleNewCategory() {
+      const select = document.getElementById('pack-category');
+      const wrap = document.getElementById('pack-new-category-wrap');
+      if (!select || !wrap) return;
+      const isNew = select.value === '__new__';
+      wrap.classList.toggle('hidden', !isNew);
+      if (isNew) document.getElementById('pack-new-category').focus();
+    }
+
+    function fillCategorySelect() {
+      const select = document.getElementById('pack-category');
+      if (!select || document.activeElement === select) return;
+      const current = select.value;
+      const categories = [];
+      groupedPacking().forEach(section => categories.push(section.category));
+      select.innerHTML = categories.map(category =>
+        `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`
+      ).join('') + '<option value="__new__">New category…</option>';
+      const stillThere = Array.from(select.options).some(option => option.value === current);
+      if (current && stillThere) select.value = current;
+      const wrap = document.getElementById('pack-new-category-wrap');
+      if (wrap) wrap.classList.toggle('hidden', select.value !== '__new__');
+    }
+
     function renderPacking() {
       const container = document.getElementById('packing-container');
+      const sections = groupedPacking();
+      const shared = !!packingClient;
       let total = 0;
       let completed = 0;
 
-      container.innerHTML = groupPackingList.map(section => {
+      container.innerHTML = sections.map(section => {
         const itemsHtml = section.items.map(item => {
           total++;
           const isChecked = !!checkedItems[item.id];
           if (isChecked) completed++;
-          return `
-            <label class="flex items-start gap-3 p-3 rounded-xl border ${isChecked ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200 hover:border-slate-300'} cursor-pointer transition">
-              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePackItem('${item.id}')"
-                     class="mt-0.5 w-5 h-5 accent-red-600 rounded cursor-pointer shrink-0" />
-              <div class="flex-1 text-xs sm:text-sm">
-                <div class="font-bold ${isChecked ? 'line-through text-slate-400' : 'text-slate-900'}">${item.name}</div>
-                <p class="text-xs text-slate-500 mt-0.5">${item.note}</p>
+          if (shared && editingPackId === item.id) {
+            return `
+              <div class="p-3 rounded-xl border border-red-200 bg-red-50/50 space-y-2" data-pack-id="${escapeHtml(item.id)}">
+                <label class="text-xs font-semibold text-slate-600 block">
+                  Item
+                  <input data-edit-name value="${escapeHtml(item.name)}" maxlength="160" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900" />
+                </label>
+                <label class="text-xs font-semibold text-slate-600 block">
+                  Note
+                  <textarea data-edit-note maxlength="400" rows="2" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900">${escapeHtml(item.note || '')}</textarea>
+                </label>
+                <div class="flex justify-end gap-2">
+                  <button type="button" data-cancel-edit class="text-xs font-bold text-slate-500 px-2 py-1">Cancel</button>
+                  <button type="button" data-save-edit="${escapeHtml(item.id)}" class="text-xs font-bold bg-red-600 text-white px-3 py-1.5 rounded-lg">Save</button>
+                </div>
               </div>
-            </label>
+            `;
+          }
+          const note = item.note
+            ? `<p class="text-xs text-slate-500 mt-0.5">${escapeHtml(item.note)}</p>`
+            : '';
+          const controls = shared ? `
+            <div class="flex shrink-0 gap-2 no-print">
+              <button type="button" data-edit-item="${escapeHtml(item.id)}" class="text-[11px] font-bold text-slate-500 hover:text-slate-900">Edit</button>
+              <button type="button" data-remove-item="${escapeHtml(item.id)}" class="text-[11px] font-bold text-slate-400 hover:text-red-600">Remove</button>
+            </div>
+          ` : '';
+          return `
+            <div class="flex items-start gap-3 p-3 rounded-xl border ${isChecked ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200 hover:border-slate-300'} transition">
+              <label class="flex items-start gap-3 flex-1 min-w-0 cursor-pointer">
+                <input type="checkbox" data-pack-check="${escapeHtml(item.id)}" ${isChecked ? 'checked' : ''}
+                       class="mt-0.5 w-5 h-5 accent-red-600 rounded cursor-pointer shrink-0" />
+                <div class="flex-1 text-xs sm:text-sm min-w-0">
+                  <div class="font-bold ${isChecked ? 'line-through text-slate-400' : 'text-slate-900'}">${escapeHtml(item.name)}</div>
+                  ${note}
+                </div>
+              </label>
+              ${controls}
+            </div>
           `;
         }).join('');
 
         return `
           <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2.5">
-            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">${section.category}</h3>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">${escapeHtml(section.category)}</h3>
             <div class="space-y-2">${itemsHtml}</div>
           </div>
         `;
@@ -940,6 +1088,7 @@
       const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
       document.getElementById('packing-progress-text').textContent = `${completed}/${total} (${pct}%) Packed`;
       document.getElementById('packing-progress-bar').style.width = `${pct}%`;
+      if (shared) fillCategorySelect();
     }
 
     function togglePackItem(id) {
@@ -954,6 +1103,242 @@
         localStorage.removeItem('japan2026_group_checked');
         renderPacking();
       }
+    }
+
+    function nextPackingPosition(category) {
+      const inCategory = packingRows.filter(row => row.category === category);
+      if (inCategory.length === 0) {
+        const maxPosition = packingRows.reduce((max, row) => Math.max(max, Number(row.position) || 0), 0);
+        return maxPosition + 100;
+      }
+      return inCategory.reduce((max, row) => Math.max(max, Number(row.position) || 0), 0) + 1;
+    }
+
+    function normalizePackingRow(row) {
+      return {
+        id: String(row.id),
+        category: row.category || 'Other',
+        name: row.name || '',
+        note: row.note || '',
+        position: Number(row.position) || 0
+      };
+    }
+
+    function addPackingSuggestion(event) {
+      if (event) event.preventDefault();
+      submitPackingSuggestion();
+      return false;
+    }
+
+    async function submitPackingSuggestion() {
+      if (!packingClient || packingSaving) return;
+      const select = document.getElementById('pack-category');
+      const newCategoryInput = document.getElementById('pack-new-category');
+      const nameInput = document.getElementById('pack-name');
+      const noteInput = document.getElementById('pack-note');
+      const wasNew = select.value === '__new__';
+      const category = (wasNew ? newCategoryInput.value : select.value).trim();
+      const name = nameInput.value.trim();
+      const note = noteInput.value.trim();
+      if (!category || !name) {
+        setPackingStatus('Add a category and an item.');
+        return;
+      }
+      const row = {
+        id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `gp-${Date.now()}`,
+        category,
+        name,
+        note,
+        position: nextPackingPosition(category)
+      };
+      packingSaving = true;
+      setPackingStatus('Saving…');
+      try {
+        const { data, error } = await packingClient
+          .from('packing_items')
+          .insert(row)
+          .select('id, category, name, note, position')
+          .single();
+        if (error) throw error;
+        const saved = normalizePackingRow(data || row);
+        if (!packingRows.some(existing => existing.id === saved.id)) packingRows.push(saved);
+        nameInput.value = '';
+        noteInput.value = '';
+        if (wasNew) newCategoryInput.value = '';
+        setPackingStatus('Added for everyone.');
+        renderPacking();
+        if (wasNew) {
+          select.value = saved.category;
+          document.getElementById('pack-new-category-wrap').classList.add('hidden');
+        }
+      } catch (err) {
+        setPackingStatus('Could not add that suggestion. Try again.');
+      } finally {
+        packingSaving = false;
+      }
+    }
+
+    async function savePackingEdit(id) {
+      if (!packingClient || packingSaving) return;
+      const card = document.querySelector(`[data-pack-id="${CSS.escape(id)}"]`);
+      if (!card) return;
+      const name = card.querySelector('[data-edit-name]').value.trim();
+      const note = card.querySelector('[data-edit-note]').value.trim();
+      if (!name) {
+        setPackingStatus('An item needs a name.');
+        return;
+      }
+      packingSaving = true;
+      setPackingStatus('Saving…');
+      try {
+        const { data, error } = await packingClient
+          .from('packing_items')
+          .update({ name, note })
+          .eq('id', id)
+          .select('id, category, name, note, position')
+          .single();
+        if (error) throw error;
+        const saved = normalizePackingRow(data || { id, name, note });
+        packingRows = packingRows.map(row => row.id === id ? { ...row, ...saved } : row);
+        editingPackId = null;
+        setPackingStatus('Saved for everyone.');
+        renderPacking();
+      } catch (err) {
+        setPackingStatus('Could not save that edit.');
+      } finally {
+        packingSaving = false;
+      }
+    }
+
+    async function removePackingItem(id) {
+      if (!packingClient || packingSaving) return;
+      if (!confirm('Remove this suggestion for everyone?')) return;
+      packingSaving = true;
+      setPackingStatus('Removing…');
+      try {
+        const { error } = await packingClient.from('packing_items').delete().eq('id', id);
+        if (error) throw error;
+        packingRows = packingRows.filter(row => row.id !== id);
+        if (editingPackId === id) editingPackId = null;
+        setPackingStatus('Removed for everyone.');
+        renderPacking();
+      } catch (err) {
+        setPackingStatus('Could not remove that suggestion.');
+      } finally {
+        packingSaving = false;
+      }
+    }
+
+    function onPackingClick(event) {
+      const edit = event.target.closest('[data-edit-item]');
+      if (edit) {
+        editingPackId = edit.getAttribute('data-edit-item');
+        renderPacking();
+        return;
+      }
+      if (event.target.closest('[data-cancel-edit]')) {
+        editingPackId = null;
+        renderPacking();
+        return;
+      }
+      const save = event.target.closest('[data-save-edit]');
+      if (save) {
+        savePackingEdit(save.getAttribute('data-save-edit'));
+        return;
+      }
+      const remove = event.target.closest('[data-remove-item]');
+      if (remove) removePackingItem(remove.getAttribute('data-remove-item'));
+    }
+
+    function onPackingChange(event) {
+      const id = event.target.getAttribute('data-pack-check');
+      if (!id) return;
+      togglePackItem(id);
+    }
+
+    function applyPackingChange(payload) {
+      const eventType = payload.eventType || payload.event;
+      if (eventType === 'DELETE') {
+        const id = payload.old && payload.old.id;
+        if (!id) return;
+        packingRows = packingRows.filter(row => row.id !== id);
+        if (editingPackId === id) editingPackId = null;
+        renderPacking();
+        return;
+      }
+      const incoming = payload.new && payload.new.id ? normalizePackingRow(payload.new) : null;
+      if (!incoming) return;
+      if (eventType === 'INSERT') {
+        if (!packingRows.some(row => row.id === incoming.id)) packingRows.push(incoming);
+      } else if (eventType === 'UPDATE') {
+        packingRows = packingRows.map(row => row.id === incoming.id ? { ...row, ...incoming } : row);
+        if (editingPackId === incoming.id) return;
+      }
+      renderPacking();
+    }
+
+    function subscribePacking() {
+      packingClient
+        .channel('packing-items')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'packing_items' }, applyPackingChange)
+        .subscribe();
+    }
+
+    async function loadSharedPacking() {
+      try {
+        const { data, error } = await packingClient
+          .from('packing_items')
+          .select('id, category, name, note, position')
+          .order('position', { ascending: true });
+        if (error) throw error;
+        if (!data || data.length === 0) {
+          const seed = defaultPackingRows();
+          const { error: seedError } = await packingClient.from('packing_items').upsert(seed, { onConflict: 'id' });
+          if (seedError) throw seedError;
+          packingRows = seed;
+        } else {
+          packingRows = data.map(normalizePackingRow);
+        }
+        setPackingStatus('');
+        renderPacking();
+        return true;
+      } catch (err) {
+        packingRows = defaultPackingRows();
+        setPackingStatus('Could not load shared suggestions. Showing the built-in list.');
+        renderPacking();
+        return false;
+      }
+    }
+
+    function initPacking() {
+      if (packingStarted) return;
+      packingStarted = true;
+      const container = document.getElementById('packing-container');
+      container.addEventListener('click', onPackingClick);
+      container.addEventListener('change', onPackingChange);
+      document.getElementById('pack-category').addEventListener('change', toggleNewCategory);
+
+      packingRows = defaultPackingRows();
+      const url = (SUPABASE_URL || '').trim();
+      const key = (SUPABASE_ANON_KEY || '').trim();
+      const canShare = url && key && window.supabase && typeof window.supabase.createClient === 'function';
+      if (!canShare) {
+        renderPacking();
+        return;
+      }
+      try {
+        packingClient = window.supabase.createClient(url, key);
+      } catch (err) {
+        packingClient = null;
+        renderPacking();
+        return;
+      }
+      document.getElementById('packing-editor').classList.remove('hidden');
+      document.getElementById('packing-blurb').textContent = 'Check items off on your own phone. Suggestions added or edited here are shared with the group.';
+      renderPacking();
+      loadSharedPacking().then(loaded => {
+        if (loaded) subscribePacking();
+      });
     }
 
     // ====================================================
@@ -980,7 +1365,7 @@
     renderHotels();
     renderRooms();
     renderActions();
-    renderPacking();
+    initPacking();
   </script>
 </body>
 </html>
