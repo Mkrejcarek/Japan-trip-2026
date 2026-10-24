@@ -172,7 +172,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
           <div>
             <h2 class="text-lg font-extrabold text-slate-900">🎒 Group Packing Checklist (Tailored to Our Route)</h2>
-            <p class="text-xs text-slate-500">Each person/family can check items off on their own phone. Saved automatically to your device.</p>
+            <p id="packing-blurb" class="text-xs text-slate-500">The group list is the starting point. Choose a person to make their own checklist.</p>
           </div>
           <div class="flex items-center gap-2">
             <span id="packing-progress-text" class="text-sm font-extrabold text-red-700">0% Packed</span>
@@ -182,14 +182,58 @@
         <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
           <div id="packing-progress-bar" class="h-full bg-gradient-to-r from-red-600 to-amber-500 transition-all duration-300" style="width: 0%"></div>
         </div>
+        <div class="mt-3 flex flex-col sm:flex-row sm:items-end gap-2 no-print">
+          <label class="text-xs font-semibold text-slate-600 block flex-1">
+            This list is for
+            <select id="pack-person" onchange="onPackingPersonChange()" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900"></select>
+          </label>
+          <button type="button" onclick="downloadPackingList()" class="shrink-0 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg">Download this list</button>
+        </div>
+        <p id="packing-personal-note" class="text-xs text-slate-500 mt-2">Pick a person. Items you add, edit, or remove stay on their list.</p>
       </div>
+
+      <form id="packing-editor" class="hidden no-print bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3" onsubmit="return addPackingSuggestion(event)">
+        <div>
+          <h3 id="packing-editor-title" class="text-sm font-extrabold text-slate-900">Add an item</h3>
+          <p id="packing-editor-note" class="text-xs text-slate-500 mt-0.5">This item is added only to the selected person's list.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <label class="text-xs font-semibold text-slate-600 block">
+            Category
+            <select id="pack-category" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900"></select>
+          </label>
+          <label id="pack-new-category-wrap" class="hidden text-xs font-semibold text-slate-600 block">
+            New category
+            <input id="pack-new-category" type="text" maxlength="80" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900" placeholder="For example, Baby gear" />
+          </label>
+        </div>
+        <label class="text-xs font-semibold text-slate-600 block">
+          Item
+          <input id="pack-name" required maxlength="160" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900" placeholder="What should we pack?" />
+        </label>
+        <label class="text-xs font-semibold text-slate-600 block">
+          Note
+          <textarea id="pack-note" maxlength="400" rows="2" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900" placeholder="Optional detail"></textarea>
+        </label>
+        <div class="flex items-center justify-between gap-3">
+          <p id="packing-status" class="text-xs text-slate-500"></p>
+          <button type="submit" class="shrink-0 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-2 rounded-lg">Add suggestion</button>
+        </div>
+      </form>
 
       <div id="packing-container" class="space-y-4"></div>
     </section>
 
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4"></script>
   <script>
+    // Publishable key from Supabase → Project Settings → API.
+    // Leave the key blank to keep the built-in list with no shared editing.
+    // Do not put the service_role or secret key here.
+    const SUPABASE_URL = "https://rvqvwakwridhfldgjlri.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_JtJBEz-9meu69F83zZAOqA_5zDBaLdG";
+
     // ====================================================
     // DATA FROM THE SHARED ITINERARY SHEET
     // ====================================================
@@ -905,33 +949,149 @@
     }
 
     // ====================================================
-    // RENDER GROUP PACKING CHECKLIST
+    // GROUP PACKING CHECKLIST
+    // Suggestions can live in Supabase. Checkmarks stay on this phone.
     // ====================================================
+    let packingClient = null;
+    let packingRows = [];
+    let sharedTemplate = [];
+    let packingPerson = '';
+    let personalStore = 'template';
+    let editingPackId = null;
+    let packingSaving = false;
+    let packingStarted = false;
+    let personalLoadToken = 0;
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function defaultPackingRows() {
+      const rows = [];
+      groupPackingList.forEach((section, sIndex) => {
+        section.items.forEach((item, iIndex) => {
+          rows.push({
+            id: item.id,
+            category: section.category,
+            name: item.name,
+            note: item.note || '',
+            position: (sIndex + 1) * 100 + iIndex
+          });
+        });
+      });
+      return rows;
+    }
+
+    function setPackingStatus(message) {
+      const el = document.getElementById('packing-status');
+      if (el) el.textContent = message || '';
+    }
+
+    function groupedPacking() {
+      const sorted = packingRows.slice().sort((a, b) => {
+        const byPosition = (Number(a.position) || 0) - (Number(b.position) || 0);
+        if (byPosition !== 0) return byPosition;
+        return String(a.id).localeCompare(String(b.id));
+      });
+      const sections = [];
+      const indexByCategory = new Map();
+      sorted.forEach(row => {
+        const category = row.category || 'Other';
+        if (!indexByCategory.has(category)) {
+          indexByCategory.set(category, sections.length);
+          sections.push({ category, items: [] });
+        }
+        sections[indexByCategory.get(category)].items.push(row);
+      });
+      return sections;
+    }
+
+    function toggleNewCategory() {
+      const select = document.getElementById('pack-category');
+      const wrap = document.getElementById('pack-new-category-wrap');
+      if (!select || !wrap) return;
+      const isNew = select.value === '__new__';
+      wrap.classList.toggle('hidden', !isNew);
+      if (isNew) document.getElementById('pack-new-category').focus();
+    }
+
+    function fillCategorySelect() {
+      const select = document.getElementById('pack-category');
+      if (!select || document.activeElement === select) return;
+      const current = select.value;
+      const categories = [];
+      groupedPacking().forEach(section => categories.push(section.category));
+      select.innerHTML = categories.map(category =>
+        `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`
+      ).join('') + '<option value="__new__">New category…</option>';
+      const stillThere = Array.from(select.options).some(option => option.value === current);
+      if (current && stillThere) select.value = current;
+      const wrap = document.getElementById('pack-new-category-wrap');
+      if (wrap) wrap.classList.toggle('hidden', select.value !== '__new__');
+    }
+
     function renderPacking() {
       const container = document.getElementById('packing-container');
+      const sections = groupedPacking();
+      const personal = !!packingPerson;
       let total = 0;
       let completed = 0;
 
-      container.innerHTML = groupPackingList.map(section => {
+      container.innerHTML = sections.map(section => {
         const itemsHtml = section.items.map(item => {
           total++;
           const isChecked = !!checkedItems[item.id];
           if (isChecked) completed++;
-          return `
-            <label class="flex items-start gap-3 p-3 rounded-xl border ${isChecked ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200 hover:border-slate-300'} cursor-pointer transition">
-              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePackItem('${item.id}')"
-                     class="mt-0.5 w-5 h-5 accent-red-600 rounded cursor-pointer shrink-0" />
-              <div class="flex-1 text-xs sm:text-sm">
-                <div class="font-bold ${isChecked ? 'line-through text-slate-400' : 'text-slate-900'}">${item.name}</div>
-                <p class="text-xs text-slate-500 mt-0.5">${item.note}</p>
+          if (personal && editingPackId === item.id) {
+            return `
+              <div class="p-3 rounded-xl border border-red-200 bg-red-50/50 space-y-2" data-pack-id="${escapeHtml(item.id)}">
+                <label class="text-xs font-semibold text-slate-600 block">
+                  Item
+                  <input data-edit-name value="${escapeHtml(item.name)}" maxlength="160" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900" />
+                </label>
+                <label class="text-xs font-semibold text-slate-600 block">
+                  Note
+                  <textarea data-edit-note maxlength="400" rows="2" class="mt-1 w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-900">${escapeHtml(item.note || '')}</textarea>
+                </label>
+                <div class="flex justify-end gap-2">
+                  <button type="button" data-cancel-edit class="text-xs font-bold text-slate-500 px-2 py-1">Cancel</button>
+                  <button type="button" data-save-edit="${escapeHtml(item.id)}" class="text-xs font-bold bg-red-600 text-white px-3 py-1.5 rounded-lg">Save</button>
+                </div>
               </div>
-            </label>
+            `;
+          }
+          const note = item.note
+            ? `<p class="text-xs text-slate-500 mt-0.5">${escapeHtml(item.note)}</p>`
+            : '';
+          const controls = personal ? `
+            <div class="flex shrink-0 gap-2 no-print">
+              <button type="button" data-edit-item="${escapeHtml(item.id)}" class="text-[11px] font-bold text-slate-500 hover:text-slate-900">Edit</button>
+              <button type="button" data-remove-item="${escapeHtml(item.id)}" class="text-[11px] font-bold text-slate-400 hover:text-red-600">Remove</button>
+            </div>
+          ` : '';
+          return `
+            <div class="flex items-start gap-3 p-3 rounded-xl border ${isChecked ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-slate-200 hover:border-slate-300'} transition">
+              <label class="flex items-start gap-3 flex-1 min-w-0 cursor-pointer">
+                <input type="checkbox" data-pack-check="${escapeHtml(item.id)}" ${isChecked ? 'checked' : ''}
+                       class="mt-0.5 w-5 h-5 accent-red-600 rounded cursor-pointer shrink-0" />
+                <div class="flex-1 text-xs sm:text-sm min-w-0">
+                  <div class="font-bold ${isChecked ? 'line-through text-slate-400' : 'text-slate-900'}">${escapeHtml(item.name)}</div>
+                  ${note}
+                </div>
+              </label>
+              ${controls}
+            </div>
           `;
         }).join('');
 
         return `
           <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2.5">
-            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">${section.category}</h3>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">${escapeHtml(section.category)}</h3>
             <div class="space-y-2">${itemsHtml}</div>
           </div>
         `;
@@ -940,20 +1100,486 @@
       const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
       document.getElementById('packing-progress-text').textContent = `${completed}/${total} (${pct}%) Packed`;
       document.getElementById('packing-progress-bar').style.width = `${pct}%`;
+      if (personal) fillCategorySelect();
+    }
+
+    function checksStorageKey() {
+      return packingPerson ? `japan2026_pack_checks_${packingPerson}` : 'japan2026_group_checked';
+    }
+
+    function loadChecks() {
+      try {
+        checkedItems = JSON.parse(localStorage.getItem(checksStorageKey()) || '{}');
+      } catch (err) {
+        checkedItems = {};
+      }
+    }
+
+    function saveChecks() {
+      localStorage.setItem(checksStorageKey(), JSON.stringify(checkedItems));
+    }
+
+    function localPersonalKey(person = packingPerson) {
+      return `japan2026_pack_items_v1_${person}`;
+    }
+
+    function readLocalPersonal(person) {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(localPersonalKey(person)) || 'null');
+        return Array.isArray(parsed) ? parsed : null;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function saveLocalPersonal() {
+      if (!packingPerson) return;
+      localStorage.setItem(localPersonalKey(), JSON.stringify(packingRows));
+    }
+
+    function newPackingId() {
+      return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `gp-${Date.now()}`;
+    }
+
+    function seedPersonalRows(person) {
+      const source = sharedTemplate.length ? sharedTemplate : defaultPackingRows();
+      return source.map(row => ({
+        id: newPackingId(),
+        person,
+        category: row.category,
+        name: row.name,
+        note: row.note || '',
+        position: row.position,
+        sourceId: row.id
+      }));
+    }
+
+    function personalRow(row) {
+      return {
+        id: String(row.id),
+        person: row.person || packingPerson,
+        category: row.category || 'Other',
+        name: row.name || '',
+        note: row.note || '',
+        position: Number(row.position) || 0,
+        sourceId: row.source_id || row.sourceId || ''
+      };
+    }
+
+    function fillPersonSelect() {
+      const select = document.getElementById('pack-person');
+      if (!select) return;
+      const groups = [];
+      const byGroup = new Map();
+      travelers.forEach(traveler => {
+        if (!byGroup.has(traveler.group)) {
+          byGroup.set(traveler.group, []);
+          groups.push(traveler.group);
+        }
+        byGroup.get(traveler.group).push(traveler.name);
+      });
+      const saved = localStorage.getItem('japan2026_packing_person') || '';
+      select.innerHTML = '<option value="">Choose a person</option>' + groups.map(group => `
+        <optgroup label="${escapeHtml(group)}">
+          ${byGroup.get(group).map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('')}
+        </optgroup>
+      `).join('');
+      if (saved && Array.from(select.options).some(option => option.value === saved)) select.value = saved;
+      packingPerson = select.value;
+    }
+
+    function updatePersonalChrome() {
+      const editor = document.getElementById('packing-editor');
+      const note = document.getElementById('packing-personal-note');
+      const title = document.getElementById('packing-editor-title');
+      const blurb = document.getElementById('packing-blurb');
+      if (!packingPerson) {
+        editor.classList.add('hidden');
+        note.textContent = 'Pick a person. Items you add, edit, or remove stay on their list.';
+        blurb.textContent = 'The group list is the starting point. Choose a person to make their own checklist.';
+        return;
+      }
+      editor.classList.remove('hidden');
+      title.textContent = `Add an item for ${packingPerson}`;
+      blurb.textContent = `Check items off on this phone for ${packingPerson}. Their list is separate from everyone else's.`;
+      note.textContent = personalStore === 'remote'
+        ? `Adds, edits, and removals stay on the list for ${packingPerson}. Checkmarks stay on this phone.`
+        : `Saved on this phone for ${packingPerson}. Checkmarks stay on this phone too.`;
     }
 
     function togglePackItem(id) {
       checkedItems[id] = !checkedItems[id];
-      localStorage.setItem('japan2026_group_checked', JSON.stringify(checkedItems));
+      saveChecks();
       renderPacking();
     }
 
     function resetPacking() {
-      if (confirm('Reset all packing checkmarks on this device?')) {
+      const who = packingPerson ? `${packingPerson}'s checkmarks` : 'the group checkmarks';
+      if (confirm(`Reset ${who} on this phone?`)) {
         checkedItems = {};
-        localStorage.removeItem('japan2026_group_checked');
+        localStorage.removeItem(checksStorageKey());
         renderPacking();
       }
+    }
+
+    function downloadPackingList() {
+      const who = packingPerson || 'Group';
+      const lines = ['Japan 2026 packing list', `For: ${who}`, ''];
+      groupedPacking().forEach(section => {
+        lines.push(section.category);
+        section.items.forEach(item => {
+          lines.push(`${checkedItems[item.id] ? '[x]' : '[ ]'} ${item.name}`);
+          if (item.note) lines.push(`    ${item.note}`);
+        });
+        lines.push('');
+      });
+      const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      const slug = who.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'group';
+      link.href = URL.createObjectURL(blob);
+      link.download = `japan-2026-packing-${slug}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1500);
+    }
+
+    function nextPackingPosition(category) {
+      const inCategory = packingRows.filter(row => row.category === category);
+      if (inCategory.length === 0) {
+        const maxPosition = packingRows.reduce((max, row) => Math.max(max, Number(row.position) || 0), 0);
+        return maxPosition + 100;
+      }
+      return inCategory.reduce((max, row) => Math.max(max, Number(row.position) || 0), 0) + 1;
+    }
+
+    function normalizePackingRow(row) {
+      return {
+        id: String(row.id),
+        category: row.category || 'Other',
+        name: row.name || '',
+        note: row.note || '',
+        position: Number(row.position) || 0
+      };
+    }
+
+    function addPackingSuggestion(event) {
+      if (event) event.preventDefault();
+      submitPackingSuggestion();
+      return false;
+    }
+
+    async function submitPackingSuggestion() {
+      if (!packingPerson || packingSaving) {
+        if (!packingPerson) setPackingStatus('Choose who this list is for.');
+        return;
+      }
+      const select = document.getElementById('pack-category');
+      const newCategoryInput = document.getElementById('pack-new-category');
+      const nameInput = document.getElementById('pack-name');
+      const noteInput = document.getElementById('pack-note');
+      const wasNew = select.value === '__new__';
+      const category = (wasNew ? newCategoryInput.value : select.value).trim();
+      const name = nameInput.value.trim();
+      const note = noteInput.value.trim();
+      if (!category || !name) {
+        setPackingStatus('Add a category and an item.');
+        return;
+      }
+      const row = {
+        id: newPackingId(),
+        person: packingPerson,
+        category,
+        name,
+        note,
+        position: nextPackingPosition(category),
+        sourceId: ''
+      };
+      packingSaving = true;
+      setPackingStatus('Saving…');
+      try {
+        const saved = personalStore === 'remote'
+          ? await writePersonalRow(row, 'insert')
+          : row;
+        if (!packingRows.some(existing => existing.id === saved.id)) packingRows.push(saved);
+        saveLocalPersonal();
+        nameInput.value = '';
+        noteInput.value = '';
+        if (wasNew) newCategoryInput.value = '';
+        setPackingStatus(`Added for ${packingPerson}.`);
+        renderPacking();
+        if (wasNew) {
+          select.value = saved.category;
+          document.getElementById('pack-new-category-wrap').classList.add('hidden');
+        }
+      } catch (err) {
+        setPackingStatus(`Could not add that item for ${packingPerson}. Try again.`);
+      } finally {
+        packingSaving = false;
+      }
+    }
+
+    async function savePackingEdit(id) {
+      if (!packingPerson || packingSaving) return;
+      const card = document.querySelector(`[data-pack-id="${CSS.escape(id)}"]`);
+      if (!card) return;
+      const name = card.querySelector('[data-edit-name]').value.trim();
+      const note = card.querySelector('[data-edit-note]').value.trim();
+      if (!name) {
+        setPackingStatus('An item needs a name.');
+        return;
+      }
+      packingSaving = true;
+      setPackingStatus('Saving…');
+      try {
+        const current = packingRows.find(row => row.id === id) || { id };
+        const saved = personalStore === 'remote'
+          ? await writePersonalRow({ ...current, name, note }, 'update')
+          : { ...current, name, note };
+        packingRows = packingRows.map(row => row.id === id ? { ...row, ...saved } : row);
+        saveLocalPersonal();
+        editingPackId = null;
+        setPackingStatus(`Saved for ${packingPerson}.`);
+        renderPacking();
+      } catch (err) {
+        setPackingStatus(`Could not save that edit for ${packingPerson}.`);
+      } finally {
+        packingSaving = false;
+      }
+    }
+
+    async function removePackingItem(id) {
+      if (!packingPerson || packingSaving) return;
+      if (!confirm(`Remove this from ${packingPerson}'s list?`)) return;
+      packingSaving = true;
+      setPackingStatus('Removing…');
+      try {
+        if (personalStore === 'remote') await writePersonalRow({ id }, 'delete');
+        packingRows = packingRows.filter(row => row.id !== id);
+        saveLocalPersonal();
+        if (editingPackId === id) editingPackId = null;
+        setPackingStatus(`Removed from ${packingPerson}'s list.`);
+        renderPacking();
+      } catch (err) {
+        setPackingStatus(`Could not remove that item from ${packingPerson}'s list.`);
+      } finally {
+        packingSaving = false;
+      }
+    }
+
+    function onPackingClick(event) {
+      const edit = event.target.closest('[data-edit-item]');
+      if (edit) {
+        editingPackId = edit.getAttribute('data-edit-item');
+        renderPacking();
+        return;
+      }
+      if (event.target.closest('[data-cancel-edit]')) {
+        editingPackId = null;
+        renderPacking();
+        return;
+      }
+      const save = event.target.closest('[data-save-edit]');
+      if (save) {
+        savePackingEdit(save.getAttribute('data-save-edit'));
+        return;
+      }
+      const remove = event.target.closest('[data-remove-item]');
+      if (remove) removePackingItem(remove.getAttribute('data-remove-item'));
+    }
+
+    function onPackingChange(event) {
+      const id = event.target.getAttribute('data-pack-check');
+      if (!id) return;
+      togglePackItem(id);
+    }
+
+    function applyPackingChange(payload) {
+      const eventType = payload.eventType || payload.event;
+      if (eventType === 'DELETE') {
+        const id = payload.old && payload.old.id;
+        if (!id) return;
+        packingRows = packingRows.filter(row => row.id !== id);
+        if (editingPackId === id) editingPackId = null;
+        renderPacking();
+        return;
+      }
+      const incoming = payload.new && payload.new.id ? normalizePackingRow(payload.new) : null;
+      if (!incoming) return;
+      if (eventType === 'INSERT') {
+        if (!packingRows.some(row => row.id === incoming.id)) packingRows.push(incoming);
+      } else if (eventType === 'UPDATE') {
+        packingRows = packingRows.map(row => row.id === incoming.id ? { ...row, ...incoming } : row);
+        if (editingPackId === incoming.id) return;
+      }
+      renderPacking();
+    }
+
+    function subscribePacking() {
+      packingClient
+        .channel('packing-items')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'packing_items' }, applyPackingChange)
+        .subscribe();
+    }
+
+    async function writePersonalRow(row, op) {
+      if (!packingClient) throw new Error('Personal lists are saved on this phone.');
+      if (op === 'delete') {
+        const { error } = await packingClient.from('packing_personal').delete().eq('id', row.id).eq('person', packingPerson);
+        if (error) throw error;
+        return row;
+      }
+      const payload = {
+        id: row.id,
+        person: packingPerson,
+        category: row.category,
+        name: row.name,
+        note: row.note || '',
+        position: Number(row.position) || 0,
+        source_id: row.sourceId || null
+      };
+      if (op === 'insert') {
+        const { data, error } = await packingClient
+          .from('packing_personal')
+          .insert(payload)
+          .select('id, person, category, name, note, position, source_id')
+          .single();
+        if (error) throw error;
+        return personalRow(data || payload);
+      }
+      const { data, error } = await packingClient
+        .from('packing_personal')
+        .update({ name: payload.name, note: payload.note })
+        .eq('id', row.id)
+        .eq('person', packingPerson)
+        .select('id, person, category, name, note, position, source_id')
+        .single();
+      if (error) throw error;
+      return personalRow(data || payload);
+    }
+
+    async function loadPersonalList(person) {
+      const local = readLocalPersonal(person);
+      if (!packingClient) {
+        packingRows = local || seedPersonalRows(person);
+        personalStore = 'local';
+        saveLocalPersonal();
+        return;
+      }
+      const { data, error } = await packingClient
+        .from('packing_personal')
+        .select('id, person, category, name, note, position, source_id')
+        .eq('person', person)
+        .order('position', { ascending: true });
+      if (error) {
+        packingRows = local || seedPersonalRows(person);
+        personalStore = 'local';
+        saveLocalPersonal();
+        return;
+      }
+      if (data && data.length) {
+        packingRows = data.map(personalRow);
+        personalStore = 'remote';
+        saveLocalPersonal();
+        return;
+      }
+      const seed = (local && local.length) ? local.map(personalRow) : seedPersonalRows(person);
+      const payload = seed.map(row => ({
+        id: row.id,
+        person,
+        category: row.category,
+        name: row.name,
+        note: row.note || '',
+        position: row.position,
+        source_id: row.sourceId || null
+      }));
+      const { error: insertError } = await packingClient.from('packing_personal').upsert(payload, { onConflict: 'id' });
+      if (insertError) {
+        packingRows = seed;
+        personalStore = 'local';
+        saveLocalPersonal();
+        return;
+      }
+      packingRows = seed;
+      personalStore = 'remote';
+      saveLocalPersonal();
+    }
+
+    async function onPackingPersonChange() {
+      const token = ++personalLoadToken;
+      const select = document.getElementById('pack-person');
+      packingPerson = select ? select.value : '';
+      localStorage.setItem('japan2026_packing_person', packingPerson);
+      editingPackId = null;
+      loadChecks();
+      if (!packingPerson) {
+        packingRows = sharedTemplate.map(row => ({ ...row }));
+        personalStore = 'template';
+        updatePersonalChrome();
+        renderPacking();
+        return;
+      }
+      setPackingStatus('Loading…');
+      await loadPersonalList(packingPerson);
+      if (token !== personalLoadToken) return;
+      setPackingStatus('');
+      updatePersonalChrome();
+      renderPacking();
+    }
+
+    async function loadSharedPacking() {
+      try {
+        const { data, error } = await packingClient
+          .from('packing_items')
+          .select('id, category, name, note, position')
+          .order('position', { ascending: true });
+        if (error) throw error;
+        sharedTemplate = (!data || !data.length) ? defaultPackingRows() : data.map(normalizePackingRow);
+        if (!data || !data.length) {
+          await packingClient.from('packing_items').upsert(sharedTemplate, { onConflict: 'id' });
+        }
+      } catch (err) {
+        sharedTemplate = defaultPackingRows();
+      }
+      if (!packingPerson) {
+        packingRows = sharedTemplate.map(row => ({ ...row }));
+        personalStore = 'template';
+        updatePersonalChrome();
+        renderPacking();
+      }
+    }
+
+    function initPacking() {
+      if (packingStarted) return;
+      packingStarted = true;
+      const container = document.getElementById('packing-container');
+      container.addEventListener('click', onPackingClick);
+      container.addEventListener('change', onPackingChange);
+      document.getElementById('pack-category').addEventListener('change', toggleNewCategory);
+      fillPersonSelect();
+      sharedTemplate = defaultPackingRows();
+      packingRows = sharedTemplate.map(row => ({ ...row }));
+      loadChecks();
+      updatePersonalChrome();
+      renderPacking();
+
+      const url = (SUPABASE_URL || '').trim();
+      const key = (SUPABASE_ANON_KEY || '').trim();
+      const canShare = url && key && window.supabase && typeof window.supabase.createClient === 'function';
+      if (!canShare) {
+        if (packingPerson) onPackingPersonChange();
+        return;
+      }
+      try {
+        packingClient = window.supabase.createClient(url, key);
+      } catch (err) {
+        packingClient = null;
+        if (packingPerson) onPackingPersonChange();
+        return;
+      }
+      loadSharedPacking().then(() => {
+        if (packingPerson) return onPackingPersonChange();
+      });
     }
 
     // ====================================================
@@ -980,7 +1606,7 @@
     renderHotels();
     renderRooms();
     renderActions();
-    renderPacking();
+    initPacking();
   </script>
 </body>
 </html>
