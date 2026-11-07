@@ -15,6 +15,34 @@
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .route-node {
+      min-width: 4.5rem;
+      text-align: center;
+    }
+    .route-line {
+      width: 1.5rem;
+      height: 2px;
+      background: linear-gradient(90deg, #dc2626, #f59e0b);
+      flex-shrink: 0;
+    }
+    .nav-map-frame {
+      width: 100%;
+      height: 180px;
+      border: 0;
+      border-radius: 0.75rem;
+    }
+    .nav-step-rail {
+      position: relative;
+    }
+    .nav-step-rail::before {
+      content: '';
+      position: absolute;
+      left: 0.85rem;
+      top: 0.5rem;
+      bottom: 0.5rem;
+      width: 2px;
+      background: #fecaca;
+    }
     @media print {
       .no-print { display: none !important; }
       body { background: white; }
@@ -54,6 +82,10 @@
         <button onclick="switchTab('itinerary')" id="tab-btn-itinerary"
                 class="tab-btn active-tab whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white text-slate-900 shadow">
           🗓️ Day-by-Day Itinerary
+        </button>
+        <button onclick="switchTab('getting-around')" id="tab-btn-getting-around"
+                class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
+          🧭 Getting Around
         </button>
         <button onclick="switchTab('hotels')" id="tab-btn-hotels"
                 class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
@@ -138,6 +170,38 @@
       <p class="text-xs text-slate-500">Anything tagged <span class="font-bold text-red-700">Booked for everyone</span> is already set for all 15 travelers. Blue suggestions are optional—choose your name, then tap I’m interested.</p>
 
       <div id="itinerary-cards-container" class="space-y-4"></div>
+    </section>
+
+    <!-- ==========================================
+         TAB: GETTING AROUND
+    =========================================== -->
+    <section id="tab-getting-around" class="hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
+        <div>
+          <h2 class="text-lg font-extrabold text-slate-900">🧭 Getting Around Japan</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Visual step-by-step moves between cities, stations, ferries, and hotel pickups—matching the Google Doc.</p>
+        </div>
+        <div id="route-strip" class="overflow-x-auto no-scrollbar">
+          <div class="min-w-max flex items-center gap-1.5 py-1"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+          <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-amber-950">
+            <p class="font-extrabold">JR Pass rule</p>
+            <p class="mt-0.5">No Nozomi. Use Hikari or Kodama only. Reserve seats for the big Shinkansen hops.</p>
+          </div>
+          <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800">
+            <p class="font-extrabold">Local rides</p>
+            <p class="mt-0.5">Streetcars, subways, and short hops: Suica / Pasmo IC cards. Kids 11 & under get child fares.</p>
+          </div>
+          <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-red-950">
+            <p class="font-extrabold">Luggage plan</p>
+            <p class="mt-0.5">Ship big bags Osaka ➔ Kyoto on 11/20. Miyajima: Makoto van picks up bags at the pier.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-1.5 no-print" id="nav-guide-pills"></div>
+      <div id="getting-around-container" class="space-y-4"></div>
     </section>
 
     <!-- ==========================================
@@ -674,6 +738,181 @@
       { id: "act-8", urgent: false, title: "Confirm Cascade Dinner Time at Fujiya (11/24)", desc: "Pre-check-in done. Cascade is listed for 18:30 — confirm dinner time with the hotel.", link: "https://www.booking.com/hotel/jp/fujiya.html" }
     ];
 
+    const routeCities = [
+      { id: "osaka", label: "Osaka", sub: "KIX / Umeda" },
+      { id: "himeji", label: "Himeji", sub: "Castle day" },
+      { id: "hiroshima", label: "Hiroshima", sub: "Streetcar" },
+      { id: "miyajima", label: "Miyajima", sub: "Ferry" },
+      { id: "kyoto", label: "Kyoto", sub: "2 nights" },
+      { id: "hakone", label: "Hakone", sub: "Tozan bus" },
+      { id: "tokyo", label: "Tokyo", sub: "Kyobashi" },
+      { id: "nrt", label: "NRT", sub: "Fly home" }
+    ];
+
+    const gettingAroundGuides = [
+      {
+        id: "kix-osaka",
+        date: "11/19",
+        title: "KIX Airport ➔ Hilton Osaka (Umeda)",
+        mode: "Train",
+        duration: "~1 hr",
+        lookFor: "JR Haruka Express toward Kyoto/Osaka, or trains to Namba then transfer toward Umeda.",
+        tip: "Umeda is the most convenient stop for Hilton Osaka and the next morning’s Shin-Osaka Shinkansen.",
+        steps: [
+          "Clear immigration at Kansai International (KIX) around noon.",
+          "Buy / activate JR Pass and IC cards if needed.",
+          "Take JR Haruka Express toward Umeda / Osaka, or train via Namba.",
+          "Walk or short taxi to Hilton Osaka (Umeda). Ask concierge about luggage shipment for 11/20."
+        ],
+        maps: [
+          { label: "Hilton Osaka", query: "Hilton Osaka Umeda", url: "https://www.hilton.com/en/hotels/osahitw-hilton-osaka/" }
+        ],
+        links: [
+          { label: "Japan Rail Pass", url: "https://japanrailpass.net/en/" },
+          { label: "Seat reservation video", url: "https://www.youtube.com/watch?v=2Lf0A7z_1Zc" }
+        ]
+      },
+      {
+        id: "osaka-hiroshima",
+        date: "11/20",
+        title: "Osaka ➔ Himeji ➔ (optional Kojima) ➔ Hiroshima",
+        mode: "Shinkansen + streetcar",
+        duration: "Half day moving",
+        lookFor: "Shin-Osaka station → Hikari/Kodama only (no Nozomi). In Hiroshima, Streetcar Line 1 → Chuden-mae.",
+        tip: "Ship big suitcases from Hilton Osaka to Hilton Garden Inn Kyoto before leaving. Carry only a 2-night bag.",
+        steps: [
+          "Leave Hilton Osaka early → Shin-Osaka Station.",
+          "Shinkansen Shin-Osaka ➔ Himeji (30–40 min) for Himeji Castle.",
+          "Optional denim detour: Himeji ➔ Okayama ➔ JR Marine Liner to Kojima (Jeans Street).",
+          "Continue to Hiroshima Station (~1 hr from Himeji direct, or ~1 hr 15 min via Kojima).",
+          "From Hiroshima Station take Electric Railway Streetcar Line 1 and get off at Chuden-mae for THE KNot."
+        ],
+        maps: [
+          { label: "Shin-Osaka Station", query: "Shin-Osaka Station", url: "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station" },
+          { label: "Chuden-mae / Peace Park area", query: "Chuden-mae Station Hiroshima", url: "https://dive-hiroshima.com/en/information/access-peacememorialpark/" }
+        ],
+        links: [
+          { label: "Shin-Osaka guide", url: "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station" },
+          { label: "Streetcar walk steps", url: "https://dive-hiroshima.com/en/information/access-peacememorialpark/" }
+        ]
+      },
+      {
+        id: "hiroshima-miyajima",
+        date: "11/21",
+        title: "THE KNot ➔ Peace Memorial Ferry ➔ Miyajima",
+        mode: "Walk + ferry",
+        duration: "~1 hr door to dock + 45 min boat",
+        lookFor: "Aqua Net World Heritage ferry dock. Arrive 9:45 AM for 10:10 AM departure. Pay at the boat dock.",
+        tip: "Text Shin as you board so Hotel Makoto’s van can meet you at the Miyajima pier for luggage.",
+        steps: [
+          "Walk ~15 minutes from THE KNot to the Peace Memorial boat dock.",
+          "Be at the dock by 9:45 AM (boat leaves 10:10 AM).",
+          "Use ferry bookings #538527 (key ju9J) and #538532 (key 2CkE).",
+          "On Miyajima, look for the Hotel Makoto luggage van at the pier—bags go with the van so you can explore hands-free."
+        ],
+        maps: [
+          { label: "Ferry meeting point", query: "Hiroshima Peace Memorial Park ferry terminal", url: "https://maps.app.goo.gl/WA44dJRN4K4BbwQc7" }
+        ],
+        links: [
+          { label: "Ferry timetable", url: "https://www.aqua-net-h.co.jp/en/heritage/#timeTable-m" },
+          { label: "Directions photo doc", url: "https://docs.google.com/document/d/1Nr92oKDYSzGGOJD6nCr7dNQbiknT8I-XrEAG61sjIEo/edit?usp=sharing" },
+          { label: "Makoto van photo", url: "https://docs.google.com/document/d/1RVkwfAPNKfkHgwYBl83nZy7IL7E43WWavRpLBzrRGt0/edit?usp=sharing" },
+          { label: "Meeting map", url: "https://maps.app.goo.gl/WA44dJRN4K4BbwQc7" }
+        ],
+        visualNote: "Open the Directions photo doc and Makoto van photo before this morning—those are the visual guides from the Google Doc."
+      },
+      {
+        id: "miyajima-kyoto",
+        date: "11/22",
+        title: "Miyajima ➔ Miyajimaguchi ➔ Hiroshima ➔ Kyoto",
+        mode: "JR ferry + train + Shinkansen",
+        duration: "~3 hrs total",
+        lookFor: "Different ferry company off the island—JR West ferry (JR Pass works, no reservation). Sit non-reserved on the Shinkansen if needed.",
+        tip: "Your big suitcases shipped from Osaka should be waiting at Hilton Garden Inn Kyoto.",
+        steps: [
+          "Board the JR West Miyajima Ferry off the island (not the Aqua Net boat you took over).",
+          "Walk 2–3 blocks / ~10 minutes to JR Miyajimaguchi Station.",
+          "Take the JR train to Hiroshima Station (last stop).",
+          "Transfer to Shinkansen bound for Kyoto (~total travel ~3 hrs).",
+          "From Kyoto Station, easy subway / short ride to Hilton Garden Inn Shijo Karasuma."
+        ],
+        maps: [
+          { label: "JR Ferry boarding", query: "Miyajima JR Ferry Terminal", url: "https://maps.app.goo.gl/nphaSxZogRQywBSq6" },
+          { label: "Miyajimaguchi Station", query: "JR Miyajimaguchi Station", url: "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8" }
+        ],
+        links: [
+          { label: "JR ferry map", url: "https://maps.app.goo.gl/nphaSxZogRQywBSq6" },
+          { label: "Miyajimaguchi map", url: "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8" }
+        ]
+      },
+      {
+        id: "kyoto-hakone",
+        date: "11/24",
+        title: "Kyoto ➔ Odawara ➔ Hakone Tozan Micro Bus ➔ Fujiya",
+        mode: "Shinkansen + booked bus tour",
+        duration: "~2 hrs rail + ~6 hr tour/drop-off",
+        lookFor: "Odawara Station west exit at 11:45 AM. Hakone Tozan micro bus (TEL 0465-30-211). Wire transfer already done.",
+        tip: "Try left-side Shinkansen seats Kyoto ➔ Odawara for Mt. Fuji views. Optional: ship heavy bags Kyoto ➔ Tokyo overnight bag only into Hakone.",
+        steps: [
+          "Leave Kyoto early on Shinkansen to Odawara Station (~2 hrs).",
+          "Meet Hakone Tozan Micro Bus at Odawara west exit at 11:45 AM.",
+          "Ride the ~6 hour Hakone micro-bus tour (Open-Air Museum tickets booked).",
+          "Bus drops the group at Fujiya Hotel / Ryokan for onsen evening and Cascade dinner 18:30."
+        ],
+        maps: [
+          { label: "Odawara Station", query: "Odawara Station west exit", url: "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/" },
+          { label: "Fujiya Hotel", query: "Fujiya Hotel Hakone Miyanoshita", url: "https://www.booking.com/hotel/jp/fujiya.html" }
+        ],
+        links: [
+          { label: "Hakone Tozan micro bus", url: "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/" },
+          { label: "Open-Air Museum", url: "https://www.hakone-oam.or.jp/en/" }
+        ]
+      },
+      {
+        id: "hakone-tokyo",
+        date: "11/25",
+        title: "Hakone morning ➔ Odawara ➔ Tokyo (Kyobashi)",
+        mode: "Ropeway option + Shinkansen",
+        duration: "~2 hrs after checkout",
+        lookFor: "Morning ropeway / Fuji view before checkout, then rail Odawara ➔ Tokyo Station. Hotel is walkable toward Ginza / Kyobashi.",
+        tip: "Mitsui Garden pre-check-in is done—ask about early check-in after the Hakone morning.",
+        steps: [
+          "Optional morning: Hakone Ropeway / Owakudani Fuji views before checkout.",
+          "Return to Odawara and take Shinkansen / train to Tokyo Station (~2 hrs total).",
+          "Walk or short taxi to Mitsui Garden Hotel Kyobashi."
+        ],
+        maps: [
+          { label: "Mitsui Garden Kyobashi", query: "Mitsui Garden Hotel Kyobashi", url: "https://www.gardenhotels.co.jp/kyobashi/eng/" }
+        ],
+        links: [
+          { label: "Hakone Ropeway", url: "https://www.japan-guide.com/e/e5223.html" },
+          { label: "Owakudani", url: "https://www.japan.travel/en/spot/1566/" }
+        ]
+      },
+      {
+        id: "tokyo-nrt",
+        date: "11/27",
+        title: "Tokyo ➔ Narita (NRT) for 2:00 PM flight",
+        mode: "Airport bus or N'EX",
+        duration: "Leave hotel ~9:30–10:00 AM",
+        lookFor: "TYO-NRT airport shuttle from Tokyo Station / Ginza area, or Narita Express from Tokyo Station. Be at NRT by ~11:00 AM.",
+        tip: "All bags travel with you on departure day—no luggage van.",
+        steps: [
+          "Checkout from Mitsui Garden Hotel Kyobashi.",
+          "Take Airport Shuttle Bus (Tokyo Station/Ginza) or Narita Express from Tokyo Station.",
+          "Arrive NRT by ~11:00 AM for the 2:00 PM departure."
+        ],
+        maps: [
+          { label: "Tokyo Station", query: "Tokyo Station", url: "https://www.google.com/maps/search/?api=1&query=Tokyo+Station" }
+        ],
+        links: [
+          { label: "Narita Airport", url: "https://www.narita-airport.jp/en/" }
+        ]
+      }
+    ];
+
+    let selectedNavGuide = 'all';
+
     const groupPackingList = [
       {
         category: "🛂 Documents, Passes & Entry",
@@ -975,6 +1214,121 @@
         activeBtn.className = 'day-pill bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow';
       }
       renderItinerary();
+    }
+
+    // ====================================================
+    // RENDER GETTING AROUND
+    // ====================================================
+    function mapEmbedUrl(query) {
+      return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`;
+    }
+
+    function renderRouteStrip() {
+      const wrap = document.querySelector('#route-strip > div');
+      if (!wrap) return;
+      wrap.innerHTML = routeCities.map((city, index) => `
+        <div class="route-node">
+          <div class="mx-auto w-9 h-9 rounded-full bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center border-2 border-red-500">${index + 1}</div>
+          <p class="mt-1 text-[11px] font-extrabold text-slate-900">${city.label}</p>
+          <p class="text-[10px] text-slate-500">${city.sub}</p>
+        </div>
+        ${index < routeCities.length - 1 ? '<div class="route-line" aria-hidden="true"></div>' : ''}
+      `).join('');
+    }
+
+    function filterNavGuide(id) {
+      selectedNavGuide = id;
+      document.querySelectorAll('.nav-guide-pill').forEach(btn => {
+        const active = btn.getAttribute('data-nav-id') === id;
+        btn.className = active
+          ? 'nav-guide-pill bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow'
+          : 'nav-guide-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap';
+      });
+      renderGettingAround();
+    }
+
+    function renderNavGuidePills() {
+      const el = document.getElementById('nav-guide-pills');
+      if (!el) return;
+      const pills = [{ id: 'all', label: 'All moves' }].concat(
+        gettingAroundGuides.map(guide => ({ id: guide.id, label: `${guide.date} · ${guide.title.split('➔')[0].trim()}` }))
+      );
+      el.innerHTML = pills.map(pill => `
+        <button type="button" data-nav-id="${pill.id}" onclick="filterNavGuide('${pill.id}')"
+                class="nav-guide-pill ${selectedNavGuide === pill.id ? 'bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow' : 'bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap'}">${escapeHtml(pill.label)}</button>
+      `).join('');
+    }
+
+    function renderGettingAround() {
+      renderRouteStrip();
+      renderNavGuidePills();
+      const container = document.getElementById('getting-around-container');
+      if (!container) return;
+      const guides = selectedNavGuide === 'all'
+        ? gettingAroundGuides
+        : gettingAroundGuides.filter(guide => guide.id === selectedNavGuide);
+
+      container.innerHTML = guides.map(guide => `
+        <article class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-red-950 text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="bg-red-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded">${guide.date}</span>
+                <span class="bg-white/15 text-amber-100 text-[10px] font-bold px-2 py-0.5 rounded">${escapeHtml(guide.mode)}</span>
+                <span class="bg-white/10 text-slate-200 text-[10px] font-semibold px-2 py-0.5 rounded">${escapeHtml(guide.duration)}</span>
+              </div>
+              <h3 class="text-base sm:text-lg font-extrabold mt-1">${escapeHtml(guide.title)}</h3>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-0">
+            <div class="lg:col-span-3 p-4 space-y-4 border-b lg:border-b-0 lg:border-r border-slate-100">
+              <div class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950">
+                <p class="font-extrabold">Look for</p>
+                <p class="mt-0.5">${escapeHtml(guide.lookFor)}</p>
+              </div>
+
+              <div class="nav-step-rail space-y-3 pl-1">
+                ${guide.steps.map((step, index) => `
+                  <div class="relative flex gap-3">
+                    <div class="relative z-10 w-7 h-7 rounded-full bg-red-600 text-white text-[11px] font-extrabold flex items-center justify-center shrink-0">${index + 1}</div>
+                    <p class="text-sm text-slate-800 pt-1 leading-snug">${escapeHtml(step)}</p>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                <p class="font-extrabold text-slate-900">Tip</p>
+                <p class="mt-0.5">${escapeHtml(guide.tip)}</p>
+              </div>
+              ${guide.visualNote ? `<p class="text-xs font-semibold text-red-800 bg-red-50 border border-red-200 rounded-lg px-3 py-2">${escapeHtml(guide.visualNote)}</p>` : ''}
+
+              ${(guide.links || []).length ? `
+                <div class="flex flex-wrap gap-1.5">
+                  ${guide.links.map(link => `
+                    <a href="${link.url}" target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2.5 py-1.5 rounded-lg">🔗 ${escapeHtml(link.label)} ↗</a>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="lg:col-span-2 p-4 space-y-3 bg-slate-50/70">
+              <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Maps & visuals</p>
+              ${(guide.maps || []).map(map => `
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <p class="text-xs font-bold text-slate-800">${escapeHtml(map.label)}</p>
+                    <a href="${map.url}" target="_blank" rel="noopener" class="text-[11px] font-bold text-blue-700 underline">Open ↗</a>
+                  </div>
+                  <iframe class="nav-map-frame border border-slate-200 shadow-sm" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                          src="${mapEmbedUrl(map.query)}" title="${escapeHtml(map.label)}"></iframe>
+                </div>
+              `).join('') || '<p class="text-xs text-slate-500">Use the day itinerary links for this move.</p>'}
+            </div>
+          </div>
+        </article>
+      `).join('');
     }
 
     // ====================================================
@@ -2064,9 +2418,10 @@
     // ====================================================
     function switchTab(tabName) {
       currentTab = tabName;
-      ['itinerary', 'hotels', 'rooms', 'actions', 'packing'].forEach(t => {
+      ['itinerary', 'getting-around', 'hotels', 'rooms', 'actions', 'packing'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         const btn = document.getElementById(`tab-btn-${t}`);
+        if (!el || !btn) return;
         if (t === tabName) {
           el.classList.remove('hidden');
           btn.className = 'tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white text-slate-900 shadow';
@@ -2075,11 +2430,13 @@
           btn.className = 'tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20';
         }
       });
+      if (tabName === 'getting-around') renderGettingAround();
     }
 
     // INITIALIZE
     updateCountdown();
     renderItinerary();
+    renderGettingAround();
     renderHotels();
     renderRooms();
     renderActions();
