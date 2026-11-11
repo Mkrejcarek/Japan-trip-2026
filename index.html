@@ -43,6 +43,12 @@
       width: 2px;
       background: #fecaca;
     }
+    .tab-btn { min-height: 44px; }
+    .day-pill, .nav-guide-pill { min-height: 40px; }
+    .day-card, #route-map, #today-next { scroll-margin-top: 0.75rem; }
+    .route-node { background: transparent; border: 0; padding: 0; }
+    #japan-map-svg, #japan-inset-svg { width: 100%; height: auto; display: block; }
+    .stop-hit { cursor: pointer; }
     @media print {
       .no-print { display: none !important; }
       body { background: white; }
@@ -52,8 +58,8 @@
 <body class="min-h-screen pb-24">
 
   <!-- TOP HERO HEADER -->
-  <header class="bg-gradient-to-br from-slate-900 via-red-950 to-slate-900 text-white shadow-lg sticky top-0 z-30">
-    <div class="max-w-5xl mx-auto px-4 py-4">
+  <header class="bg-gradient-to-br from-slate-900 via-red-950 to-slate-900 text-white shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 py-3">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <div class="flex items-center gap-2 flex-wrap">
@@ -79,27 +85,31 @@
 
       <!-- MAIN NAVIGATION TABS -->
       <nav class="flex flex-wrap gap-1.5 mt-4 no-print">
-        <button onclick="switchTab('itinerary')" id="tab-btn-itinerary"
+        <button onclick="switchTab('itinerary', true)" id="tab-btn-itinerary"
                 class="tab-btn active-tab whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white text-slate-900 shadow">
           🗓️ Day-by-Day Itinerary
         </button>
-        <button onclick="switchTab('getting-around')" id="tab-btn-getting-around"
+        <button onclick="switchTab('getting-around', true)" id="tab-btn-getting-around"
                 class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
           🧭 Getting Around
         </button>
-        <button onclick="switchTab('hotels')" id="tab-btn-hotels"
+        <button onclick="switchTab('denim', true)" id="tab-btn-denim"
+                class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
+          👖 Denim Quest
+        </button>
+        <button onclick="switchTab('hotels', true)" id="tab-btn-hotels"
                 class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
           🏨 Hotels & Confirmations
         </button>
-        <button onclick="switchTab('rooms')" id="tab-btn-rooms"
+        <button onclick="switchTab('rooms', true)" id="tab-btn-rooms"
                 class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
           🛏️ Room Assignments (15)
         </button>
-        <button onclick="switchTab('actions')" id="tab-btn-actions"
+        <button onclick="switchTab('actions', true)" id="tab-btn-actions"
                 class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
           ⚡ Action Items & Links
         </button>
-        <button onclick="switchTab('packing')" id="tab-btn-packing"
+        <button onclick="switchTab('packing', true)" id="tab-btn-packing"
                 class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20">
           🎒 Group Packing Checklist
         </button>
@@ -109,21 +119,65 @@
 
   <main class="max-w-5xl mx-auto px-4 pt-5 space-y-6">
 
+    <section id="today-next" class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="px-4 py-3 bg-slate-900 text-white">
+        <p class="text-[11px] font-semibold uppercase tracking-wider text-amber-200">Krejcarek family Japan trip · 15 travelers · 4 families</p>
+        <h2 class="text-lg font-extrabold">Nov 19–27, 2026</h2>
+        <p class="text-xs text-slate-300 mt-1">Osaka, Himeji, Kojima, Hiroshima, Miyajima, Kyoto, Hakone, and Tokyo. This is the shared plan: what is booked, what is optional, and how we move between cities.</p>
+      </div>
+      <div id="today-next-body" class="p-4"></div>
+    </section>
+
     <!-- LEGEND BAR -->
     <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex flex-wrap items-center justify-between gap-2 text-xs">
-      <div class="flex flex-wrap items-center gap-3">
-        <span class="font-bold text-slate-700">Color Key (Matches Google Doc):</span>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="font-bold text-slate-700">Color key (same as the Doc):</span>
         <span class="inline-flex items-center gap-1.5 font-semibold text-red-700 bg-red-50 border border-red-200 px-2.5 py-1 rounded-md">
-          <span class="w-2 h-2 rounded-full bg-red-600"></span> RED = Booked for everyone
+          <span class="w-2 h-2 rounded-full bg-red-600"></span> Red = Booked
         </span>
         <span class="inline-flex items-center gap-1.5 font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md">
-          <span class="w-2 h-2 rounded-full bg-blue-600"></span> BLUE = Optional suggestion
+          <span class="w-2 h-2 rounded-full bg-blue-600"></span> Blue = Suggestion
+        </span>
+        <span class="inline-flex items-center gap-1.5 font-semibold text-fuchsia-800 bg-fuchsia-50 border border-fuchsia-200 px-2.5 py-1 rounded-md">
+          <span class="w-2 h-2 rounded-full bg-fuchsia-500"></span> Pink = What to do when you are there
         </span>
       </div>
       <div class="text-slate-500 font-medium">
         Contact on Bookings: <span class="text-slate-800 font-semibold">mkrejcarek@gmail.com</span> • <span class="text-slate-800 font-semibold">954-232-5478</span>
       </div>
     </div>
+
+
+    <section id="route-map" class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="px-4 py-3 border-b border-slate-100">
+        <h2 class="text-base font-extrabold text-slate-900">Japan Trip Nov 2026 Itinerary Route</h2>
+        <p class="text-xs text-slate-600 mt-1">Tap a number for that day. City dates match Mark’s route map. Miyajima is labeled Nov 21; the Doc also has the group leaving the island on the morning of Nov 22.</p>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-5">
+        <div class="lg:col-span-3 p-2 sm:p-3">
+          <svg id="japan-map-svg" role="img" aria-label="Japan with the trip route"></svg>
+        </div>
+        <div class="lg:col-span-2 p-3 space-y-3 border-t lg:border-t-0 lg:border-l border-slate-100">
+          <div>
+            <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Seto Inland Sea · stops 2–5</p>
+            <svg id="japan-inset-svg" role="img" aria-label="Himeji, Kojima, Hiroshima, and Miyajima"></svg>
+          </div>
+          <ol id="route-stop-list" class="space-y-1.5"></ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="flights-box" class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <details>
+        <summary class="cursor-pointer list-none px-4 py-3 min-h-[44px] flex items-center">
+          <span>
+            <span class="block text-sm font-extrabold text-slate-900">Flights · both groups land KIX at 11:55 on Nov 19</span>
+            <span class="block text-xs text-slate-500">NRT departure is 2:00 PM on Nov 27 (Option A on the Doc screenshots). Tap for the rows.</span>
+          </span>
+        </summary>
+        <div id="flights-container" class="px-4 pb-4"></div>
+      </details>
+    </section>
 
     <section id="booked-for-everyone" class="bg-white border border-red-200 rounded-xl shadow-sm overflow-hidden">
       <div class="px-4 py-3 bg-red-50 border-b border-red-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -157,17 +211,17 @@
       <!-- Day Jump Pills -->
       <div class="flex flex-wrap items-center gap-1.5 py-1 no-print">
         <button onclick="filterDay('all')" id="day-pill-all" class="day-pill bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap">All 9 Days</button>
-        <button onclick="filterDay('11/19')" id="day-pill-11/19" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Thu 11/19 • Osaka</button>
-        <button onclick="filterDay('11/20')" id="day-pill-11/20" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Fri 11/20 • Himeji/Kojima/Hiroshima</button>
-        <button onclick="filterDay('11/21')" id="day-pill-11/21" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Sat 11/21 • Miyajima</button>
-        <button onclick="filterDay('11/22')" id="day-pill-11/22" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Sun 11/22 • Miyajima ➔ Kyoto</button>
-        <button onclick="filterDay('11/23')" id="day-pill-11/23" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Mon 11/23 • Kyoto</button>
-        <button onclick="filterDay('11/24')" id="day-pill-11/24" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Tue 11/24 • Hakone</button>
-        <button onclick="filterDay('11/25')" id="day-pill-11/25" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Wed 11/25 • Tokyo</button>
-        <button onclick="filterDay('11/26')" id="day-pill-11/26" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Thu 11/26 • Tokyo</button>
-        <button onclick="filterDay('11/27')" id="day-pill-11/27" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Fri 11/27 • Departure NRT</button>
+        <button onclick="jumpToDay('11/19')" id="day-pill-11/19" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Thu 11/19 • Osaka</button>
+        <button onclick="jumpToDay('11/20')" id="day-pill-11/20" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Fri 11/20 • Himeji/Kojima/Hiroshima</button>
+        <button onclick="jumpToDay('11/21')" id="day-pill-11/21" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Sat 11/21 • Miyajima</button>
+        <button onclick="jumpToDay('11/22')" id="day-pill-11/22" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Sun 11/22 • Miyajima ➔ Kyoto</button>
+        <button onclick="jumpToDay('11/23')" id="day-pill-11/23" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Mon 11/23 • Kyoto</button>
+        <button onclick="jumpToDay('11/24')" id="day-pill-11/24" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Tue 11/24 • Hakone</button>
+        <button onclick="jumpToDay('11/25')" id="day-pill-11/25" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Wed 11/25 • Tokyo</button>
+        <button onclick="jumpToDay('11/26')" id="day-pill-11/26" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Thu 11/26 • Tokyo</button>
+        <button onclick="jumpToDay('11/27')" id="day-pill-11/27" class="day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap">Fri 11/27 • Departure NRT</button>
       </div>
-      <p class="text-xs text-slate-500">Anything tagged <span class="font-bold text-red-700">Booked for everyone</span> is already set for all 15 travelers. Blue suggestions are optional—choose your name, then tap I’m interested.</p>
+      <p class="text-xs text-slate-500">Red items are booked for the group. Blue items are suggestions — choose your name, then tap I’m interested. Pink items are how to do it on the day. The time chips under each day are the meeting times.</p>
 
       <div id="itinerary-cards-container" class="space-y-4"></div>
     </section>
@@ -195,7 +249,7 @@
           </div>
           <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-red-950">
             <p class="font-extrabold">Luggage plan</p>
-            <p class="mt-0.5">Ship big bags Osaka ➔ Kyoto on 11/20. Miyajima: Makoto van picks up bags at the pier.</p>
+            <p class="mt-0.5">The Doc still asks about sending big bags Osaka → Kyoto on 11/20. Miyajima: text Shin; the Makoto van meets the ferry.</p>
           </div>
         </div>
       </div>
@@ -327,6 +381,11 @@
 
   </main>
 
+  
+    <section id="tab-denim" class="hidden space-y-4">
+      <div id="denim-container" class="space-y-4"></div>
+    </section>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4"></script>
   <script>
     // Publishable key from Supabase → Project Settings → API.
@@ -393,303 +452,743 @@
     };
 
     const itineraryDays = [
+  {
+    "date": "11/19",
+    "dayName": "Thursday, Nov 19",
+    "title": "Osaka Arrival (KIX 11:55) → Umeda & Namba",
+    "city": "Osaka",
+    "keyTimes": [
+      "KIX Terminal 1 · 11:55",
+      "WithLocals · 4:00 PM",
+      "Zauo · 6:00 PM",
+      "Hilton #3537286416"
+    ],
+    "luggageTip": "Bring bags to Hilton Osaka. At check-in, ask the front desk or concierge about luggage shipment so the morning send-off is quicker.",
+    "transport": [
       {
-        date: "11/19",
-        dayName: "Thursday, Nov 19",
-        title: "Osaka Arrival (KIX ~Noon) ➔ Umeda & Namba",
-        city: "Osaka",
-        luggageTip: "Bring all luggage from KIX Airport to Hilton Osaka (Umeda). At check-in, ask the front desk/concierge about luggage shipment so morning send-off is quick.",
-        transport: [
-          { text: "Arrival at Kansai International Airport (KIX) around 12:00 PM noon", status: "booked" },
-          { text: "Train to Namba OR JR Haruka Express directly to Umeda (Umeda is most convenient for Hilton Osaka & next day's Shinkansen)", status: "suggestion" },
-          { text: "JR Pass / Reserved Seat Tickets (1-month reservation window opened 10/19)", status: "info", links: [
-            { label: "Japan Rail Pass Official", url: "https://japanrailpass.net/en/" },
-            { label: "JR Pass Video Guide", url: "https://www.youtube.com/watch?v=sa3_by5fRjE" },
-            { label: "How to Reserve Seats Video", url: "https://www.youtube.com/watch?v=2Lf0A7z_1Zc" }
-          ]}
-        ],
-        hotel: {
-          name: "Hilton Osaka (Umeda)",
-          status: "booked",
-          url: "https://www.hilton.com/en/hotels/osahitw-hilton-osaka/",
-          address: "530-0001, Osaka, 8-8, Umeda 1-chome, Kita-ku, Japan",
-          confirmation: "#3537286416",
-          details: "7 rooms confirmed (1 King bed, 6 Twin beds). Breakfast included. Passport photos sent. Pre-check-in DONE."
-        },
-        activities: [
-          { text: "4:00 PM 'WithLocals' Private Tour — BOOKED (timing may adjust). Ask guide to meet at Hilton Osaka, take group to Namba area, and end at Zauo fishing restaurant.", status: "booked" },
-          { text: "Optional daytime ideas: Cat cafe, yoga, shopping around Umeda/Namba (free time—join tour or meet at dinner).", status: "suggestion" }
-        ],
-        food: [
-          { text: "6:00 PM Dinner Reservation at Zauo Fishing Restaurant (Namba) — BOOKED! Catch your own fish from the boat. Option to walk Dotonbori afterward.", status: "booked", url: "https://www.zauo.com/shops/namba/" }
+        "text": "Arrival at KIX Terminal 1 at 11:55 on Nov 19 (the Doc also says around noon). San Francisco group: EVA Air BR017, then BR132. Los Angeles group: EVA Air BR015, then BR132. Both groups land on BR132. Full rows are in Flights.",
+        "status": "booked"
+      },
+      {
+        "text": "Take the airport express Haruka to Osaka Station (about every 20 minutes). Reserved or non-reserved seats. If you want a reserved seat, ask the staff when you receive the JR Pass. You can also get the Kyoto → Odawara tickets here (green class) for the Nov 24 train.",
+        "status": "there",
+        "links": [
+          {
+            "label": "How to activate the JR Pass at KIX",
+            "url": "https://www.jrpass.com/blog/how-to-activate-the-jr-pass-at-kansai-airport"
+          },
+          {
+            "label": "Japan Rail Pass",
+            "url": "https://japanrailpass.net/en/"
+          },
+          {
+            "label": "JR Pass video",
+            "url": "https://www.youtube.com/watch?v=sa3_by5fRjE"
+          },
+          {
+            "label": "How to reserve a seat",
+            "url": "https://www.youtube.com/watch?v=2Lf0A7z_1Zc"
+          }
         ]
       },
       {
-        date: "11/20",
-        dayName: "Friday, Nov 20",
-        title: "Osaka ➔ Himeji Castle ➔ Kojima Jeans St ➔ Hiroshima",
-        city: "Himeji • Kojima • Hiroshima",
-        luggageTip: "📦 Send big suitcases from Hilton Osaka front desk directly to Hilton Garden Inn Kyoto (arrives 11/22). Carry only a 2-night bag for Hiroshima & Miyajima!",
-        transport: [
-          { text: "Leave Hilton Osaka early morning ➔ head to Shin-Osaka Station for Shinkansen", status: "booked", links: [
-            { label: "Shin-Osaka Station Guide", url: "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station" }
-          ]},
-          { text: "Rail Pass note: You cannot take Nozomi — use Hikari (or Kodama) trains only.", status: "info" },
-          { text: "Leg 1: Shinkansen from Shin-Osaka to Himeji (30–40 min)", status: "booked" },
-          { text: "Leg 2 (Optional): Shinkansen from Himeji to Okayama Station (19–23 min), transfer to JR Marine Liner/local train to Kojima (20–24 min)", status: "suggestion" },
-          { text: "Leg 3: To Hiroshima (~1 hr 15 min from Kojima, or ~1 hr direct from Himeji on Shinkansen)", status: "booked" },
-          { text: "Hiroshima Station to Hotel: Take Hiroshima Electric Railway Streetcar Line 1 → get off at Chuden-mae stop.", status: "info", links: [
-            { label: "Streetcar Walk Steps to Peace Park / Hotel Area", url: "https://dive-hiroshima.com/en/information/access-peacememorialpark/" }
-          ]}
-        ],
-        hotel: {
-          name: "THE KNot Hiroshima",
-          status: "suggestion",
-          url: "https://hotel-the-knot.jp/hiroshima/en/",
-          address: "Central Hiroshima (Streetcar Line 1 → Chuden-mae)",
-          confirmation: "Pre-check-in NOT done yet — email hotel re: rooms, baby cot & 16yo policy",
-          details: "Stayed here on last school trip. Basic rooms, nice lobby & breakfast, convenient location. Phone not working on their end — email them."
-        },
-        activities: [
-          { text: "Himeji Castle (2–3 hours): Students are FREE with a School ID! Adults ~$15. Buy online or at castle gate (not pre-booked for the group).", status: "suggestion", url: "https://himejicastle-ticket.jp/?utm_source=alliance&utm_medium=referral&utm_campaign=2603_ticket&utm_id=nid000309" },
-          { text: "Kojima Jeans Street (1–2 hours): Indigo denim district in Kurashiki City. (Note: Momotaro, Kapital, Samurai & Japan Blue Jeans also have shops in Kyoto/Tokyo).", status: "suggestion", links: [
-            { label: "Kojima Jeans Street Guide", url: "https://www.japan.travel/en/japan-magazine/exploring-jeans-street-in-kojima-city-dyed-in-indigo/" },
-            { label: "Momotaro Jeans", url: "https://www.momotaro-jeans.com/en_US/home/" },
-            { label: "Kapital", url: "https://www.kapital.jp/" },
-            { label: "Samurai Jeans", url: "https://www.samurai-j.com/en" },
-            { label: "Japan Blue Jeans", url: "https://www.japanblue-jeans.com/en_US/home/" }
-          ]}
-        ],
-        food: [
-          { text: "Breakfast included at Hilton Osaka before departure", status: "booked" },
-          { text: "Lunch at Otemae Park (right across from Himeji Castle) — outdoor food stalls with local specialties", status: "suggestion", url: "https://maps.app.goo.gl/QARUvBrxchKmCdbd6" },
-          { text: "6:30 PM Dinner at Yamachan (chicken wings) — BOOKED! Call a few days before to confirm the menu.", status: "booked" }
+        "text": "Umeda is the more convenient area for Hilton Osaka and the next morning’s Shinkansen.",
+        "status": "info"
+      }
+    ],
+    "hotel": {
+      "name": "Hilton Osaka (Umeda)",
+      "status": "booked",
+      "url": "https://www.hilton.com/en/hotels/osahitw-hilton-osaka/",
+      "address": "530-0001, Osaka, 8-8, Umeda 1-chome, Kita-ku, Japan",
+      "confirmation": "#3537286416",
+      "details": "Pre-check-in done. Breakfast included. Passport photos sent. Contact on the booking: mkrejcarek@gmail.com · 954-232-5478. The Doc says both “Booked - Hilton Osaka - 6 Rooms” and “7 rooms confirmed. 1 king bed, 6 twin beds.” The room table is the 7-room layout."
+    },
+    "activities": [
+      {
+        "text": "4:00 PM WithLocals tour — booked. Timing will likely be adjusted. Ask the guide to meet at the hotel, take the group to Namba, and end at the fishing restaurant.",
+        "status": "booked"
+      },
+      {
+        "text": "Cat cafe, yoga, shopping. Otherwise free time. Join the tour or meet at dinner.",
+        "status": "suggestion"
+      },
+      {
+        "text": "Denim side quest, stop 1: possible afternoon visit to the Osaka 5 shops named so far (Studio D’Artisan, Momotaro, and Big John), near-ish the hotel. Open the Denim Quest tab. Two of the five names were not given.",
+        "status": "info"
+      }
+    ],
+    "food": [
+      {
+        "text": "Zauo in Namba — 6:00 PM reservation made. Catch your own fish.",
+        "status": "booked",
+        "url": "https://www.zauo.com/shops/namba/"
+      },
+      {
+        "text": "Option to walk around Dotonbori and then back to the hotel.",
+        "status": "info"
+      }
+    ]
+  },
+  {
+    "date": "11/20",
+    "dayName": "Friday, Nov 20",
+    "title": "Osaka → Himeji Castle → Kojima → Hiroshima",
+    "city": "Himeji · Kojima · Hiroshima",
+    "keyTimes": [
+      "Osaka Station → Shin-Osaka",
+      "Platforms 20–22 · Hikari only",
+      "Yamachan · 6:30 PM"
+    ],
+    "luggageTip": "The Doc still asks: send luggage to the Kyoto hotel? Ask the Hilton front desk about shipment so the morning is quicker. Carry what you need for Hiroshima and Miyajima.",
+    "transport": [
+      {
+        "text": "Leave early. Go from Osaka Station to Shin-Osaka Station for the Shinkansen, platforms 20–22.",
+        "status": "there",
+        "links": [
+          {
+            "label": "Shin-Osaka Station guide",
+            "url": "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station"
+          }
         ]
       },
       {
-        date: "11/21",
-        dayName: "Saturday, Nov 21",
-        title: "Hiroshima Peace Park Ferry ➔ Miyajima Island",
-        city: "Miyajima Island",
-        luggageTip: "🚐 Text Shin as you board the ferry so Hotel Makoto can meet you at the dock for luggage. Look for the Makoto van at the pier—they pick up bags so you can explore hands-free!",
-        transport: [
-          { text: "Walk 15 mins from The Knot Hotel to Peace Memorial Boat Dock. Arrive by 9:45 AM for 10:10 AM departure (45-min boat ride to Miyajima). Pay at dock.", status: "booked", links: [
-            { label: "Aqua Net World Heritage Ferry Timetable", url: "https://www.aqua-net-h.co.jp/en/heritage/#timeTable-m" },
-            { label: "Meeting Location Map", url: "https://maps.app.goo.gl/WA44dJRN4K4BbwQc7" },
-            { label: "Directions to Boat Dock Doc", url: "https://docs.google.com/document/d/1Nr92oKDYSzGGOJD6nCr7dNQbiknT8I-XrEAG61sjIEo/edit?usp=sharing" },
-            { label: "Photo of Hotel Makoto Luggage Van", url: "https://docs.google.com/document/d/1RVkwfAPNKfkHgwYBl83nZy7IL7E43WWavRpLBzrRGt0/edit?usp=sharing" }
-          ]},
-          { text: "Ferry Booking #1: Confirmation #538527 (Inquiry Key: ju9J) • Ferry Booking #2: Confirmation #538532 (Inquiry Key: 2CkE)", status: "booked" }
-        ],
-        hotel: {
-          name: "Hotel Makoto (Miyajima)",
-          status: "booked",
-          url: "https://hotelmakoto.co.jp/en/",
-          address: "Miyajima Island (Van picks up luggage at ferry terminal)",
-          confirmation: "Pre-check-in DONE (Optional +2,200 yen/person for ocean view room)",
-          details: "Traditional stay on Miyajima Island with dinner & breakfast included. Text Shin when boarding so the hotel meets the ferry for bags."
-        },
-        activities: [
-          { text: "Mount Misen Hike & Ropeway Gondola to the summit", status: "suggestion" },
-          { text: "Stroll Omotesando shopping street & Itsukushima Shrine", status: "suggestion" },
-          { text: "Okeiko Japan Miyajima Tea Ceremony (with optional Kimono): 30-min English guide, watch sensei & whisk your own matcha (5,000 yen, ages 6+, baby held). Sessions at 10:30, 13:30, 15:30.", status: "suggestion", links: [
-            { label: "Okeiko Japan Menu", url: "https://okeikojapan-miyajima.com/en/activity-menu-english/" },
-            { label: "TripAdvisor Reviews", url: "https://www.tripadvisor.com/Attraction_Review-g14135087-d12298024-Reviews-Okeiko_Japan_Miyajima-Itsukushima_Hatsukaichi_Hiroshima_Prefecture_Chugoku.html" }
-          ]}
-        ],
-        food: [
-          { text: "Lunch along Miyajima shopping street", status: "suggestion" },
-          { text: "Dinner & Breakfast included at Hotel Makoto", status: "booked" }
-        ]
+        "text": "You cannot take Nozomi with the rail pass. Take Hikari.",
+        "status": "there"
       },
       {
-        date: "11/22",
-        dayName: "Sunday, Nov 22",
-        title: "Miyajima ➔ Hiroshima ➔ Shinkansen to Kyoto",
-        city: "Kyoto",
-        luggageTip: "Your big suitcases shipped from Osaka on 11/20 will be waiting for you at Hilton Garden Inn Kyoto!",
-        transport: [
-          { text: "Board JR West Miyajima Ferry off the island (use JR Pass, no reservation needed).", status: "booked", links: [
-            { label: "JR Ferry Boarding Map", url: "https://maps.app.goo.gl/nphaSxZogRQywBSq6" }
-          ]},
-          { text: "Walk 10 mins (2–3 blocks) to JR Miyajimaguchi Station ➔ take JR train to Hiroshima Station (last stop).", status: "booked", links: [
-            { label: "Miyajimaguchi Station Map", url: "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8" }
-          ]},
-          { text: "Transfer at Hiroshima Station to Shinkansen bound for Kyoto (sit in non-reserved section; total travel ~3 hrs). Easy subway ride from Kyoto Station to hotel.", status: "booked" }
-        ],
-        hotel: {
-          name: "Hilton Garden Inn Kyoto Shijo Karasuma",
-          status: "booked",
-          url: "https://www.hilton.com/en/hotels/itmkygi-hilton-garden-inn-kyoto-shijo-karasuma/?SEO_id=GMB-APAC-GI-ITMKYGI",
-          address: "600-8418, Kyoto, 397 Gojokarasumacho, Shimogyo Ward, Japan",
-          confirmation: "#3532653371",
-          details: "7 rooms confirmed (2 rooms w/ 2 Twin beds, 5 rooms w/ 1 Queen bed). Breakfast included. Passport photos sent. Pre-check-in DONE."
-        },
-        activities: [
-          { text: "Arrive Kyoto mid-to-late afternoon", status: "info" },
-          { text: "Afternoon options: Nishiki Market (2–3 hrs), Cat / Mini-Pig / Shiba-Inu / Hedgehog Cafe, Fushimi Inari Shrine (2–3 hrs), Nighttime Ghost Tour", status: "suggestion" }
-        ],
-        food: [
-          { text: "6:00 PM Dinner at Hanatanuki — BOOKED! À la carte.", status: "booked" }
-        ]
+        "text": "Himeji is 30–40 minutes from Osaka on the Shinkansen.",
+        "status": "info"
       },
       {
-        date: "11/23",
-        dayName: "Monday, Nov 23",
-        title: "Full Day Exploring Kyoto — Momo Tour + TeamLab",
-        city: "Kyoto",
-        luggageTip: "No hotel change today! Relax and enjoy Kyoto.",
-        transport: [
-          { text: "Local Kyoto trains, subway, or taxis between shrines and markets", status: "info" }
-        ],
-        hotel: {
-          name: "Hilton Garden Inn Kyoto Shijo Karasuma (Night 2)",
-          status: "booked",
-          url: "https://www.hilton.com/en/hotels/itmkygi-hilton-garden-inn-kyoto-shijo-karasuma/?SEO_id=GMB-APAC-GI-ITMKYGI",
-          address: "600-8418, Kyoto, 397 Gojokarasumacho, Shimogyo Ward, Japan",
-          confirmation: "#3532653371",
-          details: "Continuing stay — 7 rooms confirmed, breakfast included. Pre-check-in DONE."
-        },
-        activities: [
-          { text: "Momo Tour Guide — 8 hours BOOKED", status: "booked" },
-          { text: "TeamLab Biovortex Kyoto (2–3 hrs) — BOOKED for 6:30 PM. Tickets are in AMK Gmail (three confirmation emails). Top floor has interactive physical activities.", status: "booked", links: [
-            { label: "TeamLab Kyoto", url: "https://www.teamlab.art/e/kyoto/" }
-          ]},
-          { text: "Daytime options with guide / free time: Nishiki Market, animal cafes, Fushimi Inari (2–3 hrs), Tea Ceremony, Arashiyama Bamboo Forest (3–4 hrs including transit)", status: "suggestion", links: [
-            { label: "Maikoya Tea Ceremony", url: "https://mai-ko.com/" }
-          ]}
-        ],
-        food: [
-          { text: "Breakfast included at Hilton Garden Inn Kyoto", status: "booked" },
-          { text: "Dinner options: Chicken Wings, Okonomiyaki, or Shabu-Shabu", status: "suggestion" }
-        ]
+        "text": "Kojima is a bit out of the way (just over an hour from Himeji). Shinkansen Himeji → Okayama (19–23 min), then JR Marine Liner or a local train to Kojima (20–24 min). To skip Kojima, stay on the Shinkansen after Himeji.",
+        "status": "suggestion"
       },
       {
-        date: "11/24",
-        dayName: "Tuesday, Nov 24",
-        title: "Kyoto ➔ Hakone (Mt. Fuji Views & Onsen)",
-        city: "Hakone",
-        luggageTip: "Optional: Ship heavy bags from Kyoto straight to Mitsui Garden Hotel Tokyo so you only carry an overnight bag into Hakone!",
-        transport: [
-          { text: "Leave Kyoto early on Shinkansen to Odawara Station (~2 hrs). Try left-side seats for Mt. Fuji views.", status: "booked" },
-          { text: "Hakone Tozan Micro Bus Tour — BOOKED (wire transfer DONE). Pickup 11:45 AM at west exit of Odawara Station. ~6 hr Hakone tour, then drop-off at Fujiya Ryokan. TEL: 0465-30-211", status: "booked", links: [
-            { label: "Hakone Tozan Micro Bus Info", url: "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/" }
-          ]}
-        ],
-        hotel: {
-          name: "Fujiya Hotel (Hakone)",
-          status: "booked",
-          url: "https://www.booking.com/hotel/jp/fujiya.html",
-          address: "Miyanoshita, Hakone (Historic turn-of-the-century resort)",
-          confirmation: "Pre-check-in DONE — ask for dinner time (Cascade 18:30)",
-          details: "6 rooms: 4x Forest Wing Twin (3 ppl each), 1x Flower Palace Penthouse (4 ppl), 1x Comfy Lodge (3 adults). Japanese / French / Western dining."
-        },
-        activities: [
-          { text: "Hakone Open-Air Outdoor Museum — tickets BOOKED (included in day tour / afternoon)", status: "booked", links: [
-            { label: "Hakone Open-Air Museum", url: "https://www.hakone-oam.or.jp/en/" }
-          ]},
-          { text: "Owakudani, Hakone Ropeway, Hakone Shrine options (ropeway with Fuji view also great morning of 11/25 before checkout)", status: "suggestion", links: [
-            { label: "Owakudani", url: "https://www.japan.travel/en/spot/1566/" },
-            { label: "Hakone Ropeway", url: "https://www.japan-guide.com/e/e5223.html" },
-            { label: "Hakone Shrine", url: "https://www.japan-guide.com/e/e5204.html" }
-          ]},
-          { text: "Evening Onsen (hot springs) relaxation at hotel", status: "suggestion" }
-        ],
-        food: [
-          { text: "Breakfast at Hilton Garden Inn Kyoto before departing", status: "booked" },
-          { text: "Lunch on Hakone shopping street (optional)", status: "suggestion" },
-          { text: "6:30 PM Dinner at Cascade (Fujiya Hotel) — BOOKED. Breakfast & dinner included at hotel.", status: "booked" }
-        ]
+        "text": "Hiroshima is about 1 hour 15 minutes from Kojima (local train and Shinkansen), or about an hour direct from Himeji.",
+        "status": "info"
       },
       {
-        date: "11/25",
-        dayName: "Wednesday, Nov 25",
-        title: "Hakone ➔ Tokyo (Ginza, Shibuya, TeamLab Planets)",
-        city: "Tokyo",
-        luggageTip: "Check into Mitsui Garden Hotel Kyobashi (walking distance to Tokyo Station & Ginza).",
-        transport: [
-          { text: "Morning Ropeway / Fuji view in Hakone before checkout, then Shinkansen/train from Odawara to Tokyo Station (~2 hrs total)", status: "booked" }
-        ],
-        hotel: {
-          name: "Mitsui Garden Hotel Kyobashi (Tokyo)",
-          status: "booked",
-          url: "https://www.gardenhotels.co.jp/kyobashi/eng/",
-          address: "Kyobashi, Chuo-ku, Tokyo (Near Tokyo Station & Ginza)",
-          confirmation: "Pre-check-in DONE — 7 rooms (6 of 2ppl + 1 with 2 adults & baby). Early check-in?",
-          details: "Breakfast is 2,420 yen/person (many BF options sold; anticipate 20–30 min wait, or grab food nearby)."
-        },
-        activities: [
-          { text: "TeamLab Planets Tokyo (Different from the Kyoto/school trip one! Knee-deep water rooms — wear pants that roll up).", status: "suggestion", url: "https://www.teamlab.art/e/planets/" },
-          { text: "Shopping in Ginza (Shiseido flagship store) & Harajuku / Shibuya (Liberty Walk Tokyo)", status: "suggestion" },
-          { text: "JDM Car Tour experience", status: "suggestion", url: "https://www.getyourguide.com/s?q=Tokyo&et=507597" },
-          { text: "Casio Museum & G-Shock Store Tokyo", status: "suggestion", links: [
-            { label: "Casio Museum Blog Guide", url: "https://www.plus9time.com/blog/2025/10/10/visit-to-the-casio-museum-tokyo" },
-            { label: "G-Shock Store Tokyo", url: "https://www.casio.com/jp/watches/G-SHOCK_STORE/store-203/" }
-          ]}
-        ],
-        food: [
-          { text: "Breakfast at Hakone hotel; Dinner at Tokyo restaurants", status: "suggestion" }
-        ]
-      },
-      {
-        date: "11/26",
-        dayName: "Thursday, Nov 26",
-        title: "Full Day in Tokyo (Markets, Vintage & Neighborhoods)",
-        city: "Tokyo",
-        luggageTip: "Pack souvenirs tonight for tomorrow's 2:00 PM NRT flight!",
-        transport: [
-          { text: "Tokyo Metro & JR lines using IC Cards / Suica", status: "info" }
-        ],
-        hotel: {
-          name: "Mitsui Garden Hotel Kyobashi (Night 2)",
-          status: "booked",
-          url: "https://www.gardenhotels.co.jp/kyobashi/eng/",
-          address: "Kyobashi, Chuo-ku, Tokyo",
-          confirmation: "Continuing Stay (7 Rooms)",
-          details: "Walking distance to Ginza & Tokyo Station."
-        },
-        activities: [
-          { text: "Tsukiji Outer Market food & market stroll (1–2 hrs)", status: "suggestion" },
-          { text: "Shimokitazawa neighborhood (vintage clothing stores, record shops, indie cafes)", status: "suggestion" },
-          { text: "Harajuku / Shibuya (Liberty Walk Tokyo) & Ginza shopping", status: "suggestion" },
-          { text: "Optional Day Trip: Kamakura & Enoshima coastal train", status: "suggestion" }
-        ],
-        food: [
-          { text: "Tsukiji Market street food + Farewell Group Dinner in Tokyo", status: "suggestion" }
-        ]
-      },
-      {
-        date: "11/27",
-        dayName: "Friday, Nov 27",
-        title: "Tokyo ➔ Narita Airport (NRT) 2:00 PM Flight Home",
-        city: "Tokyo ➔ NRT Departure",
-        luggageTip: "All bags with you on the Airport Shuttle Bus or Narita Express train.",
-        transport: [
-          { text: "Flight departs Narita Airport (NRT) at 2:00 PM (Arrive NRT by ~11:00 AM)", status: "booked" },
-          { text: "Airport Shuttle Bus (TYO-NRT Bus from Tokyo Station/Ginza) OR Narita Express (N'EX) train from Tokyo Station", status: "suggestion" }
-        ],
-        hotel: {
-          name: "Check-out from Mitsui Garden Hotel Kyobashi",
-          status: "info",
-          url: "https://www.gardenhotels.co.jp/kyobashi/eng/",
-          address: "Kyobashi, Chuo-ku, Tokyo",
-          confirmation: "Morning Check-Out",
-          details: "Leave for Narita Airport by ~9:30–10:00 AM."
-        },
-        activities: [
-          { text: "Last-minute souvenir shopping at Tokyo Station or Narita Airport duty-free", status: "suggestion" }
-        ],
-        food: [
-          { text: "Breakfast at hotel (or bakery near Tokyo Station)", status: "suggestion" }
+        "text": "Hiroshima Station to the hotel: Hiroshima Electric Railway streetcar Line 1. Get off at Chuden-mae.",
+        "status": "there",
+        "links": [
+          {
+            "label": "Streetcar steps toward Peace Park",
+            "url": "https://dive-hiroshima.com/en/information/access-peacememorialpark/"
+          }
         ]
       }
-    ];
+    ],
+    "hotel": {
+      "name": "THE KNot Hiroshima",
+      "status": "pending",
+      "url": "https://hotel-the-knot.jp/hiroshima/en/",
+      "address": "Central Hiroshima (streetcar Line 1 → Chuden-mae)",
+      "confirmation": "Pre-check-in not done yet",
+      "details": "Basic rooms, nice lobby and breakfast, convenient location. Pre-check status: only one room showing? Baby cot? Is 16 OK? Phone was not working on their end — email them."
+    },
+    "activities": [
+      {
+        "text": "Himeji Castle, 2–3 hours. Students are free with a school ID. About $15 for adults. The Doc asks: should we buy them now? Tickets on the website or at the castle. There may be a line.",
+        "status": "suggestion",
+        "url": "https://himejicastle-ticket.jp/?utm_source=alliance&utm_medium=referral&utm_campaign=2603_ticket&utm_id=nid000309"
+      },
+      {
+        "text": "Kojima Jeans Street, 1–2 hours, in Kurashiki. A bunch of denim stores close together, but a bit out of the way. The same brands also show up in Kyoto and Tokyo: Momotaro, Kapital, Samurai, and Japan Blue. Denim side quest stop 2 (Jeans Street and the TCB factory) is on the Denim Quest tab.",
+        "status": "suggestion",
+        "links": [
+          {
+            "label": "Kojima Jeans Street guide",
+            "url": "https://www.japan.travel/en/japan-magazine/exploring-jeans-street-in-kojima-city-dyed-in-indigo/"
+          },
+          {
+            "label": "Kojima Jeans Street",
+            "url": "https://jeans-street.com/"
+          },
+          {
+            "label": "Momotaro Jeans",
+            "url": "https://www.momotaro-jeans.com/en_US/home/"
+          },
+          {
+            "label": "Kapital",
+            "url": "https://www.kapital.jp/"
+          },
+          {
+            "label": "Samurai Jeans",
+            "url": "https://www.samurai-j.com/en"
+          },
+          {
+            "label": "Japan Blue Jeans",
+            "url": "https://www.japanblue-jeans.com/en_US/home/"
+          }
+        ]
+      },
+      {
+        "text": "Walk around Peace Park and other sites in Hiroshima.",
+        "status": "suggestion"
+      }
+    ],
+    "food": [
+      {
+        "text": "Breakfast in the hotel.",
+        "status": "booked"
+      },
+      {
+        "text": "Lots of food places in Shin-Osaka Station before the Shinkansen gate.",
+        "status": "suggestion"
+      },
+      {
+        "text": "Lunch at Otemae Park — food stalls outside where you can try different foods.",
+        "status": "suggestion",
+        "url": "https://maps.app.goo.gl/QARUvBrxchKmCdbd6"
+      },
+      {
+        "text": "Kushiyaki Kobe beef for a beef donburi bento to go, or a convenience-store bento or snack.",
+        "status": "suggestion",
+        "url": "https://www.tripadvisor.com/Restaurant_Review-g298191-d14176877-Reviews-Kushiyaki_Kobebeef-Himeji_Hyogo_Prefecture_Kinki.html"
+      },
+      {
+        "text": "Dinner at Yamachan (chicken wings) — 6:30 PM booked, 2 blocks from the hotel. Call a few days before to confirm the menu. Pre-set menu?",
+        "status": "booked",
+        "url": "https://maps.app.goo.gl/eECphUN1V8QcmA478"
+      }
+    ]
+  },
+  {
+    "date": "11/21",
+    "dayName": "Saturday, Nov 21",
+    "title": "Hiroshima Peace Park Ferry → Miyajima",
+    "city": "Miyajima",
+    "keyTimes": [
+      "Dock · 9:45 AM",
+      "Ferry · 10:10 AM",
+      "Text Shin when you board",
+      "Tea ceremony · 1:30 PM"
+    ],
+    "luggageTip": "Text Shin as you get on the boat so he can call Hotel Makoto. They want to meet you at the dock to collect bags. Look for the Makoto van.",
+    "transport": [
+      {
+        "text": "Walk 15 minutes from THE KNot to the Peace Memorial boat dock. Ferry leaves at 10:10 AM. Be at the dock at 9:45 AM. Pay at the dock. Reservations are made. About a 45-minute ride to Miyajima.",
+        "status": "booked",
+        "links": [
+          {
+            "label": "Ferry timetable",
+            "url": "https://www.aqua-net-h.co.jp/en/heritage/#timeTable-m"
+          },
+          {
+            "label": "Meet here",
+            "url": "https://maps.app.goo.gl/WA44dJRN4K4BbwQc7"
+          },
+          {
+            "label": "Directions to the boat dock",
+            "url": "https://docs.google.com/document/d/1Nr92oKDYSzGGOJD6nCr7dNQbiknT8I-XrEAG61sjIEo/edit?usp=sharing"
+          },
+          {
+            "label": "Makoto van photo",
+            "url": "https://docs.google.com/document/d/1RVkwfAPNKfkHgwYBl83nZy7IL7E43WWavRpLBzrRGt0/edit?usp=sharing"
+          }
+        ]
+      },
+      {
+        "text": "Ferry booking #538527, inquiry key ju9J. Ferry booking #538532, inquiry key 2CkE.",
+        "status": "booked"
+      },
+      {
+        "text": "Text Shin when you board so Hotel Makoto can meet the ferry and take the bags.",
+        "status": "there"
+      }
+    ],
+    "hotel": {
+      "name": "Hotel Makoto (Miyajima)",
+      "status": "booked",
+      "url": "https://hotelmakoto.co.jp/en/",
+      "address": "Miyajima (van meets the ferry for luggage)",
+      "confirmation": "Pre-check-in done",
+      "details": "Additional 2,200 yen per person for an ocean-view room (still far). Dinner and breakfast are at the hotel. Text Shin when you board."
+    },
+    "activities": [
+      {
+        "text": "Hiking on the mountain. Gondola to the top. Walk the shopping street.",
+        "status": "suggestion"
+      },
+      {
+        "text": "Tea ceremony booked at 1:30 PM under Ann Krejcarek. 5,000 yen per person. 30-minute English guide. Watch and taste sensei tea, then make matcha yourself. Over age 6. Baby needs to be held. Pay there by card.",
+        "status": "booked",
+        "links": [
+          {
+            "label": "Okeiko Japan",
+            "url": "https://okeikojapan-miyajima.com/en/activity-menu-english/"
+          },
+          {
+            "label": "Map of the island",
+            "url": "https://drive.google.com/file/d/1C8-y6t0EuCYUYbQPW6w_hQi7pUgjDd_F/view?usp=sharing"
+          }
+        ]
+      },
+      {
+        "text": "Kimono dress-up is optional and needs a prior reservation: 6,000 yen per person, 120 cm or taller only. If you want it, be there by 1:00 PM.",
+        "status": "suggestion"
+      }
+    ],
+    "food": [
+      {
+        "text": "Breakfast at THE KNot before the ferry.",
+        "status": "booked"
+      },
+      {
+        "text": "Lunch along the shopping street on Miyajima.",
+        "status": "info"
+      },
+      {
+        "text": "Dinner at Hotel Makoto.",
+        "status": "booked"
+      }
+    ]
+  },
+  {
+    "date": "11/22",
+    "dayName": "Sunday, Nov 22",
+    "title": "Miyajima morning → Hiroshima → Kyoto",
+    "city": "Kyoto",
+    "keyTimes": [
+      "JR ferry off Miyajima",
+      "Hikari, not Nozomi",
+      "Hanatanuki · 6:00 PM"
+    ],
+    "luggageTip": "If big bags were sent from Osaka on 11/20, they should be at Hilton Garden Inn Kyoto. The Doc still phrases that shipment as a question.",
+    "transport": [
+      {
+        "text": "Board the JR ferry here. No reservation needed. This is a different ferry company off the island, and the JR Pass works.",
+        "status": "there",
+        "links": [
+          {
+            "label": "JR ferry boarding point",
+            "url": "https://maps.app.goo.gl/nphaSxZogRQywBSq6"
+          }
+        ]
+      },
+      {
+        "text": "After the ferry, walk 10 minutes to Miyajimaguchi Station. The JR train’s last stop is Hiroshima Station.",
+        "status": "there",
+        "links": [
+          {
+            "label": "Miyajimaguchi Station",
+            "url": "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8"
+          }
+        ]
+      },
+      {
+        "text": "At Hiroshima Station, find the Shinkansen and board for Kyoto. Sit in non-reserved. Take Hikari, not Nozomi. About 3 hours Miyajima to Kyoto. Easy train from Kyoto Station to the hotel.",
+        "status": "there"
+      }
+    ],
+    "hotel": {
+      "name": "Hilton Garden Inn Kyoto Shijo Karasuma",
+      "status": "booked",
+      "url": "https://www.hilton.com/en/hotels/itmkygi-hilton-garden-inn-kyoto-shijo-karasuma/?SEO_id=GMB-APAC-GI-ITMKYGI",
+      "address": "600-8418, Kyoto, 397 Gojokarasumacho, Shimogyo Ward, Japan",
+      "confirmation": "#3532653371",
+      "details": "Pre-check-in done. Central, easy train from Kyoto Station. Breakfast included. Passport photos sent. Contact: mkrejcarek@gmail.com · 954-232-5478. The Doc says both “6 rooms” and “7 rooms confirmed. 2 rooms with 2 twin beds. 5 rooms with 1 queen bed.” The room table is the 7-room layout."
+    },
+    "activities": [
+      {
+        "text": "Arrive mid to late afternoon.",
+        "status": "info"
+      },
+      {
+        "text": "Nishiki Market, 2–3 hours. Stop in the knife shop in the market — dad and mom will be happy to buy each family a Japanese knife.",
+        "status": "info",
+        "links": [
+          {
+            "label": "Nishiki Market",
+            "url": "https://www.japan.travel/en/spot/1174/"
+          },
+          {
+            "label": "Aritsugu knife shop",
+            "url": "https://www.kyoto-nishiki.or.jp/en/stores/aritsugu/"
+          }
+        ]
+      },
+      {
+        "text": "Cat, mini-pig, Shiba Inu, or hedgehog cafe.",
+        "status": "suggestion"
+      },
+      {
+        "text": "Fushimi Inari, 2–3 hours.",
+        "status": "suggestion"
+      },
+      {
+        "text": "Nighttime ghost tour.",
+        "status": "suggestion"
+      },
+      {
+        "text": "Easy evening. No plan after dinner — walk around Kyoto or go to bed early.",
+        "status": "info"
+      },
+      {
+        "text": "Send laundry out, or use laundry near the hotel.",
+        "status": "suggestion",
+        "url": "https://maps.app.goo.gl/DDi4HrZ5oi2BjmSN9"
+      }
+    ],
+    "food": [
+      {
+        "text": "Breakfast at Hotel Makoto before leaving Miyajima.",
+        "status": "booked"
+      },
+      {
+        "text": "Lunch: station bento at Hiroshima Station. Bento shops are inside the Shinkansen area, just before the escalator.",
+        "status": "suggestion"
+      },
+      {
+        "text": "Dinner at Hanatanuki (okonomiyaki) — booked 6:00 PM, à la carte, near Nishiki Market.",
+        "status": "booked",
+        "url": "https://www.tripadvisor.com/Restaurant_Review-g298564-d3827489-Reviews-Hanatanuki_Kawaramachi-Kyoto_Kyoto_Prefecture_Kinki.html"
+      }
+    ]
+  },
+  {
+    "date": "11/23",
+    "dayName": "Monday, Nov 23",
+    "title": "Kyoto — Momo tour and TeamLab",
+    "city": "Kyoto",
+    "keyTimes": [
+      "Momo · hotel lobby 10:00 AM",
+      "Tour ends 6:00 PM near TeamLab",
+      "TeamLab · 6:30 PM"
+    ],
+    "luggageTip": "Same hotel tonight. No city change.",
+    "transport": [
+      {
+        "text": "The Momo tour uses public transportation. She will suggest the route.",
+        "status": "info"
+      }
+    ],
+    "hotel": {
+      "name": "Hilton Garden Inn Kyoto Shijo Karasuma (night 2)",
+      "status": "booked",
+      "url": "https://www.hilton.com/en/hotels/itmkygi-hilton-garden-inn-kyoto-shijo-karasuma/?SEO_id=GMB-APAC-GI-ITMKYGI",
+      "address": "600-8418, Kyoto, 397 Gojokarasumacho, Shimogyo Ward, Japan",
+      "confirmation": "#3532653371",
+      "details": "Same stay. Pre-check-in done. Breakfast included."
+    },
+    "activities": [
+      {
+        "text": "Momo tour guide — 8 hours, booked. She meets you in the hotel lobby at 10:00 AM. Fushimi Inari (will be busy), a foliage temple, Philosopher’s Path, and whatever Momo suggests. She will find a lunch spot. The tour ends at 6:00 PM near TeamLab.",
+        "status": "booked"
+      },
+      {
+        "text": "TeamLab Kyoto — booked 6:30 PM, about 2–3 hours. Tickets are in AMK Gmail, in three emails. The top floor is interactive physical activities.",
+        "status": "booked",
+        "links": [
+          {
+            "label": "TeamLab Kyoto",
+            "url": "https://www.teamlab.art/e/kyoto/"
+          }
+        ]
+      }
+    ],
+    "food": [
+      {
+        "text": "Breakfast in the hotel.",
+        "status": "booked"
+      },
+      {
+        "text": "Lunch with Momo (TBD).",
+        "status": "info"
+      },
+      {
+        "text": "Dinner: cafe at TeamLab, or a conbini. Shabu shabu?",
+        "status": "suggestion"
+      }
+    ]
+  },
+  {
+    "date": "11/24",
+    "dayName": "Tuesday, Nov 24",
+    "title": "Kyoto → Odawara → Hakone micro bus → Fujiya",
+    "city": "Hakone",
+    "keyTimes": [
+      "Kyoto Station by 8:00 AM",
+      "Hikari 8:33 → Odawara 11:38",
+      "West exit bus · 11:45 AM",
+      "Cascade · 18:30"
+    ],
+    "luggageTip": "One night at Fujiya. Leave Kyoto right after breakfast.",
+    "transport": [
+      {
+        "text": "Leave Kyoto right after breakfast. Aim to be at Kyoto Station by 8:00 AM.",
+        "status": "there"
+      },
+      {
+        "text": "You must catch the Hikari that departs at 8:33 AM. It arrives Odawara at 11:38. Sit on the left side for the Fuji view.",
+        "status": "there"
+      },
+      {
+        "text": "Hakone Tozan micro bus — booked. Wire transfer done. Reservation under Krejcarek Family. TEL 0465-30-211. Pickup 11:45 AM at the west exit of Odawara Station. About a 5–6 hour Hakone tour, then drop-off at Fujiya. The bus should reach the hotel around 5:00–6:00 PM.",
+        "status": "booked",
+        "links": [
+          {
+            "label": "Hakone Tozan micro bus",
+            "url": "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/"
+          }
+        ]
+      }
+    ],
+    "hotel": {
+      "name": "Fujiya Hotel (Hakone)",
+      "status": "booked",
+      "url": "https://www.booking.com/hotel/jp/fujiya.html",
+      "address": "Hakone (turn-of-the-century building)",
+      "confirmation": "Pre-check-in done · Cascade 18:30",
+      "details": "Pre-check-in done. The hotel has spa services and an indoor pool. Book any spa services you want early. Japanese, French, and Western dining. Room table: 4 Forest Wing twins (3 people), 1 Flower Palace penthouse (4 people), 1 Comfy Lodge (3 adults)."
+    },
+    "activities": [
+      {
+        "text": "The 11:45 AM bus tour includes Owakudani, the Hakone Ropeway, Hakone Shrine, and the Open-Air Museum. Museum tickets are booked. It is one sweep, then the hotel.",
+        "status": "booked",
+        "links": [
+          {
+            "label": "Open-Air Museum",
+            "url": "https://www.hakone-oam.or.jp/en/"
+          },
+          {
+            "label": "Owakudani",
+            "url": "https://www.japan.travel/en/spot/1566/"
+          },
+          {
+            "label": "Hakone Ropeway",
+            "url": "https://www.japan-guide.com/e/e5223.html"
+          },
+          {
+            "label": "Hakone Shrine",
+            "url": "https://www.japan-guide.com/e/e5204.html"
+          }
+        ]
+      },
+      {
+        "text": "Onsen at the hotel. Check spa features. Book desired spa services early.",
+        "status": "suggestion"
+      }
+    ],
+    "food": [
+      {
+        "text": "Breakfast at Hilton Garden Inn Kyoto.",
+        "status": "booked"
+      },
+      {
+        "text": "Lunch: bento from Kyoto Station, or a conbini. Once you leave the Shinkansen you are on the bus, with little chance for a meal.",
+        "status": "there"
+      },
+      {
+        "text": "Dinner at the hotel — booked. Japanese-Western cuisine at Restaurant Cascade, 18:30.",
+        "status": "booked"
+      }
+    ]
+  },
+  {
+    "date": "11/25",
+    "dayName": "Wednesday, Nov 25",
+    "title": "Hakone → Odawara → Tokyo",
+    "city": "Tokyo",
+    "keyTimes": [
+      "Hotel pickup · 9:00 AM",
+      "Odawara ~10:00 AM",
+      "Next Hikari or Kodama to Tokyo"
+    ],
+    "luggageTip": "Check in at Mitsui Garden Hotel Kyobashi, near Tokyo Station and Ginza. Early check-in is still a question.",
+    "transport": [
+      {
+        "text": "Hakone Tozan bus picks up at 9:00 AM at the hotel, after breakfast and a little time at the hotel. Arrive Odawara around 10:00 AM. Wire transfer done. TEL 0465-30-211. Reservation under Krejcarek family.",
+        "status": "booked",
+        "links": [
+          {
+            "label": "Hakone Tozan bus",
+            "url": "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/"
+          }
+        ]
+      },
+      {
+        "text": "Take the next Hikari or Kodama from Odawara to Tokyo Station. Tokyo should be the last stop. About 2 hours from Hakone including the bus.",
+        "status": "there"
+      }
+    ],
+    "hotel": {
+      "name": "Mitsui Garden Hotel Kyobashi (Tokyo)",
+      "status": "booked",
+      "url": "https://www.gardenhotels.co.jp/kyobashi/eng/",
+      "address": "Kyobashi, Chuo-ku, Tokyo (near Tokyo Station and Ginza)",
+      "confirmation": "Pre-check-in done · early check-in?",
+      "details": "Pre-check-in done. The Doc says: “Currently 7 rooms of 2ppl, one room with 2 adult + 1 baby.” That sentence can be read more than one way. The Doc’s room table is still the 7-room layout, with Olive in room 1. Early check-in is not answered."
+    },
+    "activities": [
+      {
+        "text": "Travel day into Tokyo. Sightseeing ideas are on Thursday, Nov 26.",
+        "status": "info"
+      }
+    ],
+    "food": [
+      {
+        "text": "Breakfast at the Hakone hotel.",
+        "status": "booked"
+      },
+      {
+        "text": "Lunch and dinner TBD.",
+        "status": "info"
+      }
+    ]
+  },
+  {
+    "date": "11/26",
+    "dayName": "Thursday, Nov 26",
+    "title": "Tokyo day",
+    "city": "Tokyo",
+    "keyTimes": [
+      "Hotel breakfast ¥2,420",
+      "Lunch and dinner TBD"
+    ],
+    "luggageTip": "The Nov 27 flight leaves NRT at 2:00 PM. Plan on the Ginza bus or train around 9:30–10:00 tomorrow.",
+    "transport": [
+      {
+        "text": "Tokyo Metro and JR with an IC card (Suica / Pasmo).",
+        "status": "info"
+      }
+    ],
+    "hotel": {
+      "name": "Mitsui Garden Hotel Kyobashi (night 2)",
+      "status": "booked",
+      "url": "https://www.gardenhotels.co.jp/kyobashi/eng/",
+      "address": "Kyobashi, Chuo-ku, Tokyo",
+      "confirmation": "Continuing stay",
+      "details": "Same hotel. Walking distance to Ginza and Tokyo Station. Hotel breakfast is 2,420 yen per person. Many breakfast options are already sold; expect a 20–30 minute wait."
+    },
+    "activities": [
+      {
+        "text": "Shopping in Ginza (Shiseido store).",
+        "status": "suggestion"
+      },
+      {
+        "text": "JDM car tour.",
+        "status": "suggestion",
+        "url": "https://www.getyourguide.com/s?q=Tokyo&et=507597"
+      },
+      {
+        "text": "TeamLab Planets Tokyo (a different one from Kyoto). Knee-deep water rooms — wear pants that roll up.",
+        "status": "suggestion",
+        "url": "https://www.teamlab.art/e/planets/"
+      },
+      {
+        "text": "Casio museum and G-Shock store.",
+        "status": "suggestion",
+        "links": [
+          {
+            "label": "Casio museum guide",
+            "url": "https://www.plus9time.com/blog/2025/10/10/visit-to-the-casio-museum-tokyo"
+          },
+          {
+            "label": "G-Shock store",
+            "url": "https://www.casio.com/jp/watches/G-SHOCK_STORE/store-203/"
+          }
+        ]
+      },
+      {
+        "text": "Tsukiji Market, 1–2 hours.",
+        "status": "suggestion",
+        "url": "https://www.japan.travel/en/spot/1707/"
+      },
+      {
+        "text": "Shopping in Harajuku / Shibuya (Liberty Walk Tokyo).",
+        "status": "suggestion"
+      },
+      {
+        "text": "Shimokitazawa (vintage, music).",
+        "status": "suggestion"
+      },
+      {
+        "text": "Day trip to Kamakura / Enoshima?",
+        "status": "suggestion"
+      },
+      {
+        "text": "Denim side quest, stop 3: a private denim shopping experience will be scheduled for anyone who still wants it (reservations needed; no time is set). Mark will also visit The Real McCoy’s flagship for classic military-clothing reproductions. Details on the Denim Quest tab.",
+        "status": "info"
+      }
+    ],
+    "food": [
+      {
+        "text": "Breakfast on our own. One note in the Doc: leave the hotel early and get a number for the 7-story Starbucks — the 1st floor is just matcha. Or hotel breakfast at 2,420 yen per person, with a likely 20–30 minute wait.",
+        "status": "info"
+      },
+      {
+        "text": "Lunch and dinner TBD.",
+        "status": "info"
+      }
+    ]
+  },
+  {
+    "date": "11/27",
+    "dayName": "Friday, Nov 27",
+    "title": "Tokyo → Narita (NRT) · 2:00 PM flight",
+    "city": "Tokyo → NRT",
+    "keyTimes": [
+      "Leave hotel 9:30–10:00",
+      "Bus 60–70 min or train 55 min",
+      "NRT flight · 2:00 PM"
+    ],
+    "luggageTip": "All bags come with you. Bus or train from Ginza Station.",
+    "transport": [
+      {
+        "text": "Flight from NRT at 2:00 PM. Catch the airport bus or train from Ginza Station around 9:30–10:00.",
+        "status": "booked"
+      },
+      {
+        "text": "Airport bus, 60–70 minutes.",
+        "status": "there",
+        "links": [
+          {
+            "label": "Tokyo–Narita bus timetable",
+            "url": "https://tyo-nrt.com/en/timetable"
+          }
+        ]
+      },
+      {
+        "text": "Train, about 55 minutes.",
+        "status": "there",
+        "links": [
+          {
+            "label": "Narita Express",
+            "url": "https://www.jreast.co.jp/en/multi/nex/"
+          }
+        ]
+      }
+    ],
+    "hotel": {
+      "name": "Check out of Mitsui Garden Hotel Kyobashi",
+      "status": "info",
+      "url": "https://www.gardenhotels.co.jp/kyobashi/eng/",
+      "address": "Kyobashi, Chuo-ku, Tokyo",
+      "confirmation": "Morning checkout",
+      "details": "Leave for the Ginza bus or train around 9:30–10:00."
+    },
+    "activities": [
+      {
+        "text": "Airport shuttle is the plan. Flight rows (Option A) are in Flights.",
+        "status": "info"
+      }
+    ],
+    "food": [
+      {
+        "text": "Breakfast on our own.",
+        "status": "info"
+      }
+    ]
+  }
+];
 
     const roomConfigs = [
       {
         title: "7-Room Configuration",
-        subtitle: "Used at Hilton Osaka, Hilton Garden Inn Kyoto & Mitsui Garden Tokyo",
-        badge: "Confirmed 7 Rooms",
+        subtitle: "This is the Doc’s 7-room table. Osaka and Kyoto prose also say “6 rooms” in one line and “7 rooms confirmed” in the next.",
+        badge: "7-room table",
         rooms: [
           { num: "Room 1", guests: ["Peter", "Cheryll", "Olive (baby)"], note: "2 Adults + Baby" },
           { num: "Room 2", guests: ["Randal", "Mark"], note: "2 Adults" },
@@ -728,188 +1227,2496 @@
     ];
 
     const actionItems = [
-      { id: "act-1", urgent: true, title: "Reserve JR Pass Shinkansen Seats (Opened 10/19)", desc: "1-month window is open now for 11/19 arrival. Reserve Hikari/Kodama seats (no Nozomi) for Osaka ➔ Himeji ➔ Hiroshima, Kyoto ➔ Odawara, and Hakone ➔ Tokyo.", link: "https://japanrailpass.net/en/" },
-      { id: "act-2", urgent: true, title: "Email THE KNot Hiroshima (11/20 Stay)", desc: "Pre-check-in still NOT done. Phone wasn't working on their end—email to verify all group rooms (not just 1 room), baby cot for Olive, and 16yo policy.", link: "https://hotel-the-knot.jp/hiroshima/en/" },
-      { id: "act-3", urgent: true, title: "Email Okeiko Japan Miyajima for 11/21 Tea Ceremony", desc: "Email to reserve group time slot (10:30, 13:30, or 15:30). 5,000 yen/person, 30-min English guide, baby Olive held.", link: "https://okeikojapan-miyajima.com/en/activity-menu-english/" },
-      { id: "act-4", urgent: true, title: "Call Yamachan a Few Days Before 11/20 Dinner", desc: "6:30 PM chicken-wings reservation is booked in Hiroshima—call ahead to confirm the group menu.", link: null },
-      { id: "act-5", urgent: false, title: "Ask Mitsui Garden Tokyo About Early Check-In (11/25)", desc: "Pre-check-in is done. Ask whether early check-in is possible after the Hakone morning.", link: "https://www.gardenhotels.co.jp/kyobashi/eng/" },
-      { id: "act-6", urgent: false, title: "Pack Physical Student IDs for All 6 Kids/Teens", desc: "Rose (16), Ella (14), Myles (13), Mary (12), Francis (11), and James Timothy (9) get into Himeji Castle FREE on 11/20 with a school ID.", link: "https://himejicastle-ticket.jp/" },
-      { id: "act-7", urgent: false, title: "Text Shin When Boarding Miyajima Ferry (11/21)", desc: "As you get on the 10:10 AM boat, text Shin so Hotel Makoto can meet the group at the dock and collect luggage.", link: null },
-      { id: "act-8", urgent: false, title: "Confirm Cascade Dinner Time at Fujiya (11/24)", desc: "Pre-check-in done. Cascade is listed for 18:30 — confirm dinner time with the hotel.", link: "https://www.booking.com/hotel/jp/fujiya.html" }
-    ];
+  {
+    "id": "act-1",
+    "urgent": true,
+    "title": "Be on the Nov 24 Hikari at 8:33 AM",
+    "desc": "Kyoto Station by 8:00 AM. That Hikari arrives Odawara at 11:38. You must catch this one. Left-side seats, green class. You can get the tickets when you activate the JR Pass at KIX. No Nozomi. The Hakone bus is at the west exit at 11:45 AM.",
+    "link": "https://japanrailpass.net/en/"
+  },
+  {
+    "id": "act-2",
+    "urgent": true,
+    "title": "Email THE KNot Hiroshima (Nov 20)",
+    "desc": "Pre-check-in is still not done. The phone was not working on their end. Ask them to confirm the group’s rooms (not just one), a baby cot for Olive, and the 16-year-old policy.",
+    "link": "https://hotel-the-knot.jp/hiroshima/en/"
+  },
+  {
+    "id": "act-3",
+    "urgent": true,
+    "title": "Call Yamachan a few days before Nov 20",
+    "desc": "Dinner is booked at 6:30 PM, about 2 blocks from the hotel. Confirm the menu. The Doc also asks: pre-set menu?",
+    "link": "https://maps.app.goo.gl/eECphUN1V8QcmA478"
+  },
+  {
+    "id": "act-4",
+    "urgent": false,
+    "title": "Himeji Castle tickets — should we buy them now?",
+    "desc": "The Doc asks this out loud. Students are free with a school ID. About $15 for adults. Buy on the website or at the castle. There may be a line.",
+    "link": "https://himejicastle-ticket.jp/"
+  },
+  {
+    "id": "act-5",
+    "urgent": false,
+    "title": "Kimono only if someone wants it (Nov 21)",
+    "desc": "The tea ceremony is already booked at 1:30 PM under Ann Krejcarek. Kimono dress-up needs a prior reservation: 6,000 yen, 120 cm or taller, and you must be there by 1:00 PM.",
+    "link": "https://okeikojapan-miyajima.com/en/activity-menu-english/"
+  },
+  {
+    "id": "act-6",
+    "urgent": false,
+    "title": "Text Shin when you board the Miyajima ferry (Nov 21)",
+    "desc": "As you get on the 10:10 AM boat, text Shin so he can call Hotel Makoto to meet the dock and take bags.",
+    "link": null
+  },
+  {
+    "id": "act-7",
+    "urgent": false,
+    "title": "Ask Mitsui Garden Tokyo about early check-in (Nov 25)",
+    "desc": "Pre-check-in is done. Early check-in is still an open question after the 9:00 AM Hakone pickup.",
+    "link": "https://www.gardenhotels.co.jp/kyobashi/eng/"
+  },
+  {
+    "id": "act-8",
+    "urgent": false,
+    "title": "Pack school IDs for Himeji",
+    "desc": "Rose (16), Ella (14), Myles (13), Mary (12), Francis (11), and James Timothy (9) are free at Himeji Castle with a school ID.",
+    "link": "https://himejicastle-ticket.jp/"
+  },
+  {
+    "id": "act-9",
+    "urgent": false,
+    "title": "Book Fujiya spa services early if you want them",
+    "desc": "Pre-check-in is done. The hotel has spa services and an indoor pool. Cascade dinner is booked at 18:30.",
+    "link": "https://www.booking.com/hotel/jp/fujiya.html"
+  },
+  {
+    "id": "act-10",
+    "urgent": false,
+    "title": "Decide whether to send big bags Osaka → Kyoto",
+    "desc": "The Doc still has this as a question, plus a note to ask the Hilton concierge at check-in so the Nov 20 morning is quicker.",
+    "link": "https://www.hilton.com/en/hotels/osahitw-hilton-osaka/"
+  }
+];
 
-    const routeCities = [
-      { id: "osaka", label: "Osaka", sub: "KIX / Umeda" },
-      { id: "himeji", label: "Himeji", sub: "Castle day" },
-      { id: "hiroshima", label: "Hiroshima", sub: "Streetcar" },
-      { id: "miyajima", label: "Miyajima", sub: "Ferry" },
-      { id: "kyoto", label: "Kyoto", sub: "2 nights" },
-      { id: "hakone", label: "Hakone", sub: "Tozan bus" },
-      { id: "tokyo", label: "Tokyo", sub: "Kyobashi" },
-      { id: "nrt", label: "NRT", sub: "Fly home" }
-    ];
+    const routeStops = [
+  {
+    "n": 1,
+    "name": "Osaka",
+    "dates": "Nov 19",
+    "day": "11/19",
+    "lat": 34.7024,
+    "lng": 135.4959,
+    "mainSide": "s"
+  },
+  {
+    "n": 2,
+    "name": "Himeji",
+    "dates": "Nov 20",
+    "day": "11/20",
+    "lat": 34.8394,
+    "lng": 134.6939,
+    "cluster": true,
+    "insetSide": "e"
+  },
+  {
+    "n": 3,
+    "name": "Kojima",
+    "dates": "Nov 20",
+    "day": "11/20",
+    "lat": 34.4628,
+    "lng": 133.6285,
+    "cluster": true,
+    "insetSide": "e",
+    "dnjsq": true
+  },
+  {
+    "n": 4,
+    "name": "Hiroshima",
+    "dates": "Nov 20",
+    "day": "11/20",
+    "lat": 34.3955,
+    "lng": 132.4536,
+    "cluster": true,
+    "insetSide": "w"
+  },
+  {
+    "n": 5,
+    "name": "Miyajima",
+    "dates": "Nov 21",
+    "day": "11/21",
+    "lat": 34.296,
+    "lng": 132.3198,
+    "cluster": true,
+    "insetSide": "w",
+    "alsoDay": "11/22",
+    "alsoLabel": "Nov 22 morning ferry"
+  },
+  {
+    "n": 6,
+    "name": "Kyoto",
+    "dates": "Nov 22–24",
+    "day": "11/22",
+    "lat": 35.0116,
+    "lng": 135.7681,
+    "mainSide": "n"
+  },
+  {
+    "n": 7,
+    "name": "Hakone",
+    "dates": "Nov 24–25",
+    "day": "11/24",
+    "lat": 35.2435,
+    "lng": 139.0585,
+    "mainSide": "e"
+  },
+  {
+    "n": 8,
+    "name": "Tokyo",
+    "dates": "Nov 25–27",
+    "day": "11/25",
+    "lat": 35.6812,
+    "lng": 139.7671,
+    "mainSide": "e"
+  }
+];
+const japanRings = [
+  [
+    [
+      133.371,
+      36.204
+    ],
+    [
+      133.239,
+      36.179
+    ],
+    [
+      133.206,
+      36.293
+    ],
+    [
+      133.296,
+      36.34
+    ],
+    [
+      133.371,
+      36.204
+    ]
+  ],
+  [
+    [
+      138.344,
+      37.822
+    ],
+    [
+      138.225,
+      37.829
+    ],
+    [
+      138.322,
+      37.97
+    ],
+    [
+      138.246,
+      37.995
+    ],
+    [
+      138.25,
+      38.078
+    ],
+    [
+      138.504,
+      38.316
+    ],
+    [
+      138.454,
+      38.076
+    ],
+    [
+      138.575,
+      38.066
+    ],
+    [
+      138.497,
+      37.904
+    ],
+    [
+      138.344,
+      37.822
+    ]
+  ],
+  [
+    [
+      134.933,
+      34.288
+    ],
+    [
+      134.824,
+      34.203
+    ],
+    [
+      134.731,
+      34.209
+    ],
+    [
+      134.668,
+      34.294
+    ],
+    [
+      134.834,
+      34.473
+    ],
+    [
+      135.005,
+      34.544
+    ],
+    [
+      134.905,
+      34.398
+    ],
+    [
+      134.933,
+      34.288
+    ]
+  ],
+  [
+    [
+      130.623,
+      30.263
+    ],
+    [
+      130.446,
+      30.265
+    ],
+    [
+      130.388,
+      30.388
+    ],
+    [
+      130.497,
+      30.466
+    ],
+    [
+      130.644,
+      30.389
+    ],
+    [
+      130.623,
+      30.263
+    ]
+  ],
+  [
+    [
+      130.96,
+      30.397
+    ],
+    [
+      130.872,
+      30.386
+    ],
+    [
+      130.87,
+      30.444
+    ],
+    [
+      131.06,
+      30.828
+    ],
+    [
+      130.96,
+      30.397
+    ]
+  ],
+  [
+    [
+      130.083,
+      32.23
+    ],
+    [
+      130.004,
+      32.194
+    ],
+    [
+      129.96,
+      32.244
+    ],
+    [
+      130.017,
+      32.292
+    ],
+    [
+      130.01,
+      32.522
+    ],
+    [
+      130.168,
+      32.541
+    ],
+    [
+      130.2,
+      32.341
+    ],
+    [
+      130.083,
+      32.23
+    ]
+  ],
+  [
+    [
+      129.279,
+      34.123
+    ],
+    [
+      129.214,
+      34.083
+    ],
+    [
+      129.186,
+      34.145
+    ],
+    [
+      129.215,
+      34.321
+    ],
+    [
+      129.337,
+      34.285
+    ],
+    [
+      129.279,
+      34.123
+    ]
+  ],
+  [
+    [
+      129.386,
+      34.354
+    ],
+    [
+      129.365,
+      34.306
+    ],
+    [
+      129.267,
+      34.37
+    ],
+    [
+      129.326,
+      34.607
+    ],
+    [
+      129.451,
+      34.687
+    ],
+    [
+      129.475,
+      34.54
+    ],
+    [
+      129.386,
+      34.354
+    ]
+  ],
+  [
+    [
+      128.665,
+      32.784
+    ],
+    [
+      128.839,
+      32.763
+    ],
+    [
+      128.895,
+      32.652
+    ],
+    [
+      128.693,
+      32.605
+    ],
+    [
+      128.665,
+      32.784
+    ]
+  ],
+  [
+    [
+      130.381,
+      32.424
+    ],
+    [
+      130.242,
+      32.463
+    ],
+    [
+      130.461,
+      32.516
+    ],
+    [
+      130.381,
+      32.424
+    ]
+  ],
+  [
+    [
+      141.073,
+      45.333
+    ],
+    [
+      141.034,
+      45.269
+    ],
+    [
+      140.972,
+      45.465
+    ],
+    [
+      141.057,
+      45.45
+    ],
+    [
+      141.073,
+      45.333
+    ]
+  ],
+  [
+    [
+      141.295,
+      45.119
+    ],
+    [
+      141.145,
+      45.154
+    ],
+    [
+      141.135,
+      45.206
+    ],
+    [
+      141.252,
+      45.232
+    ],
+    [
+      141.329,
+      45.15
+    ],
+    [
+      141.295,
+      45.119
+    ]
+  ],
+  [
+    [
+      139.481,
+      42.081
+    ],
+    [
+      139.435,
+      42.084
+    ],
+    [
+      139.431,
+      42.2
+    ],
+    [
+      139.558,
+      42.235
+    ],
+    [
+      139.481,
+      42.081
+    ]
+  ],
+  [
+    [
+      134.352,
+      34.484
+    ],
+    [
+      134.252,
+      34.423
+    ],
+    [
+      134.182,
+      34.519
+    ],
+    [
+      134.326,
+      34.534
+    ],
+    [
+      134.352,
+      34.484
+    ]
+  ],
+  [
+    [
+      139.456,
+      34.727
+    ],
+    [
+      139.392,
+      34.69
+    ],
+    [
+      139.37,
+      34.775
+    ],
+    [
+      139.456,
+      34.727
+    ]
+  ],
+  [
+    [
+      129.077,
+      32.84
+    ],
+    [
+      128.997,
+      32.952
+    ],
+    [
+      129.11,
+      33.133
+    ],
+    [
+      129.182,
+      32.993
+    ],
+    [
+      129.077,
+      32.84
+    ]
+  ],
+  [
+    [
+      129.492,
+      33.223
+    ],
+    [
+      129.37,
+      33.176
+    ],
+    [
+      129.462,
+      33.331
+    ],
+    [
+      129.57,
+      33.361
+    ],
+    [
+      129.492,
+      33.223
+    ]
+  ],
+  [
+    [
+      129.796,
+      33.749
+    ],
+    [
+      129.675,
+      33.74
+    ],
+    [
+      129.717,
+      33.858
+    ],
+    [
+      129.796,
+      33.749
+    ]
+  ],
+  [
+    [
+      132.578,
+      34.115
+    ],
+    [
+      132.461,
+      34.087
+    ],
+    [
+      132.543,
+      34.173
+    ],
+    [
+      132.578,
+      34.115
+    ]
+  ],
+  [
+    [
+      132.266,
+      33.945
+    ],
+    [
+      132.445,
+      33.913
+    ],
+    [
+      132.36,
+      33.847
+    ],
+    [
+      132.209,
+      33.873
+    ],
+    [
+      132.208,
+      33.948
+    ],
+    [
+      132.266,
+      33.945
+    ]
+  ],
+  [
+    [
+      143.824,
+      44.117
+    ],
+    [
+      144.101,
+      44.102
+    ],
+    [
+      144.482,
+      43.95
+    ],
+    [
+      144.715,
+      43.928
+    ],
+    [
+      145.37,
+      44.327
+    ],
+    [
+      145.126,
+      43.869
+    ],
+    [
+      145.14,
+      43.663
+    ],
+    [
+      145.341,
+      43.303
+    ],
+    [
+      145.488,
+      43.28
+    ],
+    [
+      145.674,
+      43.389
+    ],
+    [
+      145.833,
+      43.386
+    ],
+    [
+      145.505,
+      43.174
+    ],
+    [
+      145.347,
+      43.177
+    ],
+    [
+      144.921,
+      43.001
+    ],
+    [
+      144.631,
+      42.947
+    ],
+    [
+      144.197,
+      42.974
+    ],
+    [
+      143.969,
+      42.881
+    ],
+    [
+      143.429,
+      42.419
+    ],
+    [
+      143.237,
+      42.0
+    ],
+    [
+      142.508,
+      42.258
+    ],
+    [
+      141.851,
+      42.579
+    ],
+    [
+      141.407,
+      42.547
+    ],
+    [
+      140.986,
+      42.342
+    ],
+    [
+      140.71,
+      42.556
+    ],
+    [
+      140.48,
+      42.559
+    ],
+    [
+      140.351,
+      42.435
+    ],
+    [
+      140.327,
+      42.293
+    ],
+    [
+      140.528,
+      42.132
+    ],
+    [
+      140.734,
+      42.116
+    ],
+    [
+      141.151,
+      41.805
+    ],
+    [
+      141.0,
+      41.737
+    ],
+    [
+      140.66,
+      41.816
+    ],
+    [
+      140.27,
+      41.456
+    ],
+    [
+      140.149,
+      41.423
+    ],
+    [
+      140.037,
+      41.474
+    ],
+    [
+      139.995,
+      41.576
+    ],
+    [
+      140.108,
+      41.913
+    ],
+    [
+      140.057,
+      42.067
+    ],
+    [
+      139.835,
+      42.278
+    ],
+    [
+      139.86,
+      42.582
+    ],
+    [
+      140.432,
+      42.954
+    ],
+    [
+      140.486,
+      43.05
+    ],
+    [
+      140.397,
+      43.167
+    ],
+    [
+      140.392,
+      43.303
+    ],
+    [
+      140.487,
+      43.338
+    ],
+    [
+      140.819,
+      43.205
+    ],
+    [
+      141.138,
+      43.18
+    ],
+    [
+      141.296,
+      43.2
+    ],
+    [
+      141.374,
+      43.28
+    ],
+    [
+      141.398,
+      43.643
+    ],
+    [
+      141.645,
+      44.019
+    ],
+    [
+      141.661,
+      44.264
+    ],
+    [
+      141.761,
+      44.483
+    ],
+    [
+      141.782,
+      44.716
+    ],
+    [
+      141.583,
+      45.156
+    ],
+    [
+      141.668,
+      45.401
+    ],
+    [
+      141.938,
+      45.51
+    ],
+    [
+      142.885,
+      44.67
+    ],
+    [
+      143.824,
+      44.117
+    ]
+  ],
+  [
+    [
+      131.175,
+      33.603
+    ],
+    [
+      131.366,
+      33.571
+    ],
+    [
+      131.583,
+      33.652
+    ],
+    [
+      131.696,
+      33.603
+    ],
+    [
+      131.711,
+      33.502
+    ],
+    [
+      131.537,
+      33.274
+    ],
+    [
+      131.897,
+      33.255
+    ],
+    [
+      131.848,
+      33.118
+    ],
+    [
+      131.949,
+      33.047
+    ],
+    [
+      131.91,
+      32.974
+    ],
+    [
+      132.002,
+      32.882
+    ],
+    [
+      131.66,
+      32.466
+    ],
+    [
+      131.337,
+      31.405
+    ],
+    [
+      131.071,
+      31.437
+    ],
+    [
+      131.035,
+      31.378
+    ],
+    [
+      131.098,
+      31.256
+    ],
+    [
+      130.686,
+      31.015
+    ],
+    [
+      130.79,
+      31.269
+    ],
+    [
+      130.704,
+      31.577
+    ],
+    [
+      130.796,
+      31.624
+    ],
+    [
+      130.776,
+      31.706
+    ],
+    [
+      130.655,
+      31.718
+    ],
+    [
+      130.556,
+      31.563
+    ],
+    [
+      130.54,
+      31.403
+    ],
+    [
+      130.645,
+      31.267
+    ],
+    [
+      130.589,
+      31.179
+    ],
+    [
+      130.201,
+      31.292
+    ],
+    [
+      130.147,
+      31.408
+    ],
+    [
+      130.294,
+      31.451
+    ],
+    [
+      130.322,
+      31.601
+    ],
+    [
+      130.188,
+      31.769
+    ],
+    [
+      130.194,
+      32.091
+    ],
+    [
+      130.395,
+      32.219
+    ],
+    [
+      130.641,
+      32.619
+    ],
+    [
+      130.498,
+      32.657
+    ],
+    [
+      130.569,
+      32.734
+    ],
+    [
+      130.547,
+      32.832
+    ],
+    [
+      130.382,
+      33.093
+    ],
+    [
+      130.238,
+      33.178
+    ],
+    [
+      130.127,
+      33.105
+    ],
+    [
+      130.175,
+      32.851
+    ],
+    [
+      130.326,
+      32.853
+    ],
+    [
+      130.34,
+      32.702
+    ],
+    [
+      130.246,
+      32.677
+    ],
+    [
+      130.054,
+      32.771
+    ],
+    [
+      129.769,
+      32.571
+    ],
+    [
+      129.827,
+      32.725
+    ],
+    [
+      129.69,
+      32.875
+    ],
+    [
+      129.679,
+      33.06
+    ],
+    [
+      129.828,
+      32.893
+    ],
+    [
+      129.992,
+      32.852
+    ],
+    [
+      129.897,
+      33.022
+    ],
+    [
+      129.58,
+      33.236
+    ],
+    [
+      129.61,
+      33.344
+    ],
+    [
+      129.844,
+      33.322
+    ],
+    [
+      129.826,
+      33.437
+    ],
+    [
+      130.365,
+      33.634
+    ],
+    [
+      130.484,
+      33.835
+    ],
+    [
+      130.716,
+      33.928
+    ],
+    [
+      130.953,
+      33.872
+    ],
+    [
+      131.058,
+      33.673
+    ],
+    [
+      131.175,
+      33.603
+    ]
+  ],
+  [
+    [
+      134.357,
+      34.256
+    ],
+    [
+      134.637,
+      34.227
+    ],
+    [
+      134.675,
+      33.848
+    ],
+    [
+      134.739,
+      33.821
+    ],
+    [
+      134.377,
+      33.608
+    ],
+    [
+      134.182,
+      33.247
+    ],
+    [
+      133.959,
+      33.448
+    ],
+    [
+      133.632,
+      33.511
+    ],
+    [
+      133.286,
+      33.36
+    ],
+    [
+      132.977,
+      32.842
+    ],
+    [
+      132.804,
+      32.752
+    ],
+    [
+      132.642,
+      32.762
+    ],
+    [
+      132.709,
+      32.902
+    ],
+    [
+      132.495,
+      32.917
+    ],
+    [
+      132.428,
+      33.059
+    ],
+    [
+      132.511,
+      33.293
+    ],
+    [
+      132.405,
+      33.331
+    ],
+    [
+      132.413,
+      33.43
+    ],
+    [
+      132.033,
+      33.34
+    ],
+    [
+      132.643,
+      33.69
+    ],
+    [
+      132.784,
+      33.992
+    ],
+    [
+      132.935,
+      34.095
+    ],
+    [
+      133.193,
+      33.933
+    ],
+    [
+      133.582,
+      34.017
+    ],
+    [
+      133.643,
+      34.135
+    ],
+    [
+      133.603,
+      34.244
+    ],
+    [
+      133.948,
+      34.348
+    ],
+    [
+      134.357,
+      34.256
+    ]
+  ],
+  [
+    [
+      141.229,
+      41.373
+    ],
+    [
+      141.455,
+      41.405
+    ],
+    [
+      141.4,
+      41.096
+    ],
+    [
+      141.43,
+      40.723
+    ],
+    [
+      141.463,
+      40.611
+    ],
+    [
+      141.797,
+      40.291
+    ],
+    [
+      141.991,
+      39.792
+    ],
+    [
+      141.977,
+      39.429
+    ],
+    [
+      141.901,
+      39.111
+    ],
+    [
+      141.659,
+      38.975
+    ],
+    [
+      141.546,
+      38.763
+    ],
+    [
+      141.467,
+      38.404
+    ],
+    [
+      141.108,
+      38.338
+    ],
+    [
+      140.962,
+      38.149
+    ],
+    [
+      140.928,
+      37.95
+    ],
+    [
+      141.036,
+      37.467
+    ],
+    [
+      141.002,
+      37.115
+    ],
+    [
+      140.73,
+      36.732
+    ],
+    [
+      140.574,
+      36.231
+    ],
+    [
+      140.622,
+      36.059
+    ],
+    [
+      140.874,
+      35.725
+    ],
+    [
+      140.639,
+      35.661
+    ],
+    [
+      140.457,
+      35.51
+    ],
+    [
+      140.355,
+      35.181
+    ],
+    [
+      140.059,
+      35.038
+    ],
+    [
+      139.92,
+      34.9
+    ],
+    [
+      139.844,
+      34.915
+    ],
+    [
+      139.799,
+      34.957
+    ],
+    [
+      139.826,
+      35.297
+    ],
+    [
+      140.097,
+      35.585
+    ],
+    [
+      139.988,
+      35.668
+    ],
+    [
+      139.835,
+      35.658
+    ],
+    [
+      139.768,
+      35.495
+    ],
+    [
+      139.65,
+      35.409
+    ],
+    [
+      139.744,
+      35.252
+    ],
+    [
+      139.675,
+      35.149
+    ],
+    [
+      139.474,
+      35.299
+    ],
+    [
+      139.249,
+      35.278
+    ],
+    [
+      139.134,
+      35.155
+    ],
+    [
+      139.086,
+      34.839
+    ],
+    [
+      138.838,
+      34.619
+    ],
+    [
+      138.761,
+      34.699
+    ],
+    [
+      138.803,
+      34.975
+    ],
+    [
+      138.904,
+      35.025
+    ],
+    [
+      138.72,
+      35.124
+    ],
+    [
+      138.577,
+      35.086
+    ],
+    [
+      138.189,
+      34.596
+    ],
+    [
+      137.543,
+      34.664
+    ],
+    [
+      137.062,
+      34.583
+    ],
+    [
+      137.288,
+      34.704
+    ],
+    [
+      137.275,
+      34.773
+    ],
+    [
+      137.032,
+      34.766
+    ],
+    [
+      136.963,
+      34.835
+    ],
+    [
+      136.944,
+      34.722
+    ],
+    [
+      136.871,
+      34.733
+    ],
+    [
+      136.897,
+      35.036
+    ],
+    [
+      136.804,
+      35.05
+    ],
+    [
+      136.69,
+      34.984
+    ],
+    [
+      136.533,
+      34.678
+    ],
+    [
+      136.88,
+      34.434
+    ],
+    [
+      136.854,
+      34.324
+    ],
+    [
+      136.33,
+      34.177
+    ],
+    [
+      135.916,
+      33.562
+    ],
+    [
+      135.695,
+      33.487
+    ],
+    [
+      135.453,
+      33.553
+    ],
+    [
+      135.128,
+      34.007
+    ],
+    [
+      135.1,
+      34.288
+    ],
+    [
+      135.309,
+      34.417
+    ],
+    [
+      135.416,
+      34.617
+    ],
+    [
+      135.042,
+      34.631
+    ],
+    [
+      134.74,
+      34.765
+    ],
+    [
+      134.247,
+      34.714
+    ],
+    [
+      133.968,
+      34.527
+    ],
+    [
+      133.445,
+      34.433
+    ],
+    [
+      133.142,
+      34.302
+    ],
+    [
+      133.019,
+      34.33
+    ],
+    [
+      132.657,
+      34.246
+    ],
+    [
+      132.421,
+      34.353
+    ],
+    [
+      132.313,
+      34.325
+    ],
+    [
+      132.146,
+      33.839
+    ],
+    [
+      131.741,
+      34.052
+    ],
+    [
+      131.233,
+      33.948
+    ],
+    [
+      131.072,
+      34.021
+    ],
+    [
+      130.919,
+      33.976
+    ],
+    [
+      130.889,
+      34.262
+    ],
+    [
+      131.004,
+      34.393
+    ],
+    [
+      131.354,
+      34.413
+    ],
+    [
+      132.26,
+      35.022
+    ],
+    [
+      132.698,
+      35.418
+    ],
+    [
+      132.923,
+      35.511
+    ],
+    [
+      133.267,
+      35.557
+    ],
+    [
+      133.376,
+      35.459
+    ],
+    [
+      133.981,
+      35.507
+    ],
+    [
+      135.174,
+      35.747
+    ],
+    [
+      135.265,
+      35.722
+    ],
+    [
+      135.232,
+      35.592
+    ],
+    [
+      135.327,
+      35.526
+    ],
+    [
+      135.68,
+      35.503
+    ],
+    [
+      135.903,
+      35.607
+    ],
+    [
+      136.095,
+      35.768
+    ],
+    [
+      136.006,
+      35.991
+    ],
+    [
+      136.067,
+      36.117
+    ],
+    [
+      136.698,
+      36.742
+    ],
+    [
+      136.749,
+      36.951
+    ],
+    [
+      136.719,
+      37.198
+    ],
+    [
+      136.843,
+      37.382
+    ],
+    [
+      137.323,
+      37.522
+    ],
+    [
+      137.338,
+      37.437
+    ],
+    [
+      136.9,
+      37.118
+    ],
+    [
+      136.994,
+      37.027
+    ],
+    [
+      137.017,
+      36.837
+    ],
+    [
+      137.246,
+      36.753
+    ],
+    [
+      137.343,
+      36.77
+    ],
+    [
+      137.514,
+      36.952
+    ],
+    [
+      138.32,
+      37.218
+    ],
+    [
+      138.633,
+      37.472
+    ],
+    [
+      138.885,
+      37.844
+    ],
+    [
+      139.364,
+      38.099
+    ],
+    [
+      139.521,
+      38.503
+    ],
+    [
+      139.802,
+      38.882
+    ],
+    [
+      140.037,
+      39.411
+    ],
+    [
+      140.065,
+      39.624
+    ],
+    [
+      139.995,
+      39.855
+    ],
+    [
+      139.742,
+      39.921
+    ],
+    [
+      139.908,
+      40.022
+    ],
+    [
+      140.011,
+      40.26
+    ],
+    [
+      139.924,
+      40.534
+    ],
+    [
+      139.967,
+      40.673
+    ],
+    [
+      140.281,
+      40.846
+    ],
+    [
+      140.344,
+      41.006
+    ],
+    [
+      140.315,
+      41.161
+    ],
+    [
+      140.386,
+      41.23
+    ],
+    [
+      140.628,
+      41.195
+    ],
+    [
+      140.679,
+      40.893
+    ],
+    [
+      140.749,
+      40.83
+    ],
+    [
+      140.936,
+      40.941
+    ],
+    [
+      141.119,
+      40.882
+    ],
+    [
+      141.225,
+      40.988
+    ],
+    [
+      141.244,
+      41.206
+    ],
+    [
+      141.2,
+      41.244
+    ],
+    [
+      140.801,
+      41.139
+    ],
+    [
+      140.802,
+      41.254
+    ],
+    [
+      140.937,
+      41.506
+    ],
+    [
+      141.229,
+      41.373
+    ]
+  ],
+  [
+    [
+      124.293,
+      24.516
+    ],
+    [
+      124.234,
+      24.358
+    ],
+    [
+      124.136,
+      24.348
+    ],
+    [
+      124.085,
+      24.436
+    ],
+    [
+      124.211,
+      24.459
+    ],
+    [
+      124.302,
+      24.587
+    ],
+    [
+      124.293,
+      24.516
+    ]
+  ],
+  [
+    [
+      123.889,
+      24.28
+    ],
+    [
+      123.68,
+      24.318
+    ],
+    [
+      123.771,
+      24.414
+    ],
+    [
+      123.935,
+      24.362
+    ],
+    [
+      123.889,
+      24.28
+    ]
+  ],
+  [
+    [
+      125.444,
+      24.743
+    ],
+    [
+      125.269,
+      24.733
+    ],
+    [
+      125.284,
+      24.872
+    ],
+    [
+      125.444,
+      24.743
+    ]
+  ],
+  [
+    [
+      128.259,
+      26.653
+    ],
+    [
+      127.867,
+      26.442
+    ],
+    [
+      127.905,
+      26.328
+    ],
+    [
+      127.79,
+      26.255
+    ],
+    [
+      127.804,
+      26.153
+    ],
+    [
+      127.653,
+      26.095
+    ],
+    [
+      127.729,
+      26.434
+    ],
+    [
+      127.946,
+      26.594
+    ],
+    [
+      127.907,
+      26.694
+    ],
+    [
+      128.098,
+      26.668
+    ],
+    [
+      128.255,
+      26.882
+    ],
+    [
+      128.332,
+      26.812
+    ],
+    [
+      128.259,
+      26.653
+    ]
+  ],
+  [
+    [
+      128.998,
+      27.721
+    ],
+    [
+      128.9,
+      27.728
+    ],
+    [
+      128.908,
+      27.898
+    ],
+    [
+      128.952,
+      27.91
+    ],
+    [
+      128.998,
+      27.721
+    ]
+  ],
+  [
+    [
+      129.453,
+      28.209
+    ],
+    [
+      129.366,
+      28.128
+    ],
+    [
+      129.165,
+      28.25
+    ],
+    [
+      129.69,
+      28.517
+    ],
+    [
+      129.71,
+      28.432
+    ],
+    [
+      129.457,
+      28.272
+    ],
+    [
+      129.453,
+      28.209
+    ]
+  ],
+  [
+    [
+      129.324,
+      28.105
+    ],
+    [
+      129.232,
+      28.101
+    ],
+    [
+      129.192,
+      28.192
+    ],
+    [
+      129.324,
+      28.105
+    ]
+  ],
+  [
+    [
+      139.841,
+      33.056
+    ],
+    [
+      139.777,
+      33.125
+    ],
+    [
+      139.874,
+      33.094
+    ],
+    [
+      139.841,
+      33.056
+    ]
+  ]
+];
+const flightGroups = [
+  {
+    "name": "San Francisco group",
+    "window": "Nov 17–Nov 27",
+    "legs": [
+      {
+        "dir": "To Japan",
+        "when": "Nov 17 · 23:50",
+        "place": "SFO San Francisco International Airport I",
+        "flight": "EVA Air BR017",
+        "extra": "14h 5m"
+      },
+      {
+        "dir": "To Japan",
+        "when": "Nov 19 · 05:55",
+        "place": "TPE Taiwan Taoyuan International Airport T2",
+        "flight": "",
+        "extra": "Transfer in Taipei 2h 25m"
+      },
+      {
+        "dir": "To Japan",
+        "when": "Nov 19 · 08:20",
+        "place": "TPE Taiwan Taoyuan International Airport T2",
+        "flight": "EVA Air BR132",
+        "extra": "2h 35m"
+      },
+      {
+        "dir": "To Japan",
+        "when": "Nov 19 · 11:55",
+        "place": "KIX Kansai International Airport T1",
+        "flight": "",
+        "extra": "Land with the LA group"
+      },
+      {
+        "dir": "NRT–SFO Option A",
+        "when": "14:00",
+        "place": "NRT Narita International Airport T1",
+        "flight": "EVA Air BR197",
+        "extra": "4h 5m · matches the Doc’s Nov 27, 2:00 PM NRT departure"
+      },
+      {
+        "dir": "NRT–SFO Option A",
+        "when": "17:05",
+        "place": "TPE Taiwan Taoyuan International Airport T2",
+        "flight": "",
+        "extra": "Transfer in Taipei 2h 45m"
+      },
+      {
+        "dir": "NRT–SFO Option A",
+        "when": "19:50",
+        "place": "TPE Taiwan Taoyuan International Airport T2",
+        "flight": "EVA Air BR018",
+        "extra": "11h 10m"
+      },
+      {
+        "dir": "NRT–SFO Option A",
+        "when": "15:00",
+        "place": "SFO San Francisco International Airport I",
+        "flight": "",
+        "extra": "Time as printed on the screenshot"
+      }
+    ]
+  },
+  {
+    "name": "Los Angeles group",
+    "window": "Nov 17–Nov 27",
+    "legs": [
+      {
+        "dir": "To Japan",
+        "when": "Nov 17 · 23:00",
+        "place": "LAX Los Angeles International Airport B",
+        "flight": "EVA Air BR015",
+        "extra": "14h 40m"
+      },
+      {
+        "dir": "To Japan",
+        "when": "Nov 19 · 05:40",
+        "place": "TPE Taiwan Taoyuan International Airport T2",
+        "flight": "",
+        "extra": "Transfer in Taipei 2h 40m"
+      },
+      {
+        "dir": "To Japan",
+        "when": "Nov 19 · 08:20",
+        "place": "TPE Taiwan Taoyuan International Airport T2",
+        "flight": "EVA Air BR132",
+        "extra": "2h 35m · same flight as San Francisco"
+      },
+      {
+        "dir": "To Japan",
+        "when": "Nov 19 · 11:55",
+        "place": "KIX Kansai International Airport T1",
+        "flight": "",
+        "extra": ""
+      },
+      {
+        "dir": "NRT–LAX Option A",
+        "when": "14:00",
+        "place": "NRT Narita International Airport T1",
+        "flight": "EVA Air BR197",
+        "extra": "4h 5m · matches the Doc’s Nov 27, 2:00 PM NRT departure"
+      },
+      {
+        "dir": "NRT–LAX Option A",
+        "when": "17:05",
+        "place": "TPE Taiwan Taoyuan International Airport T2",
+        "flight": "",
+        "extra": "Transfer in Taipei 2h 35m"
+      },
+      {
+        "dir": "NRT–LAX Option A",
+        "when": "19:40",
+        "place": "TPE Taiwan Taoyuan International Airport T2",
+        "flight": "EVA Air BR012",
+        "extra": "11h 40m"
+      },
+      {
+        "dir": "NRT–LAX Option A",
+        "when": "15:20",
+        "place": "LAX Los Angeles International Airport B",
+        "flight": "",
+        "extra": "Time as printed on the screenshot"
+      }
+    ]
+  }
+];
+const denimStops = [
+  {
+    "n": 1,
+    "title": "Osaka — the Osaka 5",
+    "when": "Thursday, Nov 19 · possible afternoon, first day",
+    "day": "11/19",
+    "body": "Visit the Osaka 5 — Studio D’Artisan, Momotaro, and Big John. All are near-ish the Osaka hotel. This can be an afternoon stop on the first day, in the free time before the 4:00 PM WithLocals tour, or before meeting everyone at dinner.",
+    "gap": "This list names three brands for the “Osaka 5.” The other two were not named, so they are not filled in here.",
+    "links": [
+      {
+        "label": "Studio D’Artisan",
+        "url": "http://www.dartisan.co.jp/"
+      },
+      {
+        "label": "Studio D’Artisan Osaka store",
+        "url": "http://www.dartisan.co.jp/shop/osaka/"
+      },
+      {
+        "label": "Momotaro Jeans",
+        "url": "https://www.momotaro-jeans.com/en_US/home/"
+      },
+      {
+        "label": "Big John",
+        "url": "https://www.bigjohn.co.jp/"
+      }
+    ]
+  },
+  {
+    "n": 2,
+    "title": "Kojima Shinkansen pit stop",
+    "when": "Friday, Nov 20 · en route to Hiroshima",
+    "day": "11/20",
+    "body": "Kojima is the holy land of Japanese denim. Jeans Street, plus a trip to the TCB factory for a pilgrimage to the denim epicenter. The Doc lists Kojima Jeans Street as a 1–2 hour stop this day, between Himeji and Hiroshima. Staying on the Shinkansen after Himeji skips it.",
+    "gap": "",
+    "links": [
+      {
+        "label": "Kojima Jeans Street",
+        "url": "https://jeans-street.com/"
+      },
+      {
+        "label": "Jeans Street guide (Doc)",
+        "url": "https://www.japan.travel/en/japan-magazine/exploring-jeans-street-in-kojima-city-dyed-in-indigo/"
+      },
+      {
+        "label": "TCB jeans",
+        "url": "https://tcbjeans.com/"
+      },
+      {
+        "label": "TCB shop page",
+        "url": "https://tcbjeans.com/shop"
+      }
+    ]
+  },
+  {
+    "n": 3,
+    "title": "Tokyo flagship and a private shopping experience",
+    "when": "Tokyo stay, Nov 25–27 · the Doc’s shopping day is Thursday, Nov 26",
+    "day": "11/26",
+    "body": "For anyone who hasn’t had enough denim, or who wants a truly custom experience, a private denim shopping experience will be scheduled. Reservations are needed. No clock time is set yet. Mark will also visit The Real McCoy’s flagship store for reproductions of classic military clothing.",
+    "gap": "",
+    "links": [
+      {
+        "label": "The Real McCoy’s",
+        "url": "https://www.therealmccoys.com/"
+      },
+      {
+        "label": "The Real McCoy’s Japan",
+        "url": "https://therealmccoys.jp/"
+      }
+    ]
+  }
+];
 
     const gettingAroundGuides = [
+  {
+    "id": "kix-osaka",
+    "date": "11/19",
+    "title": "KIX Airport → Osaka Station → Hilton Osaka",
+    "mode": "Haruka",
+    "duration": "About every 20 min",
+    "lookFor": "Airport express Haruka to Osaka Station. Reserved or non-reserved seats.",
+    "tip": "When you receive the JR Pass, ask for reserved seats if you want them. Also pick up the Kyoto → Odawara green-class tickets for the Nov 24 Hikari.",
+    "steps": [
+      "Land at KIX Terminal 1 at 11:55 (the Doc also says around noon).",
+      "Activate the JR Pass. Ask staff about reserved seats.",
+      "Take the Haruka to Osaka Station, about every 20 minutes.",
+      "Hilton Osaka is in Umeda. At check-in, ask about luggage shipment."
+    ],
+    "maps": [
       {
-        id: "kix-osaka",
-        date: "11/19",
-        title: "KIX Airport ➔ Hilton Osaka (Umeda)",
-        mode: "Train",
-        duration: "~1 hr",
-        lookFor: "JR Haruka Express toward Kyoto/Osaka, or trains to Namba then transfer toward Umeda.",
-        tip: "Umeda is the most convenient stop for Hilton Osaka and the next morning’s Shin-Osaka Shinkansen.",
-        steps: [
-          "Clear immigration at Kansai International (KIX) around noon.",
-          "Buy / activate JR Pass and IC cards if needed.",
-          "Take JR Haruka Express toward Umeda / Osaka, or train via Namba.",
-          "Walk or short taxi to Hilton Osaka (Umeda). Ask concierge about luggage shipment for 11/20."
-        ],
-        maps: [
-          { label: "Hilton Osaka", query: "Hilton Osaka Umeda", url: "https://www.hilton.com/en/hotels/osahitw-hilton-osaka/" }
-        ],
-        links: [
-          { label: "Japan Rail Pass", url: "https://japanrailpass.net/en/" },
-          { label: "Seat reservation video", url: "https://www.youtube.com/watch?v=2Lf0A7z_1Zc" }
-        ]
-      },
-      {
-        id: "osaka-hiroshima",
-        date: "11/20",
-        title: "Osaka ➔ Himeji ➔ (optional Kojima) ➔ Hiroshima",
-        mode: "Shinkansen + streetcar",
-        duration: "Half day moving",
-        lookFor: "Shin-Osaka station → Hikari/Kodama only (no Nozomi). In Hiroshima, Streetcar Line 1 → Chuden-mae.",
-        tip: "Ship big suitcases from Hilton Osaka to Hilton Garden Inn Kyoto before leaving. Carry only a 2-night bag.",
-        steps: [
-          "Leave Hilton Osaka early → Shin-Osaka Station.",
-          "Shinkansen Shin-Osaka ➔ Himeji (30–40 min) for Himeji Castle.",
-          "Optional denim detour: Himeji ➔ Okayama ➔ JR Marine Liner to Kojima (Jeans Street).",
-          "Continue to Hiroshima Station (~1 hr from Himeji direct, or ~1 hr 15 min via Kojima).",
-          "From Hiroshima Station take Electric Railway Streetcar Line 1 and get off at Chuden-mae for THE KNot."
-        ],
-        maps: [
-          { label: "Shin-Osaka Station", query: "Shin-Osaka Station", url: "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station" },
-          { label: "Chuden-mae / Peace Park area", query: "Chuden-mae Station Hiroshima", url: "https://dive-hiroshima.com/en/information/access-peacememorialpark/" }
-        ],
-        links: [
-          { label: "Shin-Osaka guide", url: "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station" },
-          { label: "Streetcar walk steps", url: "https://dive-hiroshima.com/en/information/access-peacememorialpark/" }
-        ]
-      },
-      {
-        id: "hiroshima-miyajima",
-        date: "11/21",
-        title: "THE KNot ➔ Peace Memorial Ferry ➔ Miyajima",
-        mode: "Walk + ferry",
-        duration: "~1 hr door to dock + 45 min boat",
-        lookFor: "Aqua Net World Heritage ferry dock. Arrive 9:45 AM for 10:10 AM departure. Pay at the boat dock.",
-        tip: "Text Shin as you board so Hotel Makoto’s van can meet you at the Miyajima pier for luggage.",
-        steps: [
-          "Walk ~15 minutes from THE KNot to the Peace Memorial boat dock.",
-          "Be at the dock by 9:45 AM (boat leaves 10:10 AM).",
-          "Use ferry bookings #538527 (key ju9J) and #538532 (key 2CkE).",
-          "On Miyajima, look for the Hotel Makoto luggage van at the pier—bags go with the van so you can explore hands-free."
-        ],
-        maps: [
-          { label: "Ferry meeting point", query: "Hiroshima Peace Memorial Park ferry terminal", url: "https://maps.app.goo.gl/WA44dJRN4K4BbwQc7" }
-        ],
-        links: [
-          { label: "Ferry timetable", url: "https://www.aqua-net-h.co.jp/en/heritage/#timeTable-m" },
-          { label: "Directions photo doc", url: "https://docs.google.com/document/d/1Nr92oKDYSzGGOJD6nCr7dNQbiknT8I-XrEAG61sjIEo/edit?usp=sharing" },
-          { label: "Makoto van photo", url: "https://docs.google.com/document/d/1RVkwfAPNKfkHgwYBl83nZy7IL7E43WWavRpLBzrRGt0/edit?usp=sharing" },
-          { label: "Meeting map", url: "https://maps.app.goo.gl/WA44dJRN4K4BbwQc7" }
-        ],
-        visualNote: "Open the Directions photo doc and Makoto van photo before this morning—those are the visual guides from the Google Doc."
-      },
-      {
-        id: "miyajima-kyoto",
-        date: "11/22",
-        title: "Miyajima ➔ Miyajimaguchi ➔ Hiroshima ➔ Kyoto",
-        mode: "JR ferry + train + Shinkansen",
-        duration: "~3 hrs total",
-        lookFor: "Different ferry company off the island—JR West ferry (JR Pass works, no reservation). Sit non-reserved on the Shinkansen if needed.",
-        tip: "Your big suitcases shipped from Osaka should be waiting at Hilton Garden Inn Kyoto.",
-        steps: [
-          "Board the JR West Miyajima Ferry off the island (not the Aqua Net boat you took over).",
-          "Walk 2–3 blocks / ~10 minutes to JR Miyajimaguchi Station.",
-          "Take the JR train to Hiroshima Station (last stop).",
-          "Transfer to Shinkansen bound for Kyoto (~total travel ~3 hrs).",
-          "From Kyoto Station, easy subway / short ride to Hilton Garden Inn Shijo Karasuma."
-        ],
-        maps: [
-          { label: "JR Ferry boarding", query: "Miyajima JR Ferry Terminal", url: "https://maps.app.goo.gl/nphaSxZogRQywBSq6" },
-          { label: "Miyajimaguchi Station", query: "JR Miyajimaguchi Station", url: "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8" }
-        ],
-        links: [
-          { label: "JR ferry map", url: "https://maps.app.goo.gl/nphaSxZogRQywBSq6" },
-          { label: "Miyajimaguchi map", url: "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8" }
-        ]
-      },
-      {
-        id: "kyoto-hakone",
-        date: "11/24",
-        title: "Kyoto ➔ Odawara ➔ Hakone Tozan Micro Bus ➔ Fujiya",
-        mode: "Shinkansen + booked bus tour",
-        duration: "~2 hrs rail + ~6 hr tour/drop-off",
-        lookFor: "Odawara Station west exit at 11:45 AM. Hakone Tozan micro bus (TEL 0465-30-211). Wire transfer already done.",
-        tip: "Try left-side Shinkansen seats Kyoto ➔ Odawara for Mt. Fuji views. Optional: ship heavy bags Kyoto ➔ Tokyo overnight bag only into Hakone.",
-        steps: [
-          "Leave Kyoto early on Shinkansen to Odawara Station (~2 hrs).",
-          "Meet Hakone Tozan Micro Bus at Odawara west exit at 11:45 AM.",
-          "Ride the ~6 hour Hakone micro-bus tour (Open-Air Museum tickets booked).",
-          "Bus drops the group at Fujiya Hotel / Ryokan for onsen evening and Cascade dinner 18:30."
-        ],
-        maps: [
-          { label: "Odawara Station", query: "Odawara Station west exit", url: "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/" },
-          { label: "Fujiya Hotel", query: "Fujiya Hotel Hakone Miyanoshita", url: "https://www.booking.com/hotel/jp/fujiya.html" }
-        ],
-        links: [
-          { label: "Hakone Tozan micro bus", url: "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/" },
-          { label: "Open-Air Museum", url: "https://www.hakone-oam.or.jp/en/" }
-        ]
-      },
-      {
-        id: "hakone-tokyo",
-        date: "11/25",
-        title: "Hakone morning ➔ Odawara ➔ Tokyo (Kyobashi)",
-        mode: "Ropeway option + Shinkansen",
-        duration: "~2 hrs after checkout",
-        lookFor: "Morning ropeway / Fuji view before checkout, then rail Odawara ➔ Tokyo Station. Hotel is walkable toward Ginza / Kyobashi.",
-        tip: "Mitsui Garden pre-check-in is done—ask about early check-in after the Hakone morning.",
-        steps: [
-          "Optional morning: Hakone Ropeway / Owakudani Fuji views before checkout.",
-          "Return to Odawara and take Shinkansen / train to Tokyo Station (~2 hrs total).",
-          "Walk or short taxi to Mitsui Garden Hotel Kyobashi."
-        ],
-        maps: [
-          { label: "Mitsui Garden Kyobashi", query: "Mitsui Garden Hotel Kyobashi", url: "https://www.gardenhotels.co.jp/kyobashi/eng/" }
-        ],
-        links: [
-          { label: "Hakone Ropeway", url: "https://www.japan-guide.com/e/e5223.html" },
-          { label: "Owakudani", url: "https://www.japan.travel/en/spot/1566/" }
-        ]
-      },
-      {
-        id: "tokyo-nrt",
-        date: "11/27",
-        title: "Tokyo ➔ Narita (NRT) for 2:00 PM flight",
-        mode: "Airport bus or N'EX",
-        duration: "Leave hotel ~9:30–10:00 AM",
-        lookFor: "TYO-NRT airport shuttle from Tokyo Station / Ginza area, or Narita Express from Tokyo Station. Be at NRT by ~11:00 AM.",
-        tip: "All bags travel with you on departure day—no luggage van.",
-        steps: [
-          "Checkout from Mitsui Garden Hotel Kyobashi.",
-          "Take Airport Shuttle Bus (Tokyo Station/Ginza) or Narita Express from Tokyo Station.",
-          "Arrive NRT by ~11:00 AM for the 2:00 PM departure."
-        ],
-        maps: [
-          { label: "Tokyo Station", query: "Tokyo Station", url: "https://www.google.com/maps/search/?api=1&query=Tokyo+Station" }
-        ],
-        links: [
-          { label: "Narita Airport", url: "https://www.narita-airport.jp/en/" }
-        ]
+        "label": "Hilton Osaka",
+        "query": "Hilton Osaka Umeda",
+        "url": "https://www.hilton.com/en/hotels/osahitw-hilton-osaka/"
       }
-    ];
+    ],
+    "links": [
+      {
+        "label": "Activate the JR Pass at KIX",
+        "url": "https://www.jrpass.com/blog/how-to-activate-the-jr-pass-at-kansai-airport"
+      },
+      {
+        "label": "Japan Rail Pass",
+        "url": "https://japanrailpass.net/en/"
+      },
+      {
+        "label": "Seat reservation video",
+        "url": "https://www.youtube.com/watch?v=2Lf0A7z_1Zc"
+      }
+    ]
+  },
+  {
+    "id": "osaka-hiroshima",
+    "date": "11/20",
+    "title": "Osaka Station → Shin-Osaka → Himeji → optional Kojima → Hiroshima",
+    "mode": "Shinkansen + streetcar",
+    "duration": "Half day moving",
+    "lookFor": "Shin-Osaka platforms 20–22. Hikari only (no Nozomi). In Hiroshima, streetcar Line 1 to Chuden-mae.",
+    "tip": "Luggage to Kyoto is still a question in the Doc. Ask the Hilton desk before you leave.",
+    "steps": [
+      "Go from Osaka Station to Shin-Osaka. Shinkansen platforms are 20–22.",
+      "Take Hikari. Himeji is 30–40 minutes.",
+      "Optional: Himeji → Okayama (19–23 min), then JR Marine Liner or a local train to Kojima (20–24 min).",
+      "Hiroshima is about an hour direct from Himeji, or about 1 hour 15 minutes via Kojima.",
+      "From Hiroshima Station, streetcar Line 1 to Chuden-mae for THE KNot."
+    ],
+    "maps": [
+      {
+        "label": "Shin-Osaka Station",
+        "query": "Shin-Osaka Station",
+        "url": "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station"
+      },
+      {
+        "label": "Chuden-mae / Peace Park",
+        "query": "Chuden-mae Station Hiroshima",
+        "url": "https://dive-hiroshima.com/en/information/access-peacememorialpark/"
+      }
+    ],
+    "links": [
+      {
+        "label": "Shin-Osaka guide",
+        "url": "https://www.japan-bullettrain.com/articles/blog/shin-osaka-station"
+      },
+      {
+        "label": "Streetcar walk steps",
+        "url": "https://dive-hiroshima.com/en/information/access-peacememorialpark/"
+      }
+    ]
+  },
+  {
+    "id": "hiroshima-miyajima",
+    "date": "11/21",
+    "title": "THE KNot → Peace Memorial ferry → Miyajima",
+    "mode": "Walk + ferry",
+    "duration": "15 min walk + 45 min boat",
+    "lookFor": "Peace Memorial boat dock. Be there at 9:45 AM. The boat leaves at 10:10 AM. Pay at the dock.",
+    "tip": "Text Shin as you board so Hotel Makoto can meet the pier. Tea ceremony is 1:30 PM under Ann Krejcarek. Kimono, if reserved, means arriving by 1:00 PM.",
+    "steps": [
+      "Walk about 15 minutes from THE KNot to the dock.",
+      "Be at the dock by 9:45 AM. Departure is 10:10 AM.",
+      "Bookings: #538527 (key ju9J) and #538532 (key 2CkE).",
+      "On Miyajima, the Makoto van takes the bags."
+    ],
+    "maps": [
+      {
+        "label": "Ferry meeting point",
+        "query": "Hiroshima Peace Memorial Park ferry terminal",
+        "url": "https://maps.app.goo.gl/WA44dJRN4K4BbwQc7"
+      }
+    ],
+    "links": [
+      {
+        "label": "Ferry timetable",
+        "url": "https://www.aqua-net-h.co.jp/en/heritage/#timeTable-m"
+      },
+      {
+        "label": "Directions photo doc",
+        "url": "https://docs.google.com/document/d/1Nr92oKDYSzGGOJD6nCr7dNQbiknT8I-XrEAG61sjIEo/edit?usp=sharing"
+      },
+      {
+        "label": "Makoto van photo",
+        "url": "https://docs.google.com/document/d/1RVkwfAPNKfkHgwYBl83nZy7IL7E43WWavRpLBzrRGt0/edit?usp=sharing"
+      },
+      {
+        "label": "Island map",
+        "url": "https://drive.google.com/file/d/1C8-y6t0EuCYUYbQPW6w_hQi7pUgjDd_F/view?usp=sharing"
+      }
+    ],
+    "visualNote": "Open the dock directions and the Makoto van photo before this morning. Those are the visuals in the Doc."
+  },
+  {
+    "id": "miyajima-kyoto",
+    "date": "11/22",
+    "title": "Miyajima → Miyajimaguchi → Hiroshima → Kyoto",
+    "mode": "JR ferry + train + Hikari",
+    "duration": "About 3 hours",
+    "lookFor": "A different ferry off the island. JR Pass works. No reservation. At Hiroshima, sit non-reserved on Hikari, not Nozomi.",
+    "tip": "Big bags only wait at the Kyoto hotel if they were actually sent from Osaka. That shipment is still a question in the Doc.",
+    "steps": [
+      "Board the JR ferry off Miyajima (not the boat you arrived on).",
+      "Walk about 10 minutes to JR Miyajimaguchi Station.",
+      "Ride to Hiroshima Station, the last stop.",
+      "Shinkansen to Kyoto: Hikari, non-reserved seats.",
+      "Short train from Kyoto Station to Hilton Garden Inn Shijo Karasuma."
+    ],
+    "maps": [
+      {
+        "label": "JR ferry boarding",
+        "query": "Miyajima JR Ferry Terminal",
+        "url": "https://maps.app.goo.gl/nphaSxZogRQywBSq6"
+      },
+      {
+        "label": "Miyajimaguchi Station",
+        "query": "JR Miyajimaguchi Station",
+        "url": "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8"
+      }
+    ],
+    "links": [
+      {
+        "label": "JR ferry map",
+        "url": "https://maps.app.goo.gl/nphaSxZogRQywBSq6"
+      },
+      {
+        "label": "Miyajimaguchi map",
+        "url": "https://maps.app.goo.gl/y2NrSVyEcEHVaW5m8"
+      }
+    ]
+  },
+  {
+    "id": "kyoto-hakone",
+    "date": "11/24",
+    "title": "Kyoto → 8:33 Hikari → Odawara west exit → Fujiya",
+    "mode": "Hikari + booked bus",
+    "duration": "8:33–11:38 rail, then a 5–6 hour tour",
+    "lookFor": "Kyoto Station by 8:00 AM. Hikari at 8:33 AM. Odawara west exit at 11:45 AM. Reservation name: Krejcarek Family. TEL 0465-30-211.",
+    "tip": "You must catch the 8:33. Left-side seats for Fuji. Bring a bento from Kyoto Station or a conbini — there is little chance to eat once the bus starts. Cascade dinner is 18:30.",
+    "steps": [
+      "Leave the Kyoto hotel right after breakfast. Be at Kyoto Station by 8:00 AM.",
+      "Board the 8:33 Hikari. It arrives Odawara at 11:38. Sit on the left.",
+      "Meet the Hakone Tozan micro bus at the west exit at 11:45 AM.",
+      "The tour includes the Open-Air Museum (tickets booked) and drops you at Fujiya around 5:00–6:00 PM."
+    ],
+    "maps": [
+      {
+        "label": "Odawara west exit / bus",
+        "query": "Odawara Station west exit",
+        "url": "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/"
+      },
+      {
+        "label": "Fujiya Hotel",
+        "query": "Fujiya Hotel Hakone",
+        "url": "https://www.booking.com/hotel/jp/fujiya.html"
+      }
+    ],
+    "links": [
+      {
+        "label": "Hakone Tozan micro bus",
+        "url": "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/"
+      },
+      {
+        "label": "Open-Air Museum",
+        "url": "https://www.hakone-oam.or.jp/en/"
+      }
+    ]
+  },
+  {
+    "id": "hakone-tokyo",
+    "date": "11/25",
+    "title": "Fujiya → Odawara → Tokyo Station → Kyobashi",
+    "mode": "Booked bus + Hikari or Kodama",
+    "duration": "Pickup 9:00 AM",
+    "lookFor": "Hakone Tozan bus at the hotel at 9:00 AM. Odawara around 10:00 AM. Next Hikari or Kodama to Tokyo Station (last stop). Reservation: Krejcarek family.",
+    "tip": "Mitsui pre-check-in is done. Early check-in is still a question.",
+    "steps": [
+      "Breakfast at Fujiya, then a little time at the hotel.",
+      "Bus pickup at 9:00 AM. Wire transfer is already done. TEL 0465-30-211.",
+      "Odawara around 10:00 AM. Take the next Hikari or Kodama to Tokyo Station.",
+      "Walk or a short taxi to Mitsui Garden Hotel Kyobashi."
+    ],
+    "maps": [
+      {
+        "label": "Mitsui Garden Kyobashi",
+        "query": "Mitsui Garden Hotel Kyobashi",
+        "url": "https://www.gardenhotels.co.jp/kyobashi/eng/"
+      }
+    ],
+    "links": [
+      {
+        "label": "Hakone Tozan bus",
+        "url": "https://www.hakonenavi.jp/hakone-tozanbus/kanko/micro/"
+      }
+    ]
+  },
+  {
+    "id": "tokyo-nrt",
+    "date": "11/27",
+    "title": "Ginza → Narita for the 2:00 PM flight",
+    "mode": "Airport bus or train",
+    "duration": "Leave 9:30–10:00 AM",
+    "lookFor": "Bus or train from Ginza Station. Bus 60–70 minutes. Train about 55 minutes. NRT flight at 2:00 PM.",
+    "tip": "All bags ride with you. The return screenshots are labeled Option A.",
+    "steps": [
+      "Check out of Mitsui Garden Hotel Kyobashi.",
+      "From Ginza Station, catch the bus or train around 9:30–10:00.",
+      "Bus is 60–70 minutes. The train is about 55 minutes.",
+      "The Doc’s flight leaves NRT at 2:00 PM."
+    ],
+    "maps": [
+      {
+        "label": "Ginza Station",
+        "query": "Ginza Station Tokyo",
+        "url": "https://tyo-nrt.com/en/timetable"
+      }
+    ],
+    "links": [
+      {
+        "label": "Airport bus timetable",
+        "url": "https://tyo-nrt.com/en/timetable"
+      },
+      {
+        "label": "Narita Express",
+        "url": "https://www.jreast.co.jp/en/multi/nex/"
+      }
+    ]
+  }
+];
 
     let selectedNavGuide = 'all';
 
@@ -927,7 +3734,7 @@
       {
         category: "🎒 Smart Luggage Strategy (Crucial for 11/20–11/22)",
         items: [
-          { id: "gp-6", name: "Packable 2-Night Duffle / Backpack (For Hiroshima & Miyajima)", note: "On 11/20 AM, ship heavy suitcases from Hilton Osaka to Hilton Garden Inn Kyoto. Take only a 2-night bag to Himeji/Hiroshima/Miyajima!" },
+          { id: "gp-6", name: "Packable 2-Night Duffle / Backpack (For Hiroshima & Miyajima)", note: "The Doc still asks whether to send big suitcases from Hilton Osaka to the Kyoto hotel on 11/20. If you do, carry a smaller bag for Hiroshima and Miyajima." },
           { id: "gp-7", name: "Luggage AirTags & Color-Coded Straps", note: "Makes spotting our 15-person group bags easy on the Hotel Makoto van (11/21) & Shinkansen racks." },
           { id: "gp-8", name: "Packable Tote Bag for Souvenirs / Kojima Jeans / Ginza", note: "Great for carrying denim from Kojima (11/20) or Tokyo shopping (11/25–11/26)." }
         ]
@@ -937,7 +3744,7 @@
         items: [
           { id: "gp-9", name: "Broken-In Slip-On Walking Shoes (15,000–20,000 steps/day)", note: "Easy slip-on/off for Himeji Castle, tea ceremonies, and hotel lobbies." },
           { id: "gp-10", name: "Warm Crew Socks (No holes!)", note: "Himeji Castle (11/20) and tea ceremonies require removing shoes on cold wooden/tatami floors." },
-          { id: "gp-11", name: "Pants/Shorts That Roll Above the Knee (For TeamLab Planets Tokyo)", note: "TeamLab Planets (11/25) has knee-deep water rooms and mirrored floors." },
+          { id: "gp-11", name: "Pants/Shorts That Roll Above the Knee (For TeamLab Planets Tokyo)", note: "TeamLab Planets is on the Tokyo day (11/26) and has knee-deep water rooms and mirrored floors." },
           { id: "gp-12", name: "Packable Down Jacket + Breathable Layers", note: "Late November is 45°F–62°F outside (chilly in Hakone mountains & Miyajima ferry), but trains are warmly heated." },
           { id: "gp-13", name: "Soft Baby Carrier for Olive (No Strollers in Himeji Castle)", note: "Required for steep stairs inside Himeji Castle (11/20), Miyajima Tea Ceremony (11/21), and Fushimi Inari." }
         ]
@@ -977,12 +3784,18 @@
 
     function statusBadge(status) {
       if (status === 'booked') {
-        return `<span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-300"><span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>Booked for everyone</span>`;
+        return `<span class="inline-flex shrink-0 items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-300"><span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>Booked</span>`;
       }
       if (status === 'suggestion') {
-        return `<span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-300"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Optional</span>`;
+        return `<span class="inline-flex shrink-0 items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-300"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Suggestion</span>`;
       }
-      return `<span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300">Info</span>`;
+      if (status === 'there') {
+        return `<span class="inline-flex shrink-0 items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-fuchsia-100 text-fuchsia-900 border border-fuchsia-300"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span>How to</span>`;
+      }
+      if (status === 'pending') {
+        return `<span class="inline-flex shrink-0 items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Pre-check open</span>`;
+      }
+      return `<span class="inline-flex shrink-0 items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300">Info</span>`;
     }
 
     function shortBookedLabel(text) {
@@ -994,14 +3807,14 @@
     }
 
     function isNamedReservation(text) {
-      return /BOOKED|confirmation|ferry booking|tozan|wire transfer|flight departs|arrival at kansai/i.test(String(text || ''));
+      return /BOOKED|confirmation|ferry booking|tozan|wire transfer|flight departs|arrival at kansai|KIX Terminal|Hikari that departs/i.test(String(text || ''));
     }
 
     function collectBookedForEveryone() {
       return itineraryDays.map(day => {
         const items = [];
         if (day.hotel && day.hotel.status === 'booked') {
-          items.push({ kind: 'Hotel', text: day.hotel.name + (day.hotel.confirmation ? ` · ${day.hotel.confirmation}` : '') });
+          items.push({ kind: 'Hotel', text: day.hotel.name + (day.hotel.confirmation ? ` · ${escapeHtml(day.hotel.confirmation)}` : '') });
         }
         (day.transport || []).forEach(item => {
           if (item.status === 'booked' && isNamedReservation(item.text)) {
@@ -1027,8 +3840,8 @@
           <div class="flex items-center gap-2">
             <span class="bg-red-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded">${day.date}</span>
             <div>
-              <p class="text-xs font-extrabold text-slate-900">${day.city}</p>
-              <p class="text-[11px] text-slate-500">${day.dayName}</p>
+              <p class="text-xs font-extrabold text-slate-900">${escapeHtml(day.city)}</p>
+              <p class="text-[11px] text-slate-500">${escapeHtml(day.dayName)}</p>
             </div>
           </div>
           <ul class="space-y-1.5">
@@ -1088,19 +3901,21 @@
     function renderItinerary() {
       if (!packingPerson) packingPerson = savedPackingPersonId();
       const container = document.getElementById('itinerary-cards-container');
-      const filtered = selectedDay === 'all' ? itineraryDays : itineraryDays.filter(d => d.date === selectedDay);
-
       renderReminders();
       renderBookedSummary();
-      container.innerHTML = filtered.map(day => `
-        <article class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      container.innerHTML = itineraryDays.map(day => {
+        const dayId = 'day-' + day.date.replace('/', '-');
+        const hidden = selectedDay !== 'all' && selectedDay !== day.date;
+        const keyTimes = (day.keyTimes || []).map(time => `<span class="inline-flex items-center min-h-[32px] text-[11px] font-bold text-slate-800 bg-white border border-slate-200 rounded-full px-2.5 py-1">${escapeHtml(time)}</span>`).join('');
+        return `
+        <article id="${dayId}" class="day-card bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden ${hidden ? 'hidden' : ''}">
           <!-- Day Header -->
           <div class="bg-slate-900 text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
             <div class="flex items-center gap-2.5">
               <span class="bg-red-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">${day.date}</span>
               <div>
-                <h3 class="text-base sm:text-lg font-extrabold">${day.title}</h3>
-                <p class="text-xs text-slate-300">${day.dayName} • ${day.city}</p>
+                <h3 class="text-base sm:text-lg font-extrabold">${escapeHtml(day.title)}</h3>
+                <p class="text-xs text-slate-300">${escapeHtml(day.dayName)} • ${escapeHtml(day.city)}</p>
               </div>
             </div>
           </div>
@@ -1108,8 +3923,9 @@
           <!-- Luggage Tip Callout -->
           <div class="bg-amber-50/90 border-b border-amber-200 px-4 py-2 text-xs text-amber-950 font-medium flex items-center gap-2">
             <span>🧳</span>
-            <span><strong>Luggage Plan:</strong> ${day.luggageTip}</span>
+            <span><strong>Luggage:</strong> ${escapeHtml(day.luggageTip)}</span>
           </div>
+          ${keyTimes ? `<div class="px-4 py-2 flex flex-wrap gap-1.5 border-b border-slate-100">${keyTimes}</div>` : ''}
 
           <!-- 4-Column Grid matching Google Sheet -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
@@ -1123,7 +3939,7 @@
                 ${day.transport.map(t => `
                   <li class="bg-white p-2.5 rounded-lg border ${t.status === 'booked' && isNamedReservation(t.text) ? 'border-red-200 bg-red-50/30' : 'border-slate-200/70'} space-y-1.5">
                     <div class="flex items-start justify-between gap-2">
-                      <span class="text-slate-800 font-medium">${t.text}</span>
+                      <span class="text-slate-800 font-medium">${escapeHtml(t.text)}</span>
                       ${statusBadge(t.status)}
                     </div>
                     ${t.status === 'booked' && isNamedReservation(t.text) ? '<p class="text-[11px] font-semibold text-red-700">Included for everyone in the group.</p>' : ''}
@@ -1145,14 +3961,14 @@
               </div>
               <div class="bg-white p-3 rounded-lg border ${day.hotel.status === 'booked' ? 'border-red-200' : 'border-slate-200/70'} space-y-1.5">
                 <a href="${day.hotel.url}" target="_blank" rel="noopener" class="text-sm sm:text-base font-extrabold text-slate-900 hover:text-red-600 underline flex items-center gap-1">
-                  ${day.hotel.name} ↗
+                  ${escapeHtml(day.hotel.name)} ↗
                 </a>
                 ${day.hotel.status === 'booked' ? '<p class="text-[11px] font-semibold text-red-700">Hotel rooms booked for everyone.</p>' : ''}
-                <p class="text-xs text-slate-600"><strong>📍 Address:</strong> ${day.hotel.address}</p>
+                <p class="text-xs text-slate-600"><strong>📍 Address:</strong> ${escapeHtml(day.hotel.address)}</p>
                 <p class="text-xs text-red-700 font-bold bg-red-50 border border-red-200 px-2 py-1 rounded inline-block">
-                  🔑 Conf: ${day.hotel.confirmation}
+                  🔑 Conf: ${escapeHtml(day.hotel.confirmation)}
                 </p>
-                <p class="text-xs text-slate-700 pt-1">${day.hotel.details}</p>
+                <p class="text-xs text-slate-700 pt-1">${escapeHtml(day.hotel.details)}</p>
               </div>
             </div>
 
@@ -1165,7 +3981,7 @@
                 ${day.activities.map(a => `
                   <li class="bg-white p-2.5 rounded-lg border ${a.status === 'booked' ? 'border-red-200 bg-red-50/30' : 'border-slate-200/70'} space-y-1.5">
                     <div class="flex items-start justify-between gap-2">
-                      <span class="text-slate-800 font-medium">${a.text}</span>
+                      <span class="text-slate-800 font-medium">${escapeHtml(a.text)}</span>
                       ${statusBadge(a.status)}
                     </div>
                     ${a.status === 'booked' ? '<p class="text-[11px] font-semibold text-red-700">Included for everyone in the group.</p>' : ''}
@@ -1188,10 +4004,10 @@
                 ${day.food.map(f => `
                   <li class="bg-white p-2.5 rounded-lg border ${f.status === 'booked' ? 'border-red-200 bg-red-50/30' : 'border-slate-200/70'} space-y-1.5">
                     <div class="flex items-start justify-between gap-2">
-                      <span class="text-slate-800 font-medium">${f.text}</span>
+                      <span class="text-slate-800 font-medium">${escapeHtml(f.text)}</span>
                       ${statusBadge(f.status)}
                     </div>
-                    ${f.status === 'booked' ? '<p class="text-[11px] font-semibold text-red-700">Reservation covers everyone.</p>' : ''}
+                    ${f.status === 'booked' ? '<p class="text-[11px] font-semibold text-red-700">For the whole group.</p>' : ''}
                     ${interestControls(day.date, f)}
                     ${f.url ? `<div class="pt-1"><a href="${f.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded">📍 View Restaurant / Map ↗</a></div>` : ''}
                   </li>
@@ -1201,11 +4017,15 @@
 
           </div>
         </article>
-      `).join('');
+      `;
+      }).join('');
     }
 
     function filterDay(day) {
       selectedDay = day;
+      if (day === 'all' && location.hash.startsWith('#day-')) {
+        history.replaceState(null, '', '#tab-itinerary');
+      }
       document.querySelectorAll('.day-pill').forEach(btn => {
         btn.className = 'day-pill bg-white border border-slate-300 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap';
       });
@@ -1226,13 +4046,15 @@
     function renderRouteStrip() {
       const wrap = document.querySelector('#route-strip > div');
       if (!wrap) return;
-      wrap.innerHTML = routeCities.map((city, index) => `
-        <div class="route-node">
-          <div class="mx-auto w-9 h-9 rounded-full bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center border-2 border-red-500">${index + 1}</div>
-          <p class="mt-1 text-[11px] font-extrabold text-slate-900">${city.label}</p>
-          <p class="text-[10px] text-slate-500">${city.sub}</p>
-        </div>
-        ${index < routeCities.length - 1 ? '<div class="route-line" aria-hidden="true"></div>' : ''}
+      const nodes = routeStops.map(stop => ({ n: String(stop.n), label: stop.name, sub: stop.dates, day: stop.day }))
+        .concat([{ n: '✈', label: 'NRT', sub: 'Nov 27', day: '11/27' }]);
+      wrap.innerHTML = nodes.map((city, index) => `
+        <button type="button" class="route-node min-h-[44px]" onclick="jumpToDay('${city.day}')">
+          <div class="mx-auto w-9 h-9 rounded-full bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center border-2 border-red-500">${city.n}</div>
+          <p class="mt-1 text-[11px] font-extrabold text-slate-900">${escapeHtml(city.label)}</p>
+          <p class="text-[10px] text-slate-500">${escapeHtml(city.sub)}</p>
+        </button>
+        ${index < nodes.length - 1 ? '<div class="route-line" aria-hidden="true"></div>' : ''}
       `).join('');
     }
 
@@ -1472,7 +4294,21 @@
         { name: "Hakone Open-Air Museum (Tickets Booked)", url: "https://www.hakone-oam.or.jp/en/", cat: "Activity" },
         { name: "Mitsui Garden Hotel Kyobashi (11/25–27)", url: "https://www.gardenhotels.co.jp/kyobashi/eng/", cat: "Hotel" },
         { name: "TeamLab Planets Tokyo", url: "https://www.teamlab.art/e/planets/", cat: "Activity" },
-        { name: "Casio Museum Guide", url: "https://www.plus9time.com/blog/2025/10/10/visit-to-the-casio-museum-tokyo", cat: "Activity" }
+        { name: "Casio Museum Guide", url: "https://www.plus9time.com/blog/2025/10/10/visit-to-the-casio-museum-tokyo", cat: "Activity" },
+        { name: "Activate JR Pass at KIX", url: "https://www.jrpass.com/blog/how-to-activate-the-jr-pass-at-kansai-airport", cat: "Transit" },
+        { name: "Yamachan map (Nov 20, 6:30 PM)", url: "https://maps.app.goo.gl/eECphUN1V8QcmA478", cat: "Food" },
+        { name: "Hanatanuki (Nov 22, 6:00 PM)", url: "https://www.tripadvisor.com/Restaurant_Review-g298564-d3827489-Reviews-Hanatanuki_Kawaramachi-Kyoto_Kyoto_Prefecture_Kinki.html", cat: "Food" },
+        { name: "Nishiki Market", url: "https://www.japan.travel/en/spot/1174/", cat: "Activity" },
+        { name: "Aritsugu knife shop", url: "https://www.kyoto-nishiki.or.jp/en/stores/aritsugu/", cat: "Activity" },
+        { name: "Laundry near the Kyoto hotel", url: "https://maps.app.goo.gl/DDi4HrZ5oi2BjmSN9", cat: "Docs" },
+        { name: "Miyajima island map", url: "https://drive.google.com/file/d/1C8-y6t0EuCYUYbQPW6w_hQi7pUgjDd_F/view?usp=sharing", cat: "Activity" },
+        { name: "Tokyo–Narita bus", url: "https://tyo-nrt.com/en/timetable", cat: "Transit" },
+        { name: "Narita Express", url: "https://www.jreast.co.jp/en/multi/nex/", cat: "Transit" },
+        { name: "Kojima Jeans Street", url: "https://jeans-street.com/", cat: "Activity" },
+        { name: "TCB jeans", url: "https://tcbjeans.com/", cat: "Activity" },
+        { name: "Studio D’Artisan", url: "http://www.dartisan.co.jp/", cat: "Activity" },
+        { name: "Big John", url: "https://www.bigjohn.co.jp/", cat: "Activity" },
+        { name: "The Real McCoy’s", url: "https://www.therealmccoys.com/", cat: "Activity" }
       ];
 
       document.getElementById('all-links-grid').innerHTML = allLinks.map(l => `
@@ -2122,7 +4958,7 @@
 
     function toggleInterest(activityId) {
       if (!packingPerson) {
-        switchTab('packing');
+        switchTab('packing', true);
         const select = document.getElementById('pack-person');
         if (select) select.focus();
         setPackingStatus('Choose your name, then go back to the itinerary and tap I\'m interested.');
@@ -2233,7 +5069,7 @@
       const text = String(body || '').trim();
       if (!text) return;
       if (!packingPerson) {
-        switchTab('packing');
+        switchTab('packing', true);
         const select = document.getElementById('pack-person');
         if (select) select.focus();
         setPackingStatus('Choose your name, then add the reminder.');
@@ -2416,9 +5252,317 @@
     // ====================================================
     // TAB SWITCHING
     // ====================================================
-    function switchTab(tabName) {
+
+    function tokyoNow() {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short'
+      }).formatToParts(new Date());
+      const get = (type) => parts.find(part => part.type === type).value;
+      return {
+        weekday: get('weekday'),
+        stamp: `${get('year')}-${get('month')}-${get('day')}`,
+        label: `${get('weekday')} ${get('month')}/${get('day')}`
+      };
+    }
+
+    function renderTodayNext() {
+      const body = document.getElementById('today-next-body');
+      if (!body) return;
+      const now = tokyoNow();
+      let focus = itineraryDays[0];
+      let next = null;
+      let kicker = '';
+      let heading = '';
+      if (now.stamp < '2026-11-19') {
+        kicker = `Today in Japan is ${now.label}. The trip has not started.`;
+        heading = `Next up · ${focus.dayName}`;
+      } else if (now.stamp > '2026-11-27') {
+        focus = itineraryDays[itineraryDays.length - 1];
+        kicker = `Today in Japan is ${now.label}.`;
+        heading = 'Trip dates were Nov 19–27';
+      } else {
+        focus = itineraryDays.find(day => day.date === now.stamp.slice(5).replace('-', '/')) || focus;
+        const index = itineraryDays.indexOf(focus);
+        next = itineraryDays[index + 1] || null;
+        kicker = `Today in Japan is ${now.label}.`;
+        heading = `Today · ${focus.dayName}`;
+      }
+      const chips = (focus.keyTimes || []).map(time =>
+        `<span class="inline-flex items-center min-h-[32px] text-[11px] font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-full px-2.5 py-1">${escapeHtml(time)}</span>`
+      ).join('');
+      const hotelLine = focus.hotel
+        ? `${escapeHtml(focus.hotel.name)} · ${escapeHtml(focus.hotel.confirmation)}`
+        : '';
+      body.innerHTML = `
+        <p class="text-sm font-extrabold text-slate-900">${escapeHtml(heading)}</p>
+        <p class="text-xs text-slate-600 mt-1">${escapeHtml(focus.title)}</p>
+        <p class="text-xs text-slate-700 mt-2">${escapeHtml(kicker)} ${hotelLine}</p>
+        <div class="flex flex-wrap gap-1.5 mt-3">${chips}</div>
+        <div class="flex flex-wrap gap-2 mt-3">
+          <button type="button" onclick="jumpToDay('${focus.date}')" class="min-h-[44px] bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg">Open ${escapeHtml(focus.date)}</button>
+          <button type="button" onclick="showRouteMap()" class="min-h-[44px] bg-white border border-slate-300 text-slate-800 text-xs font-bold px-3 py-2 rounded-lg">See the route map</button>
+          ${next ? `<button type="button" onclick="jumpToDay('${next.date}')" class="min-h-[44px] bg-white border border-slate-300 text-slate-800 text-xs font-bold px-3 py-2 rounded-lg">Next · ${escapeHtml(next.date)} ${escapeHtml(next.city)}</button>` : ''}
+        </div>
+      `;
+    }
+
+    function showRouteMap() {
+      switchTab('itinerary', true);
+      const map = document.getElementById('route-map');
+      if (map) map.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function frameFromBox(box) {
+      const px = box.w / (box.maxLng - box.minLng);
+      const h = box.h || (box.maxLat - box.minLat) * px * 1.28;
+      return Object.assign({}, box, { h, vbW: Math.ceil(box.x + box.w + box.padR), vbH: Math.ceil(box.y + h + box.padB) });
+    }
+
+    const MAIN_FRAME = frameFromBox({
+      minLng: 128.9, maxLng: 146.15, minLat: 30.5, maxLat: 45.65,
+      x: 8, y: 12, w: 344, padR: 8, padB: 12
+    });
+    const INSET_FRAME = frameFromBox({
+      minLng: 132.08, maxLng: 135.05, minLat: 34.16, maxLat: 35.0,
+      x: 124, y: 16, w: 150, h: 220, padR: 140, padB: 24
+    });
+
+    function projectStop(lat, lng, frame) {
+      const x = frame.x + ((lng - frame.minLng) / (frame.maxLng - frame.minLng)) * frame.w;
+      const y = frame.y + ((frame.maxLat - lat) / (frame.maxLat - frame.minLat)) * frame.h;
+      return [x, y];
+    }
+
+    function landPath(frame) {
+      return japanRings.map(ring => ring.map((pair, index) => {
+        const [x, y] = projectStop(pair[1], pair[0], frame);
+        return `${index ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`;
+      }).join('') + 'Z').join('');
+    }
+
+    function spreadLabelYs(items, gap, minY, maxY) {
+      items.sort((a, b) => a.ly - b.ly);
+      for (let i = 1; i < items.length; i++) {
+        if (items[i].ly < items[i - 1].ly + gap) items[i].ly = items[i - 1].ly + gap;
+      }
+      for (let i = items.length - 2; i >= 0; i--) {
+        if (items[i].ly > items[i + 1].ly - gap) items[i].ly = items[i + 1].ly - gap;
+      }
+      items.forEach(item => {
+        item.ly = Math.max(minY, Math.min(maxY, item.ly));
+      });
+    }
+
+    function markerMarkup(stop, x, y, radius, showNumber, offset) {
+      const dx = offset ? offset[0] : 0;
+      const dy = offset ? offset[1] : 0;
+      const bx = x + dx;
+      const by = y + dy;
+      const label = showNumber ? String(stop.n) : '';
+      const ring = stop.dnjsq
+        ? `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="${radius + 4}" fill="none" stroke="#4338ca" stroke-width="1.5"></circle>`
+        : '';
+      const leader = (dx || dy)
+        ? `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#64748b" stroke-width="1"></line>`
+        : '';
+      return `
+        ${leader}
+        <a class="stop-hit" href="#day-${stop.day.replace('/', '-')}" onclick="jumpToDay('${stop.day}'); return false;">
+          <circle class="hit" cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="16" fill="transparent"></circle>
+          ${ring}
+          <circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="${radius}" fill="#0f172a" stroke="#dc2626" stroke-width="2"></circle>
+          ${showNumber ? `<text x="${bx.toFixed(1)}" y="${by.toFixed(1)}" text-anchor="middle" dominant-baseline="central" fill="#ffffff" font-size="${radius > 7 ? 11 : 8}" font-weight="800">${label}</text>` : ''}
+        </a>`;
+    }
+
+    function labelMarkup(item, anchorX, anchor, frame) {
+      const stop = item.stop;
+      const title = `${stop.n} ${stop.name}`;
+      const extra = stop.dnjsq ? ' · DNJSQ' : '';
+      const lines = [title + extra, stop.dates];
+      const text = lines.map((line, index) =>
+        `<tspan x="${anchorX.toFixed(1)}" dy="${index === 0 ? 0 : 12}" font-size="${index === 0 ? 11 : 9}" font-weight="${index === 0 ? 800 : 600}" fill="${index === 0 ? '#0f172a' : '#64748b'}">${escapeHtml(line)}</tspan>`
+      ).join('');
+      return `
+        <line x1="${item.x.toFixed(1)}" y1="${item.y.toFixed(1)}" x2="${anchorX.toFixed(1)}" y2="${item.ly.toFixed(1)}" stroke="#94a3b8" stroke-width="1"></line>
+        <text x="${anchorX.toFixed(1)}" y="${item.ly.toFixed(1)}" text-anchor="${anchor}" style="paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round;">${text}</text>`;
+    }
+
+    function drawMap(frame, stops, options) {
+      const clipId = options.clipId;
+      const line = stops.map(stop => projectStop(stop.lat, stop.lng, frame).map(n => n.toFixed(1)).join(',')).join(' ');
+      const sideKey = options.sideKey;
+      const labeled = stops.filter(stop => stop[sideKey]);
+      const placed = labeled.map(stop => {
+        const [x, y] = projectStop(stop.lat, stop.lng, frame);
+        return { stop, x, y, ly: y };
+      });
+      const east = placed.filter(item => item.stop[sideKey] === 'e');
+      const west = placed.filter(item => item.stop[sideKey] === 'w');
+      const north = placed.filter(item => item.stop[sideKey] === 'n');
+      const south = placed.filter(item => item.stop[sideKey] === 's');
+      const gap = options.labelGap || 36;
+      spreadLabelYs(east, gap, 18, frame.vbH - 18);
+      spreadLabelYs(west, gap, 18, frame.vbH - 18);
+      north.forEach(item => { item.ly = item.y - 18; });
+      south.forEach(item => { item.ly = item.y + 22; });
+      const margin = options.labelMode === 'margin';
+      const labels = []
+        .concat(east.map(item => labelMarkup(item, margin ? frame.x + frame.w + 10 : item.x + 14, 'start', frame)))
+        .concat(west.map(item => labelMarkup(item, margin ? frame.x - 10 : item.x - 14, 'end', frame)))
+        .concat(north.map(item => labelMarkup(item, item.x, 'middle', frame)))
+        .concat(south.map(item => labelMarkup(item, item.x, 'middle', frame)));
+      const dots = options.dots === false ? '' : stops.map(stop => {
+        const [x, y] = projectStop(stop.lat, stop.lng, frame);
+        const showNumber = options.numbers !== false;
+        const radius = options.radius || (showNumber ? 8 : 4);
+        return markerMarkup(stop, x, y, radius, showNumber);
+      }).join('');
+      return `
+        <rect width="${frame.vbW}" height="${frame.vbH}" fill="#f8fafc"></rect>
+        <clipPath id="${clipId}"><rect x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" rx="8"></rect></clipPath>
+        <g clip-path="url(#${clipId})">
+          <rect x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" fill="#e0f2fe"></rect>
+          <path d="${landPath(frame)}" fill="#e2e8f0" stroke="#64748b" stroke-width="1" stroke-linejoin="round"></path>
+          <polyline points="${line}" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+        </g>
+        ${dots}
+        ${labels.join('')}
+      `;
+    }
+
+    function renderRouteMap() {
+      const main = document.getElementById('japan-map-svg');
+      const inset = document.getElementById('japan-inset-svg');
+      const list = document.getElementById('route-stop-list');
+      if (!main || !inset || !list) return;
+      main.setAttribute('viewBox', `0 0 ${MAIN_FRAME.vbW} ${MAIN_FRAME.vbH}`);
+      inset.setAttribute('viewBox', `0 0 ${INSET_FRAME.vbW} ${INSET_FRAME.vbH}`);
+      const separable = routeStops.filter(stop => !stop.cluster);
+      const cluster = routeStops.filter(stop => stop.cluster);
+      main.innerHTML = drawMap(MAIN_FRAME, routeStops, { clipId: 'japan-clip', sideKey: 'none', dots: false });
+      const [cx, cy] = cluster.reduce((acc, stop) => {
+        const [x, y] = projectStop(stop.lat, stop.lng, MAIN_FRAME);
+        return [acc[0] + x / cluster.length, acc[1] + y / cluster.length];
+      }, [0, 0]);
+      main.innerHTML += `
+        <a class="stop-hit" href="#day-11-20" onclick="jumpToDay('11/20'); return false;">
+          <text x="${(cx - 36).toFixed(1)}" y="${(cy - 28).toFixed(1)}" font-size="11" font-weight="800" fill="#0f172a" style="paint-order: stroke; stroke: #ffffff; stroke-width: 4px;">2–5</text>
+          <line x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${(cx - 18).toFixed(1)}" y2="${(cy - 20).toFixed(1)}" stroke="#64748b" stroke-width="1"></line>
+        </a>`;
+      const mainBadge = { 1: [0, 22, 's'], 6: [-18, -22, 'n'], 7: [0, 18, 'e'], 8: [14, -16, 'e'] };
+      separable.forEach(stop => {
+        const [x, y] = projectStop(stop.lat, stop.lng, MAIN_FRAME);
+        const spec = mainBadge[stop.n] || [0, 0, 'e'];
+        main.innerHTML += markerMarkup(stop, x, y, 8, true, spec);
+        const bx = x + spec[0];
+        const by = y + spec[1];
+        const anchor = spec[2] === 'e' ? 'start' : 'middle';
+        const lx = spec[2] === 'e' ? bx + 14 : bx;
+        const ly = spec[2] === 'n' ? by - 30 : spec[2] === 's' ? by + 22 : by - 4;
+        main.innerHTML += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" style="paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round;"><tspan x="${lx.toFixed(1)}" font-size="11" font-weight="800" fill="#0f172a">${escapeHtml(stop.name)}</tspan><tspan x="${lx.toFixed(1)}" dy="12" font-size="9" font-weight="600" fill="#64748b">${escapeHtml(stop.dates)}</tspan></text>`;
+      });
+      inset.innerHTML = drawMap(INSET_FRAME, cluster, { clipId: 'inset-clip', sideKey: 'insetSide', numbers: true, radius: 8, labelMode: 'margin', labelGap: 48 });
+      list.innerHTML = routeStops.map(stop => `
+        <li>
+          <button type="button" onclick="jumpToDay('${stop.day}')" class="w-full min-h-[44px] text-left flex items-center gap-2 rounded-lg border border-slate-200 px-2 py-1.5 hover:border-red-300 hover:bg-red-50/40">
+            <span class="w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center shrink-0 ${stop.dnjsq ? 'ring-2 ring-indigo-500' : ''}">${stop.n}</span>
+            <span class="min-w-0">
+              <span class="block text-sm font-extrabold text-slate-900">${escapeHtml(stop.name)}${stop.dnjsq ? ' <span class="text-indigo-700 text-[11px] font-bold">DNJSQ</span>' : ''}</span>
+              <span class="block text-[11px] text-slate-500">${escapeHtml(stop.dates)}</span>
+            </span>
+          </button>
+          ${stop.alsoDay ? `<button type="button" onclick="jumpToDay('${stop.alsoDay}')" class="mt-1 ml-9 text-[11px] font-bold text-blue-700 underline">${escapeHtml(stop.alsoLabel)}</button>` : ''}
+        </li>
+      `).join('');
+    }
+
+    function renderFlights() {
+      const container = document.getElementById('flights-container');
+      if (!container) return;
+      container.innerHTML = `
+        <p class="text-xs text-slate-600 mb-3">Read from the two flight screenshots in the Doc. Return rows are labeled Option A and do not print a calendar date on every line. The 14:00 NRT departure matches the Nov 27, 2:00 PM line in the itinerary table. The screenshots do not say which family is in which city.</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          ${flightGroups.map(group => `
+            <div class="rounded-xl border border-slate-200 overflow-hidden">
+              <div class="px-3 py-2 bg-slate-900 text-white">
+                <p class="text-sm font-extrabold">${escapeHtml(group.name)}</p>
+                <p class="text-[11px] text-slate-300">${escapeHtml(group.window)}</p>
+              </div>
+              <ul class="divide-y divide-slate-100">
+                ${group.legs.map(leg => `
+                  <li class="px-3 py-2 text-xs">
+                    <p class="font-bold text-slate-500">${escapeHtml(leg.dir)} · ${escapeHtml(leg.when)}</p>
+                    <p class="text-slate-900 font-semibold">${escapeHtml(leg.place)}</p>
+                    <p class="text-slate-600">${escapeHtml([leg.flight, leg.extra].filter(Boolean).join(' · '))}</p>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderDenim() {
+      const container = document.getElementById('denim-container');
+      if (!container) return;
+      container.innerHTML = `
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-2">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-indigo-700">For the denim-nerd subset</p>
+          <h2 class="text-lg font-extrabold text-slate-900">Denim Nerds Japan Side Quest (DNJSQ)</h2>
+          <p class="text-sm text-slate-700">Three stops for anyone who wants them. The rest of the group’s plan does not change. Store hours and street addresses are not copied here — use the official pages, which were checked before they were linked.</p>
+        </div>
+        ${denimStops.map(stop => `
+          <article class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            <div class="bg-slate-900 text-white px-4 py-3 flex items-center gap-2">
+              <span class="w-7 h-7 rounded-full bg-indigo-500 text-white text-xs font-extrabold flex items-center justify-center">${stop.n}</span>
+              <div>
+                <h3 class="text-base font-extrabold">${escapeHtml(stop.title)}</h3>
+                <p class="text-xs text-slate-300">${escapeHtml(stop.when)}</p>
+              </div>
+            </div>
+            <div class="p-4 space-y-3">
+              <p class="text-sm text-slate-800">${escapeHtml(stop.body)}</p>
+              ${stop.gap ? `<p class="text-xs font-semibold text-amber-950 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">${escapeHtml(stop.gap)}</p>` : ''}
+              <div class="flex flex-wrap gap-1.5">
+                ${stop.links.map(link => `<a href="${link.url}" target="_blank" rel="noopener" class="inline-flex items-center min-h-[44px] text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-2 rounded-lg">${escapeHtml(link.label)} ↗</a>`).join('')}
+              </div>
+              <button type="button" onclick="jumpToDay('${stop.day}')" class="min-h-[44px] text-xs font-bold text-slate-800 underline">Open ${escapeHtml(stop.day)} in the itinerary</button>
+            </div>
+          </article>
+        `).join('')}
+      `;
+    }
+
+    function jumpToDay(date) {
+      const hash = '#day-' + date.replace('/', '-');
+      if (location.hash !== hash) history.replaceState(null, '', hash);
+      switchTab('itinerary');
+      filterDay(date);
+      const card = document.getElementById('day-' + date.replace('/', '-'));
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function applyHash() {
+      const hash = (location.hash || '').replace('#', '');
+      if (hash.startsWith('day-')) {
+        const date = hash.slice(4).replace('-', '/');
+        if (itineraryDays.some(day => day.date === date)) {
+          switchTab('itinerary');
+          filterDay(date);
+        }
+        return;
+      }
+      if (hash.startsWith('tab-')) {
+        const tab = hash.slice(4);
+        if (document.getElementById('tab-' + tab)) switchTab(tab);
+      }
+    }
+
+    function switchTab(tabName, updateHash) {
       currentTab = tabName;
-      ['itinerary', 'getting-around', 'hotels', 'rooms', 'actions', 'packing'].forEach(t => {
+      ['itinerary', 'getting-around', 'hotels', 'rooms', 'actions', 'packing', 'denim'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         const btn = document.getElementById(`tab-btn-${t}`);
         if (!el || !btn) return;
@@ -2430,22 +5574,33 @@
           btn.className = 'tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-white/10 text-slate-200 hover:bg-white/20';
         }
       });
-      const bookedBox = document.getElementById('booked-for-everyone');
-      if (bookedBox) {
-        if (tabName === 'itinerary') bookedBox.classList.remove('hidden');
-        else bookedBox.classList.add('hidden');
+      ['booked-for-everyone', 'route-map', 'flights-box'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (tabName === 'itinerary') el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+      if (updateHash) {
+        const next = '#tab-' + tabName;
+        if (location.hash !== next) history.replaceState(null, '', next);
       }
       if (tabName === 'getting-around') renderGettingAround();
+      if (tabName === 'denim') renderDenim();
     }
 
     // INITIALIZE
     updateCountdown();
+    renderTodayNext();
+    renderRouteMap();
+    renderFlights();
+    renderDenim();
     renderItinerary();
     renderGettingAround();
     renderHotels();
     renderRooms();
     renderActions();
     initPacking();
+    applyHash();
   </script>
 </body>
 </html>
